@@ -33,7 +33,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	ts <- c(1)
 	# Set the number of epidemics
 	k <- 1
-	allParams <- c()
+	allPredInfList <- c()
 	# Number of increasing residuals
 	nRes <- 3
 	nIncRes <- c()
@@ -51,19 +51,19 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 		print("### Fit k", quote=FALSE); print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE)
 		allPredInf <- fitInRangeParallel(setSolver(optimMethod, k), i, offsetTimes, offsetData, initConds, initParams, ts, k, c(minTRange:(i-maxTRange)), 1, plotConfig)
 		# Store allPredInf
-		allParams[[i]] <- allPredInf
-		maxVals <- allPredInf$optimParams
-		nIncRes[i] <- allPredInf$finalRes
-		lastNRes <- nIncRes[(i-(nRes-1)):i]
-		maxt <- maxVals[1]
-		rSquare <- maxVals[2]
+		allPredInfList[[i]] <- allPredInf
+
+		maxt <- allPredInf$optimTime
 		ts[k] <- maxt
+		rSquare <- allPredInf$optimRSquare
+		optimParams <- allPredInf$optimParams
 
 
 		# Try to improve fit if rSquare has deteriorated
 		lim <- thresholds$lim
 		diff <- thresholds$diff
-		if (rSquare < lim && incMag(lastNRes, nRes)) {
+		# if (rSquare < lim && incMag(lastNRes, nRes)) {
+		if (rSquare < lim) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
 			# Set initial parameters
@@ -71,32 +71,29 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 			initCondsMulti <- c(initConds, startConds)
 			# Fit k+1 epidemics
 			allPredInf <- fitInRangeParallel(setSolver(optimMethod, k+1), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, ts, k+1, c(minTRange:(i-maxTRange)), 2, plotConfig)
-			maxValsMulti <- allPredInf$optimParams
-			nIncRes[i] <- allPredInf$finalRes
-			lastNRes <- nIncRes[(i-(nRes-1)):i]
-			multiRSquare <- maxValsMulti[2]
-			print("multi rs")
-			print(multiRSquare)
-			print("rs")
-			print(rSquare)
+			# nIncRes[i] <- allPredInf$finalRes
+			# lastNRes <- nIncRes[(i-(nRes-1)):i]
+			multiRSquare <- allPredInf$optimRSquare
+
 			# If k+1 is significantly better then continue with k+1 fit
 			# if ((multiRSquare - rSquare) > diff || incMag(lastNRes, nRes)) {
+			if ((multiRSquare - rSquare) > diff) {
 				print("!!!Set k+1", quote=FALSE)
 				# Set k+1 epidemics from now on
 				k <- k + 1
 				# Update parameters to continue fitting with k+1 epidemics
-				maxVals <- maxValsMulti
-				maxt <- maxVals[1]
+				optimParams <- allPredInf$optimParams
+				maxt <- allPredInf$optimTime
 				ts <- c(ts,maxt)
-				rSquare <- maxVals[2]
+				rSquare <- multiRSquare
 				initConds <- initCondsMulti
-			# }
+			}
 		}
 		# Update the initial parameters for the next fitting
-		initParams <- maxVals[3:length(maxVals)]
+		initParams <- optimParams
 	}
 	# Save all params
-	save(allParams, file=plotConfig$dataFile)
+	save(allPredInfList, file=plotConfig$dataFile)
 	save.image(plotConfig$envFile)
 }
 
