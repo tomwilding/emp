@@ -15,8 +15,9 @@ sseSIRMulti <- function(params, times, data, initConds, ts, k) {
 		}
 	}
 	if (inf==0){
-		out <- evalSIRMulti(times, data, initConds, params, ts, k)
-		sse <- sum((out - data)^2)
+		allPredInf <- evalSIRMulti(times, data, initConds, params, ts, k, 1)
+		predInf <- allPredInf$multiInf
+		sse <- sum((predInf - data)^2)
 	}
 	sse
 }

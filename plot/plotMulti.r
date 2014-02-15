@@ -1,9 +1,4 @@
-# require(deSolve)
-# source('fitOverTimeMulti.r')
-# source('sim.r')
-# source('takeEveryOther.r')
-require(epi)
-
+load("output/data/sim/simData.RData")
 
 
 # ################################## Simulate data ########################################
@@ -29,6 +24,7 @@ allPositiveInfectious1 <- c(positiveInfectiousPad1,positiveInfectious1)
 # Add together the different predicted infectious values truncated to required size
 data <- (allPositiveInfectious[1:totalLength]) + (allPositiveInfectious1[1:totalLength])
 data <- takeEveryOther(data)
+times <- 1:length(data)
 # fluData <- sim(0.002,0.1,500,10)
 # fluData1 <- sim(0.002,0.2,400,10)
 # fluData2 <- sim(0.005,0.1,200,10)
@@ -63,19 +59,19 @@ data <- takeEveryOther(data)
 # Only fit over a specific range of times startOffset>=1
 startOffset <- 1
 endOffset <- 13
-offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=6)
+minTruncation <- 6
+offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
 thresholds <- list(diff=0.05, lim=0.95)
 
 # Init Params = beta, gamma, S0
-initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10));
+initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10))
 
 # Init Conds = S0, I0, R0
 # I0 from first data point
 initConds <- c(1,data[startOffset],0);
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/sim1/", dataFile="output/data/sim/simData.RData", envFile="output/data/sim/simEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/sim1/", dataFile="data/simData.RData", pat=5, rat=30)
 
-# Fit parameters
-fitOverTimeMulti("LMS", 1:length(data), data, initConds, initParams, offsets, thresholds, plotConfig)
+reconstructPlot(times, data, offset, thresholds, initParams, initConds, plotConfig)

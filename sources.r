@@ -10,6 +10,8 @@ source('core/fitInRangeParallel.r')
 source('core/decomposeEpidemics.r')
 source('core/setSolver.r')
 source('core/sir.r')
+
+source('plot/reconstructPlot.r')
 ## Create package (functions and descriptions)
 # source('sources.r') # To get dependencies
 # package.skeleton("epi") # Construct package - Required to add names
