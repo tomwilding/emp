@@ -32,7 +32,6 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 		# Get graph object for this iteration
 		fitParams <- allEvalList[[i]]
 		fineFitParams <- fitParams$allEvalFine
-		print(fitParams)
 		rSquare <- fitParams$optimRSquare
 		par(mar=c(6.1,4.1,4.1,2.1))
 		plot(offsetTimes, offsetData, xlab='Time', ylab='Infected Individuals', col='steelblue')
