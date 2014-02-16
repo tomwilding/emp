@@ -5,7 +5,7 @@ evalSIRMulti <- function(times, data, initConds, params, ts, k, granularity) {
 	predInfectious <- numeric(length(times))
 	I0 <- initConds[2]
 	predI <- 0
-	allEval <- c()
+	eval <- c()
 
 	for (i in 1:k) {
 		paramsMulti <- params[(3*(i-1)+1):(3*i)]
@@ -32,10 +32,10 @@ evalSIRMulti <- function(times, data, initConds, params, ts, k, granularity) {
 		predInfectious <- predInfectious + predInf
 
 		# Record sub epidemic parameters
-		allEval$subInf[[i]] <- predInf
-		allEval$subParams[[i]] <- c(paramsMulti, I0)
-		allEval$multiInf <- predInfectious
-		allEval$multiParams <- params
+		eval$subInf[[i]] <- predInf
+		eval$subParams[[i]] <- c(paramsMulti, I0)
+		eval$multiInf <- predInfectious
+		eval$multiParams <- params
 		# Set I0 for next epidemic using combined predicted I0 at next t0
 		if (i < k) {
 			# Check if S0 < I0 - why would I0 be less than S0
@@ -46,5 +46,5 @@ evalSIRMulti <- function(times, data, initConds, params, ts, k, granularity) {
 			I0 <- max(data[ts[i+1]] - predI, 1)
 		}
 	}
-	allEval
+	eval
 }

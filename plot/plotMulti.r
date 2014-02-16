@@ -14,7 +14,7 @@ offset1 <- 40
 # Total length of the combined data
 totalLength <- maxLength + offset1
 # Build times array
-times <- c(1:(totalLength));
+# times <- c(1:(totalLength));
 # Padding of zeros to offset data
 positiveInfectiousPad1 <- numeric(offset1)
 # positiveInfectiousPad2 <- numeric(offset2)

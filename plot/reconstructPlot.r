@@ -1,5 +1,5 @@
 reconstructPlot <- function(times, data, offset, thresholds, initParams, initConds, plotConfig) {
-	# Unpack
+	# Unpack settings
 	minTruncation <- offsets$minTruncation
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
@@ -10,7 +10,7 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
 
 	# Loop through all objects
-	for(i in minTruncation:length(allEvalList)) {
+	for(i in minTruncation:length(evalList)) {
 		# Set graph settings
 		setEPS()
 		graphName <- paste("t", i, sep='')
@@ -20,7 +20,6 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 		# Take data set within specified offset
 		offsetTimes <- times[startOffset:(length(times)-endOffset)]
 		offsetData <- data[startOffset:(length(data)-endOffset)]
-		
 		# Truncate data set
 		truncTimes <- offsetTimes[1:i]
 		truncData <- offsetData[1:i]
@@ -30,13 +29,13 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 		fineTimes <- breakTime(offsetTimes, timeStep)
 		# Print main graph
 		# Get graph object for this iteration
-		fitParams <- allEvalList[[i]]
-		fineFitParams <- fitParams$allEvalFine
-		rSquare <- fitParams$optimRSquare
+		eval <- evalList[[i]]
+		allEvalFine <- eval$allEvalFine
+		rSquare <- eval$optimRSquare
 		par(mar=c(6.1,4.1,4.1,2.1))
-		plot(offsetTimes, offsetData, xlab='Time', ylab='Infected Individuals', col='steelblue')
+		plot(offsetTimes, offsetData, xlab='Epochs', ylab='Infected Individuals', col='steelblue')
 		title(main=plotConfig$title, cex.main=0.9, cex.axis=0.8)
-		daysText <- paste("Days after outbreak = ", i*4)
+		daysText <- paste("Epochs after outbreak = ", i)
 		mtext(daysText, 3, cex=0.8)
 		rSquarePast <- rSquare
 		# rSquareAll <- rSquares[2]
@@ -53,10 +52,10 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 		points(truncTimes, truncData, col='black', pch=16)
 
 		# Plot lines using fine
-		multiInf <- fineFitParams$multiInf
-		for(k in 1:(length(fineFitParams$subInf))) {
-			sub <- fineFitParams$subInf[[k]]
-			subParams <- fineFitParams$subParams[[k]]
+		multiInf <- allEvalFine$multiInf
+		for(k in 1:(length(allEvalFine$subInf))) {
+			sub <- allEvalFine$subInf[[k]]
+			subParams <- allEvalFine$subParams[[k]]
 			# Print sub epidemic graph
 			lines(fineTimes, sub, col=cl[k], lty=2)
 			lines(fineTimes, multiInf, col="black")
@@ -72,7 +71,7 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 			lineType <- c(1,rep(2,k))
 			col <- c(1,cl[1:k])
 		}
-		legend("topright",legendText, col=c(1,cl[1:(length(fineFitParams$sub))]), lty=lineType, cex=0.8)
+		legend("topright",legendText, col=c(1,cl[1:(length(allEvalFine$sub))]), lty=lineType, cex=0.8)
 		dev.off()
 	}
 }
