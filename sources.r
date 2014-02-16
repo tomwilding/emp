@@ -7,7 +7,6 @@ source('core/fitOverTimeMulti.r')
 source('core/sseSIRMulti.r')
 source('core/evalSIRMulti.r')
 source('core/fitInRangeParallel.r')
-source('core/decomposeEpidemics.r')
 source('core/setSolver.r')
 source('core/sir.r')
 

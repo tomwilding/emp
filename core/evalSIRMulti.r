@@ -38,12 +38,12 @@ evalSIRMulti <- function(times, data, initConds, params, ts, k, granularity) {
 		allEval$multiParams <- params
 		# Set I0 for next epidemic using combined predicted I0 at next t0
 		if (i < k) {
-			t1Index <- which(fineTimes == times[ts[i+1]])
-			predI <- predInfectious[t1Index]
-			I0 <- max(data[ts[i+1]] - predI, 1)
 			# Check if S0 < I0 - why would I0 be less than S0
 			# S0 optimised from optim so at the start S0 < I0 in.
 			# Only predict I0 for kth epidemic
+			t1Index <- which(fineTimes == times[ts[i+1]])
+			predI <- predInfectious[t1Index]
+			I0 <- max(data[ts[i+1]] - predI, 1)
 		}
 	}
 	allEval

@@ -61,8 +61,9 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 			lines(fineTimes, sub, col=cl[k], lty=2)
 			lines(fineTimes, multiInf, col="black")
 
-			# Params
-			ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = "), subParams, collapse='')
+			# Params - Add IO to S0
+			S0 <- exp(subParams[3]) + subParams[4]
+			ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0)), collapse='')
 			mtext(ParamText, 1, at=plotConfig$pat, padj=6+(2*(k-1)), cex=0.7, col=cl[k])		
 
 			# Legend
