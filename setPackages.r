@@ -5,4 +5,5 @@ setPackages <- function() {
 	install.packages("foreach")
 	# install.packages("emdbook", lib="Rpackages")
 	install.packages("GillespieSSA", lib="Rpackages")
+	install.packages("assertive")
 }
