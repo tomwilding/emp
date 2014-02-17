@@ -55,6 +55,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 		ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		multiParams <- eval$multiParams
+		lastNResiduals <- nIncResiduals[(i-(nResiduals-1)):i]
 
 
 		# Try to improve fit if rSquare has deteriorated
