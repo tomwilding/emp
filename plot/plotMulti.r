@@ -72,6 +72,6 @@ initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10))
 # I0 from first data point
 initConds <- c(1,data[startOffset],0);
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/sim/", dataFile="data/simData.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/sim/", dataFile="output/data/sim/simData.RData", pat=5, rat=30)
 
 reconstructPlot(times, data, offset, thresholds, initParams, initConds, plotConfig)

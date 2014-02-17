@@ -61,15 +61,18 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 		}
 	}
 
+	# Get optimal values stored in parallel evaluation loop
 	optimTime <- EvalOverTime[[maxRSIndex]][[1]]
 	optimRSquare <- EvalOverTime[[maxRSIndex]][[2]]
 	# Optimal sub and combined epidemic parameters
 	optimPastEval <- EvalOverTime[[maxRSIndex]][[3]]
+	optimFinalResidual <- EvalOverTime[[maxRSIndex]][[4]]
 
-	# Evaluate over fine granularity time
+	# Evaluate over all fine granularity time
 	optimParams <- optimPastEval$multiParams
 	allEvalFine <- evalSIRMulti(times, data, initConds, optimParams, c(ts[1:k-1], optimTime), k, timeStep)
-	allEval <- evalSIRMulti(times, data, initConds, optimParams,  c(ts[1:k-1], optimTime), k, 1)
+	# Evaluate over all time
+	allEval <- evalSIRMulti(times, data, initConds, optimParams,  c(ts[1:k-1], optimTime), k, 1) 
 
 	# fineTimes <- breakTime(times, timeStep)
 	# cl <- c("red","cyan","forestgreen","goldenrod2","red4")
@@ -102,6 +105,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	eval$optimTimes <- c(ts[1:k-1], optimTime)
 	eval$k <- k
 	eval$optimRSquare <- optimRSquare
+	eval$finalResidual <- (data[i] - allEval[i])
 
 	# Set different multi and sub evals
 	eval$pastEval <- optimPastEval

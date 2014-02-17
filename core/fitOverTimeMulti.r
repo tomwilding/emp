@@ -33,10 +33,13 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	ts <- c(1)
 	# Set the number of epidemics
 	k <- 1
+
+	# All evaluation vector
 	evalList <- c()
+	
 	# Number of increasing residuals
-	nRes <- 3
-	nIncRes <- c()
+	nResiduals <- 3
+	nIncResiduals <- c()
 
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from minTruncation within offset data
@@ -57,8 +60,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 		# Try to improve fit if rSquare has deteriorated
 		lim <- thresholds$lim
 		diff <- thresholds$diff
-		# if (rSquare < lim && incMag(lastNRes, nRes)) {
-		if (rSquare < lim) {
+		if (rSquare < lim && incResiduals(lastNResiduals, nResiduals)) {
+		# if (rSquare < lim) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
 			# Set initial parameters
@@ -66,22 +69,23 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 			initCondsMulti <- c(initConds, startConds)
 			# Fit k+1 epidemics
 			eval <- fitInRangeParallel(setSolver(optimMethod, k+1), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, ts, k+1, c(minTRange:(i-maxTRange)), 2, plotConfig)
-			# nIncRes[i] <- eval$finalRes
-			# lastNRes <- nIncRes[(i-(nRes-1)):i]
+			# Get last residual and update last n residuals vector
+			nIncResiduals[i] <- eval$finalResidual
+			lastNResiduals <- nIncResiduals[(i-(nResiduals-1)):i]
 			multiRSquare <- eval$optimRSquare
 			# If k+1 is significantly better then continue with k+1 fit
-			# if ((multiRSquare - rSquare) > diff || incMag(lastNRes, nRes)) {
-			if ((multiRSquare - rSquare) > diff) {
-				print("!!!Set k+1", quote=FALSE)
-				# Set k+1 epidemics from now on
-				k <- k + 1
-				# Update parameters to continue fitting with k+1 epidemics
-				multiParams <- eval$multiParams
-				maxt <- eval$optimTime
-				ts <- c(ts,maxt)
-				rSquare <- multiRSquare
-				initConds <- initCondsMulti
-			}
+			# if ((multiRSquare - rSquare) > diff || incResiduals(lastNResiduals, nResiduals)) {
+			# if ((multiRSquare - rSquare) > diff) {
+			print("!!!Set k+1", quote=FALSE)
+			# Set k+1 epidemics from now on
+			k <- k + 1
+			# Update parameters to continue fitting with k+1 epidemics
+			multiParams <- eval$multiParams
+			maxt <- eval$optimTime
+			ts <- c(ts,maxt)
+			rSquare <- multiRSquare
+			initConds <- initCondsMulti
+			# }
 		}
 		# Update the initial parameters for the next fitting
 		initParams <- multiParams
@@ -92,20 +96,20 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	# save.image(plotConfig$envFile)
 }
 
-incMag <- function(lastNRes, n) {
-	incMag <- FALSE
+incResiduals <- function(lastNResiduals, n) {
+	incResiduals <- FALSE
 	inc <- TRUE
 	ssign <- TRUE
-	lastNRes <- (lastNRes[!is.na(lastNRes)])
-	if (length(lastNRes) == n) {
+	lastNResiduals <- (lastNResiduals[!is.na(lastNResiduals)])
+	if (length(lastNResiduals) == n) {
 		# Check is continuous increasing magnitude
 		for (i in 2:n) {
-			inc <- inc && (abs(lastNRes[i]) > abs(lastNRes[i-1]))
-			ssign <- ssign && ((lastNRes[i]<0) == (lastNRes[i-1]<0))
+			inc <- inc && (abs(lastNResiduals[i]) > abs(lastNResiduals[i-1]))
+			ssign <- ssign && ((lastNResiduals[i]<0) == (lastNResiduals[i-1]<0))
 		}
-		incMag <- inc && ssign
+		incResiduals <- inc && ssign
 		print("IM") 
-		print(incMag)
+		print(incResiduals)
 	}
-	incMag
+	incResiduals
 }
