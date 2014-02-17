@@ -28,7 +28,8 @@ allPositiveInfectious <- c(positiveInfectious,positiveInfectiousPad1)
 allPositiveInfectious1 <- c(positiveInfectiousPad1,positiveInfectious1)
 # Add together the different predicted infectious values truncated to required size
 data <- (allPositiveInfectious[1:totalLength]) + (allPositiveInfectious1[1:totalLength])
-data <- takeEveryOther(data)
+# data <- sumData(data, 2)
+
 # fluData <- sim(0.002,0.1,500,10)
 # fluData1 <- sim(0.002,0.2,400,10)
 # fluData2 <- sim(0.005,0.1,200,10)
@@ -62,11 +63,11 @@ data <- takeEveryOther(data)
 ################################## Fitting multiple epidemics ###########################
 # Only fit over a specific range of times startOffset>=1
 startOffset <- 1
-endOffset <- 13
+endOffset <- 6
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=6)
 
 # Thresholds
-thresholds <- list(diff=0.05, lim=0.95)
+thresholds <- list(diff=0.05, lim=0.9)
 
 # Init Params = beta, gamma, S0
 initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10));

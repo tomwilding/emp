@@ -1,5 +1,5 @@
 fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, offsets, thresholds, plotConfig) {
-	# library(bbmle, lib.loc="Rpackages")
+	require(assertive)
 	# source('breakTime.r')
 	# source('sseSIRMulti.r')
 	# source('evalSIRMulti.r')
@@ -18,7 +18,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	offsetTimes <- times[startOffset:(length(times)-endOffset)]
 	offsetData <- data[startOffset:(length(data)-endOffset)]
 	# Max and min truncated data set sizes within offset data
-	maxTruncation <- length(offsetData)
+	maxTruncation <- length(offsetData) - endOffset - 1
 	minTruncation <- offsets$minTruncation
 	# Min and max t0 values to explore within offset data
 	minTRange <- 3
@@ -43,8 +43,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from minTruncation within offset data
-	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {		
-
+	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("### Fit k", quote=FALSE); print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE)
 		eval <- fitInRangeParallel(setSolver(optimMethod, k), i, offsetTimes, offsetData, initConds, initParams, ts, k, c(minTRange:(i-maxTRange)), 1, plotConfig)
