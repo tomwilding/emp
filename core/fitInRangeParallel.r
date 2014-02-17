@@ -104,7 +104,8 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	eval$optimTimes <- c(ts[1:k-1], optimTime)
 	eval$k <- k
 	eval$optimRSquare <- optimRSquare
-	eval$finalResidual <- (data[i] - allEval[i])
+	# Get final residual from allEval infectious
+	eval$finalResidual <- (data[i] - allEval$multiInf[i])
 
 	# Set different multi and sub evals
 	eval$pastEval <- optimPastEval
