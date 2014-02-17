@@ -2,7 +2,7 @@
 # source('fitOverTimeMulti.r')
 # source('sim.r')
 # source('takeEveryOther.r')
-require(epi)
+# require(epi)
 
 
 

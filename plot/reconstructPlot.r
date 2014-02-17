@@ -30,28 +30,29 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 		# Print main graph
 		# Get graph object for this iteration
 		eval <- evalList[[i]]
+		allEval <- eval$allEval
 		allEvalFine <- eval$allEvalFine
-		rSquare <- eval$optimRSquare
+
+		# Plotting
 		par(mar=c(6.1,4.1,4.1,2.1))
 		plot(offsetTimes, offsetData, xlab='Epochs', ylab='Infected Individuals', col='steelblue')
 		title(main=plotConfig$title, cex.main=0.9, cex.axis=0.8)
 		daysText <- paste("Epochs after outbreak = ", i)
 		mtext(daysText, 3, cex=0.8)
-		rSquarePast <- rSquare
-		# rSquareAll <- rSquares[2]
-		# rSquareFuture <- rSquares[1]
-		RSqPastText <- paste("Past RSquare = ", signif(rSquarePast, digits=3))
-		# RSqFutureText <- paste("Future RSquare = ", signif(rSquareFuture, digits=3))
-		# RSqAllText <- paste("All RSquare = ", signif(rSquareAll, digits=3))
-		# mtext(RSqText, 1, at=10, padj=6, cex=0.5)
-		mtext(RSqPastText, 1, at=plotConfig$rat, padj=6, cex=0.7) #other
-		# mtext(RSqFutureText, 1, at=plotConfig$rat, padj=8, cex=0.7) #other
-		# mtext(RSqAllText, 1, at=plotConfig$rat, padj=10, cex=0.7) #other
-		# mtext(RSqText, 1, at=plotConfig$rat, padj=6, cex=0.7) #other
+
+		# RSquare and labels
+		rSquarePast <- eval$optimRSquare
+		rSquareT1 <- rSquareError(allEval$multiInf[1:i+1], offsetData[1:i+1])
+		RSqPastText <- paste("RSquare Past = ", signif(rSquarePast, digits=3))
+		RSqT1Text <- paste("RSquare T1 = ", signif(rSquareT1, digits=3))
+		mtext(RSqPastText, 1, at=plotConfig$rat, padj=6, cex=0.7)
+		mtext(RSqT1Text, 1, at=plotConfig$rat, padj=8, cex=0.7)
+
+		# Plot data points and actual data lines
 		lines(offsetTimes, offsetData, col='steelblue', lty=1)
 		points(truncTimes, truncData, col='black', pch=16)
 
-		# Plot lines using fine
+		# Plot lines using fine time for sub epidemics
 		multiInf <- allEvalFine$multiInf
 		for(k in 1:(length(allEvalFine$subInf))) {
 			sub <- allEvalFine$subInf[[k]]

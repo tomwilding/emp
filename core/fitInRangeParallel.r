@@ -42,12 +42,12 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 		}, error = function(e) {
 			print("optim failed")
 		})
-		evalOverTime <- evalSIRMulti(truncTimes, truncData, initConds, optimParams, tsExplore, k, 1)
-		predInfectiousPast <- evalOverTime$multiInf 
+		pastEval <- evalSIRMulti(truncTimes, truncData, initConds, optimParams, tsExplore, k, 1)
+		predInfectiousPast <- pastEval$multiInf 
 		# rSquare error to determine best time to start fitting
 		rSquareErrorPast <- rSquareError(predInfectiousPast, truncData)
 		# Build list of optimisation results
-		list(t, rSquareErrorPast, evalOverTime)
+		list(t, rSquareErrorPast, pastEval)
 	}
 
 	# Get maximal rSquare index within parallel combined list
@@ -64,12 +64,15 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	optimTime <- EvalOverTime[[maxRSIndex]][[1]]
 	optimRSquare <- EvalOverTime[[maxRSIndex]][[2]]
 	# Optimal sub and combined epidemic parameters
-	pastEval <- EvalOverTime[[maxRSIndex]][[3]]
+	optimPastEval <- EvalOverTime[[maxRSIndex]][[3]]
 
 	# Evaluate over fine granularity time
-	optimParams <- pastEval$multiParams
+	optimParams <- optimPastEval$multiParams
 	allEvalFine <- evalSIRMulti(times, data, initConds, optimParams, c(ts[1:k-1], optimTime), k, timeStep)
+	allEval <- evalSIRMulti(times, data, initConds, optimParams,  c(ts[1:k-1], optimTime), k, 1)
 
+	# fineTimes <- breakTime(times, timeStep)
+	# cl <- c("red","cyan","forestgreen","goldenrod2","red4")
 	# setEPS()
 	# graphName <- paste("t", i, sep='')
 	# graphName <- paste(graphName, ".eps", sep='')
@@ -91,13 +94,18 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	# dev.off()
 
 	# eval <- decomposeEpidemics(times, data, initConds, optimParams, c(ts[1:k-1], optimTime), k, actualFit, plotConfig)
-	eval$pastEval <- pastEval
+	
+	# Set values of eval
 	eval$multiParams <- optimParams
 	eval$initConds <- initConds
 	eval$optimTime <- optimTime
 	eval$optimTimes <- c(ts[1:k-1], optimTime)
 	eval$k <- k
 	eval$optimRSquare <- optimRSquare
+
+	# Set different multi and sub evals
+	eval$pastEval <- optimPastEval
+	eval$allEval <- allEval
 	eval$allEvalFine <- allEvalFine
 	eval
 }

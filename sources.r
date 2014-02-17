@@ -2,6 +2,7 @@ source('aux/sim.r')
 source('aux/takeEveryOther.r')
 source('aux/breakTime.r')
 source('aux/rSquareError.r')
+source('aux/sumData.r')
 
 source('core/fitOverTimeMulti.r')
 source('core/sseSIRMulti.r')
