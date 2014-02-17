@@ -55,7 +55,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 		ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		multiParams <- eval$multiParams
-		lastNResiduals <- nIncResiduals[(i-(nResiduals-1)):i]
+		# Update lastNResiduals vector
+		lastNResiduals <- updateLastNResiduals(eval)
 
 
 		# Try to improve fit if rSquare has deteriorated
@@ -70,9 +71,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 			initCondsMulti <- c(initConds, startConds)
 			# Fit k+1 epidemics
 			eval <- fitInRangeParallel(setSolver(optimMethod, k+1), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, ts, k+1, c(minTRange:(i-maxTRange)), 2, plotConfig)
-			# Get last residual and update last n residuals vector
-			nIncResiduals[i] <- eval$finalResidual
-			lastNResiduals <- nIncResiduals[(i-(nResiduals-1)):i]
+			# Update lastNResiduals vector
+			lastNResiduals <- updateLastNResiduals(eval)
 			multiRSquare <- eval$optimRSquare
 			# If k+1 is significantly better then continue with k+1 fit
 			# if ((multiRSquare - rSquare) > diff || incResiduals(lastNResiduals, nResiduals)) {
@@ -95,6 +95,12 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	# Save all params
 	save(evalList, file=plotConfig$dataFile)
 	# save.image(plotConfig$envFile)
+}
+
+updateLastNResiduals <- function(eval) {
+	# Get last residual and update last n residuals vector
+	nIncResiduals[i] <- eval$finalResidual
+	lastNResiduals <- nIncResiduals[(i-(nResiduals-1)):i]
 }
 
 incResiduals <- function(lastNResiduals, n) {
