@@ -43,7 +43,8 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 			print("optim failed")
 		})
 		pastEval <- evalSIRMulti(truncTimes, truncData, initConds, optimParams, tsExplore, k, 1)
-		predInfectiousPast <- pastEval$multiInf 
+		predInfectiousPast <- pastEval$multiInf
+
 		# rSquare error to determine best time to start fitting
 		rSquareErrorPast <- rSquareError(predInfectiousPast, truncData)
 		# Build list of optimisation results
@@ -53,11 +54,11 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	# Get maximal rSquare index within parallel combined list
 	maxRSIndex <- 1
 	maxRS <- EvalOverTime[[1]][[2]]
-	for (i in 1:length(EvalOverTime)) {
-		RS <- EvalOverTime[[i]][[2]]
+	for (r in 1:length(EvalOverTime)) {
+		RS <- EvalOverTime[[r]][[2]]
 		if (RS > maxRS) {
 			maxRS <- RS
-			maxRSIndex <- i
+			maxRSIndex <- r
 		}
 	}
 
@@ -106,7 +107,6 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	eval$optimRSquare <- optimRSquare
 	# Get final residual from allEval infectious
 	eval$finalResidual <- (data[i] - allEval$multiInf[i])
-
 	# Set different multi and sub evals
 	eval$pastEval <- optimPastEval
 	eval$allEval <- allEval

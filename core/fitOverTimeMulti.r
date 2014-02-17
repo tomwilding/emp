@@ -102,15 +102,15 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 incResiduals <- function(lastNResiduals, n) {
 	incResiduals <- FALSE
 	inc <- TRUE
-	ssign <- TRUE
+	sameSign <- TRUE
 	lastNResiduals <- (lastNResiduals[!is.na(lastNResiduals)])
 	if (length(lastNResiduals) == n) {
 		# Check is continuous increasing magnitude
 		for (i in 2:n) {
 			inc <- inc && (abs(lastNResiduals[i]) > abs(lastNResiduals[i-1]))
-			ssign <- ssign && ((lastNResiduals[i]<0) == (lastNResiduals[i-1]<0))
+			sameSign <- sameSign && ((lastNResiduals[i]<0) == (lastNResiduals[i-1]<0))
 		}
-		incResiduals <- inc && ssign
+		incResiduals <- inc && sameSign
 		print("IM") 
 		print(incResiduals)
 	}
