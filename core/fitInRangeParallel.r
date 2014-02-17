@@ -66,7 +66,6 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	optimRSquare <- EvalOverTime[[maxRSIndex]][[2]]
 	# Optimal sub and combined epidemic parameters
 	optimPastEval <- EvalOverTime[[maxRSIndex]][[3]]
-	optimFinalResidual <- EvalOverTime[[maxRSIndex]][[4]]
 
 	# Evaluate over all fine granularity time
 	optimParams <- optimPastEval$multiParams
