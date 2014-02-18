@@ -18,8 +18,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	offsetTimes <- times[startOffset:(length(times)-endOffset)]
 	offsetData <- data[startOffset:(length(data)-endOffset)]
 	# Max and min truncated data set sizes within offset data
-	maxTruncation <- length(offsetData) - endOffset - 1
 	minTruncation <- offsets$minTruncation
+	maxTruncation <- length(offsetData)
 	# Min and max t0 values to explore within offset data
 	minTRange <- 3
 	maxTRange <- 3

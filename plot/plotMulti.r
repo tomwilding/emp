@@ -58,7 +58,7 @@ times <- 1:length(data)
 ################################## Fitting multiple epidemics ###########################
 # Only fit over a specific range of times startOffset>=1
 startOffset <- 1
-endOffset <- 6
+endOffset <- 1
 minTruncation <- 6
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 

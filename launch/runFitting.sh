@@ -1,4 +1,4 @@
 #!/bin/bash
 ssh pixel01
-cd emp
+alias proj="cd emp"
 ls
