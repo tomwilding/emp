@@ -3,7 +3,7 @@
 # source('sim.r')
 # source('takeEveryOther.r')
 # require(epi)
-
+source('sources.r')
 
 
 # ################################## Simulate data ########################################

@@ -4,6 +4,7 @@
 # source('takeEveryOther.r')
 # source('reconstructPlot.r')
 # source('sumData.r')
+source('sources.r')
 
 ################################## Read data from file ###########################
 fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
