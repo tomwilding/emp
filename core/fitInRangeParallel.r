@@ -1,4 +1,4 @@
-fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initParams, ts, k, range, actualFit, plotConfig) {
+fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, ts, k, range, actualFit, plotConfig) {
 	require(doMC)
 
 	# Ensure length of range is greater than 0
@@ -11,26 +11,26 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	n <- length(range)
 	registerDoMC(n)
 
-	# Truncate data set
-	truncTimes <- times[1:i]
-	truncData <- data[1:i]
+	# Truncate offsetData set
+	truncTimes <- offsetTimes[1:i]
+	truncData <- offsetData[1:i]
 
 	# Fine Times for evaluation
 	timeStep <- 0.05
 
 	# Set optimParams to initParams to use if optimisation fails
 	optimParams <- initParams
-	# Range of feasible t0 values to explore referenced from offset data
+	# Range of feasible t0 values to explore referenced from offset offsetData
 	# t0 <- proc.time()
 	# For each possible start time optimise parameters of multiple epidemic - explore in parallel
 
 	# EvaluateSIR over to plot fitted epidemics
-	# lines(1:length(times), data, col='steelblue')
+	# lines(1:length(offsetTimes), offsetData, col='steelblue')
 	# points(1:length(truncTimes), truncData, col='black', pch=16)
 
 	# Parallel evaluation at all feasible time points
 	EvalOverTime <- foreach (t=range) %dopar% {
-		# time value t0 referenced from offset data
+		# time value t0 referenced from offset offsetData
 		tsExplore <- c(ts[1:k-1],t)
 		# Find optimal beta and gamma by optimising them to minimise the least square function
 		# OptimSIRMulti passed in from call to setSolver
@@ -68,46 +68,42 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	optimPastEval <- EvalOverTime[[maxRSIndex]][[3]]
 	# Evaluate over all fine granularity time
 	optimParams <- optimPastEval$multiParams
-	allEvalFine <- evalSIRMulti(times, data, initConds, optimParams, c(ts[1:k-1], optimTime), k, timeStep)
+	allEvalFine <- evalSIRMulti(offsetTimes, offsetData, initConds, optimParams, c(ts[1:k-1], optimTime), k, timeStep)
 	# Evaluate over all time
-	allEval <- evalSIRMulti(times, data, initConds, optimParams,  c(ts[1:k-1], optimTime), k, 1) 
+	allEval <- evalSIRMulti(offsetTimes, offsetData, initConds, optimParams,  c(ts[1:k-1], optimTime), k, 1) 
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
 	
 
-	fineTimes <- breakTime(times, timeStep)
-	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
-	setEPS()
-	graphName <- paste("t", i, sep='')
-	graphName <- paste(graphName, ".eps", sep='')
-	postscript(paste(plotConfig$fileName, graphName, sep=''))	
-	par(mar=c(7.1,4.1,4.1,2.1))
-	print(length(data))
-	print(length(times))
-	plot(1:length(times), data, xlab='Epochs', ylab='Infected Individuals', col='steelblue')
-	title(main=plotConfig$title, cex.main=1, cex.axis=0.8)
-	daysText <- paste("Epochs after outbreak = ", i)
-	mtext(daysText, 3, cex=0.8)
+	# fineTimes <- breakTime(offsetTimes, timeStep)
+	# cl <- c("red","cyan","forestgreen","goldenrod2","red4")
+	# setEPS()
+	# graphName <- paste("t", i, sep='')
+	# graphName <- paste(graphName, ".eps", sep='')
+	# postscript(paste(plotConfig$fileName, graphName, sep=''))	
+	# par(mar=c(7.1,4.1,4.1,2.1))
+	# print(length(offsetData))
+	# plot(1:length(offsetTimes), offsetData, xlab='Epochs', ylab='Infected Individuals', col='steelblue')
+	# title(main=plotConfig$title, cex.main=1, cex.axis=0.8)
+	# daysText <- paste("Epochs after outbreak = ", i)
+	# mtext(daysText, 3, cex=0.8)
 	
-	# Take data set within specified offset
-	offsetTimes <- times[startOffset:(length(times)-endOffset)]
-	offsetData <- data[startOffset:(length(data)-endOffset)]
-	# Plot data points and actual data lines
-	lines(offsetTimes, offsetData, col='steelblue', lty=1)
-	points(truncTimes, truncData, col='black', pch=16)
+	# # Plot offsetData points and actual offsetData lines
+	# lines(offsetTimes, offsetData, col='steelblue', lty=1)
+	# points(truncTimes, truncData, col='black', pch=16)
 
-	# lines(fineTimes, allEvalFine$multiInf, lty=1)
-	multiInf <- allEvalFine$multiInf
-	for(k in 1:(length(allEvalFine$subInf))) {
-		sub <- allEvalFine$subInf[[k]]
-		subParams <- allEvalFine$subParams[[k]]
-		# Print sub epidemic graph
-		lines(fineTimes, sub, col=cl[k], lty=2)
-		lines(fineTimes, multiInf, col="black")
-	}
-	dev.off()
+	# # lines(fineTimes, allEvalFine$multiInf, lty=1)
+	# multiInf <- allEvalFine$multiInf
+	# for(k in 1:(length(allEvalFine$subInf))) {
+	# 	sub <- allEvalFine$subInf[[k]]
+	# 	subParams <- allEvalFine$subParams[[k]]
+	# 	# Print sub epidemic graph
+	# 	lines(fineTimes, sub, col=cl[k], lty=2)
+	# 	lines(fineTimes, multiInf, col="black")
+	# }
+	# dev.off()
 
-	# eval <- decomposeEpidemics(times, data, initConds, optimParams, c(ts[1:k-1], optimTime), k, actualFit, plotConfig)
+	# eval <- decomposeEpidemics(offsetTimes, offsetData, initConds, optimParams, c(ts[1:k-1], optimTime), k, actualFit, plotConfig)
 	
 	# Set values of eval
 	eval$multiParams <- optimParams
@@ -117,7 +113,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	eval$k <- k
 	eval$optimRSquare <- optimRSquare
 	# Get final residual from allEval infectious
-	eval$finalResidual <- (data[i] - allEval$multiInf[i])
+	eval$finalResidual <- (offsetData[i] - allEval$multiInf[i])
 	# Set different multi and sub evals
 	eval$pastEval <- optimPastEval
 	eval$allEval <- allEval

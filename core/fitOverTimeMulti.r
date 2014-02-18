@@ -62,7 +62,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 		# Try to improve fit if rSquare has deteriorated
 		lim <- thresholds$lim
 		diff <- thresholds$diff
-		if (rSquare < lim && incResiduals(lastNResiduals, nResiduals)) {
+		if (rSquare < lim && incResiduals(lastNResiduals, nResiduals, diff)) {
 		# if (rSquare < lim) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
@@ -98,18 +98,28 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	# save.image(plotConfig$envFile)
 }
 
-incResiduals <- function(lastNResiduals, n) {
+incResiduals <- function(lastNResiduals, n, diff) {
+	# Get the last n residuals
+	lastNResiduals <- (lastNResiduals[!is.na(lastNResiduals)])
+	
+	# Initialise check variables
 	incResiduals <- FALSE
 	inc <- TRUE
 	sameSign <- TRUE
-	lastNResiduals <- (lastNResiduals[!is.na(lastNResiduals)])
+	print(lastNResiduals[1])
+	aboveLimit <- (lastNResiduals[1] > diff)
+
 	if (length(lastNResiduals) == n) {
-		# Check is continuous increasing magnitude
 		for (i in 2:n) {
+			# Check magnitude is continuously increasing
 			inc <- inc && (abs(lastNResiduals[i]) > abs(lastNResiduals[i-1]))
+			# Check residuals are the same sign
 			sameSign <- sameSign && ((lastNResiduals[i]<0) == (lastNResiduals[i-1]<0))
+			# Check magnitude of residual
+			aboveLimit <- aboveLimit && (lastNResiduals[i] > diff)
 		}
-		incResiduals <- inc && sameSign
+		# Conjunction of check variables indicates new epidemic
+		incResiduals <- inc && sameSign && aboveLimit
 		print("IM") 
 		print(incResiduals)
 	}
