@@ -2,7 +2,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	require(doMC)
 
 	# Ensure length of range is greater than 0
-	assert_all_are_true(length(range) > 0)
+	# assert_all_are_true(length(range) > 0)
 
 	# Define eval vector
 	eval <- c()

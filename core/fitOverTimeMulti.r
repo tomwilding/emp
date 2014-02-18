@@ -1,5 +1,5 @@
 fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, offsets, thresholds, plotConfig) {
-	require(assertive)
+	# require(assertive)
 	# source('breakTime.r')
 	# source('sseSIRMulti.r')
 	# source('evalSIRMulti.r')
