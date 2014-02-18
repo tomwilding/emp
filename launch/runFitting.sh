@@ -6,6 +6,5 @@ for arg in "$@"; do
         cd emp
         R CMD BATCH sources.r
         R CMD BATCH launch/"$arg".r
-	EOF
+	&
 done
-
