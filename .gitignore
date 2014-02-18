@@ -2,3 +2,5 @@ output/*
 epi/*
 .DS_Store
 */.DS_Store
+*.Rout
+*.RData
