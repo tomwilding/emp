@@ -1,6 +1,6 @@
 #!/bin/bash
 i=0
-if ["$#" = 0]; then
+if [ $# = 0 ]; then
 	echo Not Enough Args
 fi
 for arg in "$@"; do
