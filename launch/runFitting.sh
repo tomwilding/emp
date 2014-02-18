@@ -1,10 +1,6 @@
 #!/bin/bash
-i=1
+i=0
 for arg in "$@"; do
-	i=i+1
-	ssh pixel0"$i" << EOF
-        cd emp
-        R CMD BATCH sources.r
-        R CMD BATCH launch/"$arg".r
-	&
+        let "i+=1"
+        ssh pixel0"$i" 'cd emp;R CMD BATCH sources.r;R CMD BATCH launch/'"$arg"'.r' &
 done
