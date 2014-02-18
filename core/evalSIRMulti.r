@@ -2,7 +2,7 @@ evalSIRMulti <- function(times, data, initConds, params, ts, k, granularity) {
 	require(deSolve)
 	
 	fineTimes <- breakTime(times, granularity);
-	predInfectious <- numeric(length(times))
+	predInfectious <- numeric(length(fineTimes))
 	I0 <- initConds[2]
 	predI <- 0
 	eval <- c()

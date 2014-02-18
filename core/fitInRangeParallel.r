@@ -66,34 +66,46 @@ fitInRangeParallel <- function(optimSIRMulti, i, times, data, initConds, initPar
 	optimRSquare <- EvalOverTime[[maxRSIndex]][[2]]
 	# Optimal sub and combined epidemic parameters
 	optimPastEval <- EvalOverTime[[maxRSIndex]][[3]]
-
 	# Evaluate over all fine granularity time
 	optimParams <- optimPastEval$multiParams
 	allEvalFine <- evalSIRMulti(times, data, initConds, optimParams, c(ts[1:k-1], optimTime), k, timeStep)
 	# Evaluate over all time
 	allEval <- evalSIRMulti(times, data, initConds, optimParams,  c(ts[1:k-1], optimTime), k, 1) 
+	startOffset <- offsets$startOffset
+	endOffset <- offsets$endOffset
+	
 
-	# fineTimes <- breakTime(times, timeStep)
-	# cl <- c("red","cyan","forestgreen","goldenrod2","red4")
-	# setEPS()
-	# graphName <- paste("t", i, sep='')
-	# graphName <- paste(graphName, ".eps", sep='')
-	# postscript(paste(plotConfig$fileName, graphName, sep=''))	
-	# par(mar=c(7.1,4.1,4.1,2.1))
-	# plot(1:length(times), data, xlab='Epochs', ylab='Infected Individuals', col='steelblue')
-	# title(main=plotConfig$title, cex.main=1, cex.axis=0.8)
-	# daysText <- paste("Epochs after outbreak = ", i)
-	# mtext(daysText, 3, cex=0.8)
-	# # lines(fineTimes, allEvalFine$multiInf, lty=1)
-	# multiInf <- allEvalFine$multiInf
-	# for(k in 1:(length(allEvalFine$subInf))) {
-	# 	sub <- allEvalFine$subInf[[k]]
-	# 	subParams <- allEvalFine$subParams[[k]]
-	# 	# Print sub epidemic graph
-	# 	lines(fineTimes, sub, col=cl[k], lty=2)
-	# 	lines(fineTimes, multiInf, col="black")
-	# }
-	# dev.off()
+	fineTimes <- breakTime(times, timeStep)
+	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
+	setEPS()
+	graphName <- paste("t", i, sep='')
+	graphName <- paste(graphName, ".eps", sep='')
+	postscript(paste(plotConfig$fileName, graphName, sep=''))	
+	par(mar=c(7.1,4.1,4.1,2.1))
+	print(length(data))
+	print(length(times))
+	plot(1:length(times), data, xlab='Epochs', ylab='Infected Individuals', col='steelblue')
+	title(main=plotConfig$title, cex.main=1, cex.axis=0.8)
+	daysText <- paste("Epochs after outbreak = ", i)
+	mtext(daysText, 3, cex=0.8)
+	
+	# Take data set within specified offset
+	offsetTimes <- times[startOffset:(length(times)-endOffset)]
+	offsetData <- data[startOffset:(length(data)-endOffset)]
+	# Plot data points and actual data lines
+	lines(offsetTimes, offsetData, col='steelblue', lty=1)
+	points(truncTimes, truncData, col='black', pch=16)
+
+	# lines(fineTimes, allEvalFine$multiInf, lty=1)
+	multiInf <- allEvalFine$multiInf
+	for(k in 1:(length(allEvalFine$subInf))) {
+		sub <- allEvalFine$subInf[[k]]
+		subParams <- allEvalFine$subParams[[k]]
+		# Print sub epidemic graph
+		lines(fineTimes, sub, col=cl[k], lty=2)
+		lines(fineTimes, multiInf, col="black")
+	}
+	dev.off()
 
 	# eval <- decomposeEpidemics(times, data, initConds, optimParams, c(ts[1:k-1], optimTime), k, actualFit, plotConfig)
 	

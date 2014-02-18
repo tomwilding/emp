@@ -23,7 +23,7 @@ allPositiveInfectious <- c(positiveInfectious,positiveInfectiousPad1)
 allPositiveInfectious1 <- c(positiveInfectiousPad1,positiveInfectious1)
 # Add together the different predicted infectious values truncated to required size
 data <- (allPositiveInfectious[1:totalLength]) + (allPositiveInfectious1[1:totalLength])
-# data <- sumData(data, 2)
+data <- sumData(data, 2)
 times <- 1:length(data)
 # fluData <- sim(0.002,0.1,500,10)
 # fluData1 <- sim(0.002,0.2,400,10)
