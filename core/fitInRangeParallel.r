@@ -82,7 +82,6 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# graphName <- paste(graphName, ".eps", sep='')
 	# postscript(paste(plotConfig$fileName, graphName, sep=''))	
 	# par(mar=c(7.1,4.1,4.1,2.1))
-	# print(length(offsetData))
 	# plot(1:length(offsetTimes), offsetData, xlab='Epochs', ylab='Infected Individuals', col='steelblue')
 	# title(main=plotConfig$title, cex.main=1, cex.axis=0.8)
 	# daysText <- paste("Epochs after outbreak = ", i)

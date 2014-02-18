@@ -106,8 +106,8 @@ incResiduals <- function(lastNResiduals, n, diff) {
 	incResiduals <- FALSE
 	inc <- TRUE
 	sameSign <- TRUE
-	print(lastNResiduals[1])
-	aboveLimit <- (lastNResiduals[1] > diff)
+	aboveLimit <- (abs(lastNResiduals[1]) > diff)
+	print(abs(lastNResiduals[1])) 
 
 	if (length(lastNResiduals) == n) {
 		for (i in 2:n) {
@@ -116,10 +116,11 @@ incResiduals <- function(lastNResiduals, n, diff) {
 			# Check residuals are the same sign
 			sameSign <- sameSign && ((lastNResiduals[i]<0) == (lastNResiduals[i-1]<0))
 			# Check magnitude of residual
-			aboveLimit <- aboveLimit && (lastNResiduals[i] > diff)
+			print(abs(lastNResiduals[i])) 
+			aboveLimit <- aboveLimit && (abs(lastNResiduals[i]) > diff)
 		}
 		# Conjunction of check variables indicates new epidemic
-		incResiduals <- inc && sameSign && aboveLimit
+		incResiduals <- aboveLimit
 		print("IM") 
 		print(incResiduals)
 	}
