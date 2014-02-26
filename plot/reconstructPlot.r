@@ -27,13 +27,15 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 		# Fine Times for evaluation
 		timeStep <- 0.05
 		fineTimes <- breakTime(offsetTimes, timeStep)
-		# Print main graph
+
 		# Get graph object for this iteration
 		eval <- evalList[[i]]
 		allEval <- eval$allEval
 		allEvalFine <- eval$allEvalFine
 
-		# Plotting
+		# Print main graph
+
+		# Main plot
 		par(mar=c(6.1,4.1,4.1,2.1))
 		plot(offsetTimes, offsetData, xlab='Epochs', ylab='Infected Individuals', col='steelblue')
 		title(main=plotConfig$title, cex.main=0.9, cex.axis=0.8)
@@ -41,12 +43,20 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 		mtext(daysText, 3, cex=0.8)
 
 		# RSquare and labels
+		# Future RSqaure window to evaluate over
+		T7 <- 7
+		# Calculate RSqaure
 		rSquarePast <- eval$optimRSquare
-		rSquareT1 <- rSquareError(allEval$multiInf[1:i+1], offsetData[1:i+1])
+		rSquareT7 <- rSquareError(allEval$multiInf[1:i+T7], offsetData[1:i+T7])
 		RSqPastText <- paste("RSquare Past = ", signif(rSquarePast, digits=3))
-		RSqT1Text <- paste("RSquare T1 = ", signif(rSquareT1, digits=3))
+		RSqT1Text <- paste("RSquare T7 = ", signif(rSquareT7, digits=3))
 		mtext(RSqPastText, 1, at=plotConfig$rat, padj=6, cex=0.7)
 		mtext(RSqT1Text, 1, at=plotConfig$rat, padj=8, cex=0.7)
+
+		# Plot rectangle of past time first to plot on top
+		rect(-1000000,-1000000,i+T7,1000000, col = rgb(0.9,0.9,0.9), border=NA)
+		# Plot all data points over rectangle
+		points(offsetTimes, offsetData, col='steelblue')
 
 		# Plot data points and actual data lines
 		lines(offsetTimes, offsetData, col='steelblue', lty=1)
