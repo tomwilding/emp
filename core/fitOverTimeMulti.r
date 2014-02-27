@@ -1,13 +1,5 @@
 fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, offsets, thresholds, plotConfig) {
-	# require(assertive)
-	# source('breakTime.r')
-	# source('sseSIRMulti.r')
-	# source('evalSIRMulti.r')
-	# source('rSquareError.r')
-	# source('fitInRangeParallel.r')
-	# source('decomposeEpidemics.r')
-	# source('setSolver.r')
-
+	
 	# Unpack starting parameters, conditions and offsets
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset

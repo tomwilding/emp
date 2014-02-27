@@ -1,12 +1,6 @@
 load("output/data/blur/blurData.RData")
-# require(deSolve)
-# source('fitOverTimeMulti.r')
-# source('sim.r')
-# source('takeEveryOther.r')
-# source('reconstructPlot.r')
-# source('sumData.r')
 
-################################## Read data from file ###########################
+# Read data from file
 fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
 data <- sumData(fluData[,2], 4)
 times <- c(1:length(data))
@@ -14,12 +8,13 @@ times <- c(1:length(data))
 # readline()
 # times <- takeEveryOther(fluData[,1])
 # times <- takeEveryOther(times)
-################################## Fitting multiple epidemics ###########################
+
+# Fitting multiple epidemics
 # load("data/blurData.RData")
 # Only fit over a specific range
 startOffset <- 1
 endOffset <- 1
-offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=14)
+offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=14, minTRange=3, maxTRange=3)
 
 # Threshold
 # thresholds <- list(diff=0.05, lim=0.96)
@@ -36,3 +31,6 @@ plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent D
 
 # Fit parameters
 reconstructPlot(times, data, offset, thresholds, initParams, initConds, plotConfig)
+
+# Plot RSq graph
+plotRSq(times, data, offset, thresholds, initParams, initConds, plotConfig)

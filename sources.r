@@ -12,6 +12,7 @@ source('core/setSolver.r')
 source('core/sir.r')
 
 source('plot/reconstructPlot.r')
+source('plot/plotRSq.r')
 ## Create package (functions and descriptions)
 # source('sources.r') # To get dependencies
 # package.skeleton("epi") # Construct package - Required to add names

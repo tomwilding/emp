@@ -1,7 +1,7 @@
 load("output/data/sim/simData.RData")
 
 
-# ################################## Simulate data ########################################
+# Simulate data
 fluData <- sim(0.001,0.1,500,10)
 fluData1 <- sim(0.002,0.2,600,10)
 # Get data from dataframe
@@ -55,7 +55,7 @@ times <- 1:length(data)
 # data <- takeEveryOther(allData)
 
 
-################################## Fitting multiple epidemics ###########################
+# Fitting multiple epidemics
 # Only fit over a specific range of times startOffset>=1
 startOffset <- 1
 endOffset <- 13

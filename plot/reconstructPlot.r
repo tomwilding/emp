@@ -54,7 +54,7 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 		mtext(RSqT1Text, 1, at=plotConfig$rat, padj=8, cex=0.7)
 
 		# Plot rectangle of past time first to plot on top
-		rect(-1000000,-1000000,i+T7,1000000, col = rgb(0.9,0.9,0.9), border=NA)
+		rect(-1000000,-1000000,i+T7,1000000, col=rgb(0.9,0.9,0.9), border=NA)
 		# Plot all data points over rectangle
 		points(offsetTimes, offsetData, col='steelblue')
 
