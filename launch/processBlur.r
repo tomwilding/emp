@@ -1,22 +1,11 @@
-# require(deSolve)
-# source('fitOverTimeMulti.r')
-# source('sim.r')
-# source('takeEveryOther.r')
-# source('reconstructPlot.r')
-# source('sumData.r')
-source('sources.r')
+# Read data from file
+require('epi')
 
-################################## Read data from file ###########################
 fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
 data <- sumData(fluData[,2], 4)
 
-# print(data)
-# readline()
-# times <- takeEveryOther(fluData[,1])
-# times <- takeEveryOther(times)
-################################## Fitting multiple epidemics ###########################
-# load("data/blurData.RData")
-# Only fit over a specific range
+# Fitting epidemics
+
 startOffset <- 1
 endOffset <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=14)
@@ -25,6 +14,7 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=14)
 # thresholds <- list(diff=0.05, lim=0.96)
 # thresholds <- list(diff=0.05, lim=0.7)
 thresholds <- list(diff=6000, lim=0.9)
+
 # Init Params = beta, gamma, S0
 initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10));
 
@@ -36,4 +26,3 @@ plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent D
 
 # Fit parameters
 fitOverTimeMulti("LMS", 1:length(data), data, initConds, initParams, offsets, thresholds, plotConfig)
-# reconstructPlot(1:length(data), data, offset, thresholds, initParams, initConds, plotConfig)

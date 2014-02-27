@@ -1,12 +1,5 @@
-# require(deSolve)
-# source('fitOverTimeMulti.r')
-# source('sim.r')
-# source('takeEveryOther.r')
-# require(epi)
-source('sources.r')
-
-
-# ################################## Simulate data ########################################
+require('epi')
+# Simulate data 
 fluData <- sim(0.001,0.1,500,10)
 fluData1 <- sim(0.002,0.2,600,10)
 # Get data from dataframe
@@ -59,9 +52,8 @@ data <- takeEveryOther(data)
 # allData <- (allPositiveInfectious[1:totalLength]) + (allPositiveInfectious1[1:totalLength]) + (allPositiveInfectious2[1:totalLength]);
 # data <- takeEveryOther(allData)
 
+# Fitting epidemics
 
-################################## Fitting multiple epidemics ###########################
-# Only fit over a specific range of times startOffset>=1
 startOffset <- 1
 endOffset <- 13
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=6)
