@@ -4,6 +4,8 @@ source('aux/takeEveryOther.r')
 source('aux/breakTime.r')
 source('aux/rSquareError.r')
 source('aux/sumData.r')
+source('aux/myMean.r')
+source('aux/mySd.r')
 
 source('core/fitOverTimeMulti.r')
 source('core/sseSIRMulti.r')

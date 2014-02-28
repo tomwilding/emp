@@ -1,4 +1,5 @@
 load("output/data/sim/simData.RData")
+require("epi")
 
 fluData <- sim(0.001,0.1,500,10)
 fluData1 <- sim(0.002,0.2,600,10)

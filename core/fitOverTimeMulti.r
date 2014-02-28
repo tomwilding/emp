@@ -92,22 +92,6 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	# save.image(plotConfig$envFile)
 }
 
-myMean <- function(arr) {
-	total <- 0
-	for (i in 1:length(arr)) {
-		total <- total + arr[i]
-	}
-	total / length(arr)
-}
-
-mySd <- function(arr, m) {
-	total <- 0
-	for (i in 1:length(arr)) {
-		total <- total + (arr[i] - m)^2
-	}
-	sqrt(total / length(arr))
-}
-
 incResiduals <- function(lastNResiduals, n, diff) {
 	# # Get the last n residuals
 	# lastNResiduals <- (lastNResiduals[!is.na(lastNResiduals)])

@@ -44,17 +44,19 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 
 		# RSquare and labels
 		# Future RSqaure window to evaluate over
-		T7 <- 7
+		NF <- 7
 		# Calculate RSqaure
 		rSquarePast <- eval$optimRSquare
-		rSquareT7 <- rSquareError(allEval$multiInf[1:i+T7], offsetData[1:i+T7])
+		
+		rSquareNF <- rSquareError(allEval$multiInf[i:(i+NF)], offsetData[i:(i+NF)])
 		RSqPastText <- paste("RSquare Past = ", signif(rSquarePast, digits=3))
-		RSqT1Text <- paste("RSquare T7 = ", signif(rSquareT7, digits=3))
+		RSqT1Text <- paste("RSquare Near Future = ", signif(rSquareNF, digits=3))
 		mtext(RSqPastText, 1, at=plotConfig$rat, padj=6, cex=0.7)
 		mtext(RSqT1Text, 1, at=plotConfig$rat, padj=8, cex=0.7)
 
 		# Plot rectangle of past time first to plot on top
-		rect(-1000000,-1000000,i+T7,1000000, col=rgb(0.9,0.9,0.9), border=NA)
+		rect(-1000000,-1000000,i,1000000, col=rgb(0.8,0.8,0.8), border=NA)
+		rect(i,-1000000,i+NF,1000000, col=rgb(0.95,0.95,0.95), border=NA)
 		# Plot all data points over rectangle
 		points(offsetTimes, offsetData, col='steelblue')
 

@@ -1,4 +1,6 @@
 plotRSq <- function(times, data, offset, thresholds, initParams, initConds, plotConfig) {
+	require("epi")
+
 	# Unpack settings
 	minTruncation <- offsets$minTruncation
 	startOffset <- offsets$startOffset
@@ -8,7 +10,7 @@ plotRSq <- function(times, data, offset, thresholds, initParams, initConds, plot
 
 	# Array to hold all rSqaure evaluations
 	allRSqaurePast <- c()
-	allRSqaureT7 <- c()
+	allRSqaureNF <- c()
 
 	# Loop through all objects
 	for(i in minTruncation:length(evalList)) {	
@@ -30,14 +32,14 @@ plotRSq <- function(times, data, offset, thresholds, initParams, initConds, plot
 		allEvalFine <- eval$allEvalFine
 
 		# RSquare and labels
-		# Future RSqaure window to evaluate over
-		T7 <- 7
+		# Future RSquare of Near Future to evaluate over
+		NF <- 7
 		# Calculate RSqaure
 		rSquarePast <- eval$optimRSquare
-		rSquareT7 <- rSquareError(allEval$multiInf[1:i+T7], offsetData[1:i+T7])
+		rSquareNF <- rSquareError(allEval$multiInf[1:i+NF], offsetData[1:i+NF])
 
 		allRSqaurePast <- c(allRSqaurePast, rSquarePast)
-		allRSqaureT7 <- c(allRSqaureT7, rSquareT7)
+		allRSqaureNF <- c(allRSqaureNF, rSquareNF)
 	}
 
 	# Plot past rSqaure over time
