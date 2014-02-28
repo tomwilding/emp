@@ -5,5 +5,5 @@ if [ $# = 0 ]; then
 fi
 for arg in "$@"; do
         let "i+=1"
-        ssh pixel0"$i" 'cd emp;R CMD BATCH -q launch/'"$arg"'.r output/'"$arg"'.txt' &
+        ssh pixel0"$i" 'cd emp;R CMD BATCH -q sources.r;R CMD BATCH -q launch/'"$arg"'.r output/'"$arg"'.txt' &
 done
