@@ -9,6 +9,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	# Take data set within specified offset
 	offsetTimes <- times[startOffset:(length(times)-endOffset)]
 	offsetData <- data[startOffset:(length(data)-endOffset)]
+
 	# Max and min truncated data set sizes within offset data
 	minTruncation <- offsets$minTruncation
 	maxTruncation <- length(offsetData)
@@ -32,7 +33,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	# Number of increasing residuals
 	nResiduals <- 3
 	nIncResiduals <- c()
-
+	
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from minTruncation within offset data
 	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
@@ -47,14 +48,16 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 		rSquare <- eval$optimRSquare
 		multiParams <- eval$multiParams
 		# Get last residual and update last n residuals vector
-		nIncResiduals[i] <- eval$finalResidual
-		lastNResiduals <- nIncResiduals[(i-(nResiduals-1)):i]
+		nIncResiduals <- c(nIncResiduals, eval$finalResidual)
+		# lastNResiduals <- nIncResiduals[(i-(nResiduals-1)):i]
+		lastNResiduals <- nIncResiduals
 
 
 		# Try to improve fit if rSquare has deteriorated
 		lim <- thresholds$lim
 		diff <- thresholds$diff
-		if (rSquare < lim && incResiduals(lastNResiduals, nResiduals, diff)) {
+		incRes <- incResiduals(lastNResiduals, nResiduals, diff)
+		if ((rSquare < lim) && incRes) {
 		# if (rSquare < lim) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
@@ -63,9 +66,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 			initCondsMulti <- c(initConds, startConds)
 			# Fit k+1 epidemics
 			eval <- fitInRangeParallel(setSolver(optimMethod, k+1), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, ts, k+1, c(minTRange:(i-maxTRange)), 2, plotConfig)
-			# Get last residual and update last n residuals vector
-			nIncResiduals[i] <- eval$finalResidual
-			lastNResiduals <- nIncResiduals[(i-(nResiduals-1)):i]
+			# TODO: Does the residuals array need to be updated here?
+			# lastNResiduals <- nIncResiduals[(i-(nResiduals-1)):i]
 			multiRSquare <- eval$optimRSquare
 			# If k+1 is significantly better then continue with k+1 fit
 			# if ((multiRSquare - rSquare) > diff || incResiduals(lastNResiduals, nResiduals)) {
@@ -90,31 +92,63 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	# save.image(plotConfig$envFile)
 }
 
-incResiduals <- function(lastNResiduals, n, diff) {
-	# Get the last n residuals
-	lastNResiduals <- (lastNResiduals[!is.na(lastNResiduals)])
-	
-	# Initialise check variables
-	incResiduals <- FALSE
-	inc <- TRUE
-	sameSign <- TRUE
-	aboveLimit <- (abs(lastNResiduals[1]) > diff)
-	print(abs(lastNResiduals[1])) 
+myMean <- function(arr) {
+	total <- 0
+	for (i in 1:length(arr)) {
+		total <- total + arr[i]
+	}
+	total / length(arr)
+}
 
-	if (length(lastNResiduals) == n) {
-		for (i in 2:n) {
-			# Check magnitude is continuously increasing
-			inc <- inc && (abs(lastNResiduals[i]) > abs(lastNResiduals[i-1]))
-			# Check residuals are the same sign
-			sameSign <- sameSign && ((lastNResiduals[i]<0) == (lastNResiduals[i-1]<0))
-			# Check magnitude of residual
-			print(abs(lastNResiduals[i])) 
-			aboveLimit <- aboveLimit && (abs(lastNResiduals[i]) > diff)
+mySd <- function(arr, m) {
+	total <- 0
+	for (i in 1:length(arr)) {
+		total <- total + (arr[i] - m)^2
+	}
+	sqrt(total / length(arr))
+}
+
+incResiduals <- function(lastNResiduals, n, diff) {
+	# # Get the last n residuals
+	# lastNResiduals <- (lastNResiduals[!is.na(lastNResiduals)])
+	
+	# # Initialise check variables
+	incResiduals <- FALSE
+	# inc <- TRUE
+	# sameSign <- TRUE
+	# aboveLimit <- (abs(lastNResiduals[1]) > diff)
+	# print(abs(lastNResiduals[1])) 
+
+	# if (length(lastNResiduals) == n) {
+	# 	for (i in 2:n) {
+	# 		# Check magnitude is continuously increasing
+	# 		inc <- inc && (abs(lastNResiduals[i]) > abs(lastNResiduals[i-1]))
+	# 		# Check residuals are the same sign
+	# 		sameSign <- sameSign && ((lastNResiduals[i]<0) == (lastNResiduals[i-1]<0))
+	# 		# Check magnitude of residual
+	# 		print(abs(lastNResiduals[i])) 
+	# 		aboveLimit <- aboveLimit && (abs(lastNResiduals[i]) > diff)
+	# 	}
+	# 	# Conjunction of check variables indicates new epidemic
+	# 	incResiduals <- aboveLimit
+	# 	print("IM") 
+	# 	print(incResiduals)
+	# }
+	# incResiduals
+
+	# Calculate mean and standard deviation of all previous residuals
+	if (length(lastNResiduals) > 1) {
+		# Mean and SD of previous residuals
+		# print(lastNResiduals)
+		meanRes <- myMean(lastNResiduals[(1:length(lastNResiduals) - 1)])
+		sdRes <- mySd(lastNResiduals[1:(length(lastNResiduals) - 1)], meanRes)
+		# print("SD: "); print(sdRes)
+		# print("MEAN: "); print(meanRes)
+		# print("Last Res: "); print(lastNResiduals[length(lastNResiduals)])
+		if (abs(lastNResiduals[length(lastNResiduals)]) > 2*sdRes) {
+			incResiduals <- TRUE
+			print("2SD")
 		}
-		# Conjunction of check variables indicates new epidemic
-		incResiduals <- aboveLimit
-		print("IM") 
-		print(incResiduals)
 	}
 	incResiduals
 }
