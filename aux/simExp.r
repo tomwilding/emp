@@ -12,5 +12,5 @@ simExp <- function(g,S0){
 	#
 	# This model consists of two reactions with the following per capita rates,
 
-	out <- ssa(x0=c(X=S0), a=c("c*X"), nu=matrix(-1), parms=c(c=g), tf=20, censusInterval=1)
+	out <- ssa(x0=c(X=S0), a=c("c*X"), nu=matrix(-1), parms=c(c=g), tf=20, censusInterval=0.3)
 }

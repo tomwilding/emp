@@ -1,15 +1,15 @@
 require('epi')
 # Simulate data 
-fluData <- simSIR(0.001,0.05,500,10)
+fluData <- simSIR(0.002,0.1,500,10)
 fluData1 <- simExp(0.2,400)
 # Get data from dataframe
 # Ensure first is larger than second
-positiveInfectious <- fluData$data[,3]
-positiveInfectious1 <- fluData1$data[,2]
-
+nSum <- 4
+positiveInfectious <- sumData(fluData$data[,3], nSum)
+positiveInfectious1 <- sumData(fluData1$data[,2], nSum)
 
 # Offset of t0 for second epidemic
-offset1 <- 23
+offset1 <- 15
 # Total length of the combined data 
 totalLength <- length(positiveInfectious1) + offset1
 # Padding of zeros to offset data
@@ -23,7 +23,7 @@ data <- (allPositiveInfectious[1:totalLength]) + (allPositiveInfectious1[1:total
 # Fitting epidemics
 startOffset <- 1
 endOffset <- 1
-minTruncation <- 6
+minTruncation <- 3
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
