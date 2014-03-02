@@ -9,14 +9,14 @@ for (bf in seq(from=0.001, to=0.006, by=0.001)) {
 
 				# Get data from dataframe
 				# Ensure first is larger than second
-				positiveInfectious <- fluData$data[,3]
-				positiveInfectious1 <- fluData1$data[,3]
+				nSum <- 4
+				positiveInfectious <- sumData(fluData$data[,3], nSum)
+				positiveInfectious1 <- sumData(fluData1$data[,3], nSum)
 				# Offset of t0 for second epidemic
-				offset1 <- 40
+				offset1 <- 10
 				# Total length of the combined data
 				# Ensure length(positiveInfectious) < length(positiveInfectious1) + offset 
-				# totalLength <- length(positiveInfectious1) + offset1
-				totalLength <- 70
+				totalLength <- length(positiveInfectious1) + offset1
 				# Build times array
 				times <- c(1:(totalLength));
 				# Padding of zeros to offset data
@@ -27,8 +27,7 @@ for (bf in seq(from=0.001, to=0.006, by=0.001)) {
 				# Add together the different predicted infectious values truncated to required size
 				data <- (allPositiveInfectious[1:totalLength]) + (allPositiveInfectious1[1:totalLength])
 				print(bf);print(gf);print(bs);print(gs)
-				# plot(c(1:length(data)), data)
-				# readline()
+
 				# Fitting epidemics
 				startOffset <- 1
 				endOffset <- 1
@@ -45,7 +44,7 @@ for (bf in seq(from=0.001, to=0.006, by=0.001)) {
 				# I0 from first data point
 				initConds <- c(1,data[startOffset],0);
 
-				plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/sim/", dataFile=paste("output/data/sim/simData", bf, bs, bs, gs, ".RData"), envFile="output/data/sim/simEnv.RData", pat=5, rat=30)
+				plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/sim/", dataFile=paste("output/data/sim/simData", bf, bs, bs, gs, ".RData"), envFile="output/data/sim/simEnv.RData", pat=5, rat=30, bf=bf, gf=gf, bs=bs, gs=gs)
 
 				# Fit parameters
 				fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, offsets, thresholds, plotConfig)
