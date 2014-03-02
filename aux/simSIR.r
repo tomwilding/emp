@@ -29,7 +29,7 @@ simSIR <- function(b,g,S0,I0){
 
 	# Direct method
 	set.seed(2)
-	out <- ssa(x0,a,nu,parms,tf,method="D",simName)
+	out <- ssa(x0,a,nu,parms,tf,method="D",simName,censusInterval=0.3)
 	# plot(out$data[,1], out$data[,3])
 	# print(out$data[,3])
 	# readline()

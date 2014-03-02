@@ -6,8 +6,8 @@ for (bf in seq(from=0.001, to=0.006, by=0.001)) {
 	for (gf in seq(from=0.1, to=0.3, by=0.05)) {
 		for (bs in seq(from=0.001, to=0.006, by=0.001)) {
 			for (gs in seq(from=0.1, to=0.3, by=0.05)) {
-				fluData <- sim(bf, gf, 500, 10)
-				fluData1 <- sim(bs, gs, 600, 10)
+				fluData <- simSIR(bf, gf, 500, 10)
+				fluData1 <- simSIR(bs, gs, 600, 10)
 
 				# Get data from dataframe
 				# Ensure first is larger than second
@@ -15,7 +15,7 @@ for (bf in seq(from=0.001, to=0.006, by=0.001)) {
 				positiveInfectious <- sumData(fluData$data[,3], nSum)
 				positiveInfectious1 <- sumData(fluData1$data[,3], nSum)
 				# Offset of t0 for second epidemic
-				offset1 <- 10
+				offset1 <- 30
 				# Total length of the combined data
 				# Ensure length(positiveInfectious) < length(positiveInfectious1) + offset 
 				totalLength <- length(positiveInfectious1) + offset1
@@ -51,12 +51,13 @@ for (bf in seq(from=0.001, to=0.006, by=0.001)) {
 				# Fit parameters
 				totalRSquare <- totalRSquare + fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, offsets, thresholds, plotConfig)
 				i <- i + 1
+				print(paste("################## Run ", i, " of 1296"))
 			}
 		}
 	}
 }
 avRSquare <- totalRSquare / i
-print(paste("Average RSquare: ", avRSquare, " over ", i, " runs."))
+print(paste("Average RSquare: ", avRSquare, " over ", i, " runs"))
 
 # fluData <- sim(0.002,0.1,500,10)
 # fluData1 <- sim(0.002,0.2,400,10)
