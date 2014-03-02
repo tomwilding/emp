@@ -1,4 +1,4 @@
-reconstructPlot <- function(times, data, offset, thresholds, initParams, initConds, plotConfig) {
+reconstructPlot <- function(times, data, offsets, thresholds, initParams, initConds, plotConfig) {
 	# Unpack settings
 	minTruncation <- offsets$minTruncation
 	startOffset <- offsets$startOffset
@@ -10,7 +10,8 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
 
 	# Loop through all objects
-	for(i in minTruncation:length(evalList)) {
+	end <- length(evalList)
+	for(i in minTruncation:end) {
 		# Set graph settings
 		setEPS()
 		graphName <- paste("t", i, sep='')
@@ -55,8 +56,8 @@ reconstructPlot <- function(times, data, offset, thresholds, initParams, initCon
 		mtext(RSqT1Text, 1, at=plotConfig$rat, padj=8, cex=0.7)
 
 		# Plot rectangle of past time first to plot on top
-		rect(-1000000,-1000000,i,1000000, col=rgb(0.8,0.8,0.8), border=NA)
-		rect(i,-1000000,i+NF,1000000, col=rgb(0.95,0.95,0.95), border=NA)
+		rect(-1000000, -1000000, i, 1000000, col=rgb(0.8,0.8,0.8), border=NA)
+		rect(i, -1000000, min(i+NF, end), 1000000, col=rgb(0.95,0.95,0.95), border=NA)
 		# Plot all data points over rectangle
 		points(offsetTimes, offsetData, col='steelblue')
 

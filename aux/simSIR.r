@@ -1,4 +1,4 @@
-sim <- function(b,g,S0,I0){
+simSIR <- function(b,g,S0,I0){
 	require(GillespieSSA)
 
 	# ===============================================================================

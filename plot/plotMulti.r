@@ -1,7 +1,7 @@
 load("output/data/sim/simData.RData")
 require("epi")
 
-fluData <- sim(0.001,0.1,500,10)
+fluData <- sim(0.002,0.1,500,10)
 fluData1 <- sim(0.002,0.2,600,10)
 # Get data from dataframe
 # Ensure first is larger than second
@@ -72,4 +72,4 @@ initConds <- c(1,data[startOffset],0);
 
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/sim/", dataFile="output/data/sim/simData.RData", pat=5, rat=30)
 
-reconstructPlot(times, data, offset, thresholds, initParams, initConds, plotConfig)
+reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)

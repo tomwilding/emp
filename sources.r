@@ -1,5 +1,6 @@
 # Source code
-source('aux/sim.r')
+source('aux/simSIR.r')
+source('aux/simExp.r')
 source('aux/takeEveryOther.r')
 source('aux/breakTime.r')
 source('aux/rSquareError.r')
