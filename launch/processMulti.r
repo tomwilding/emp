@@ -1,5 +1,7 @@
 require('epi')
 # Simulate data 
+totalRSquare <- 0
+i <- 0
 for (bf in seq(from=0.001, to=0.006, by=0.001)) {
 	for (gf in seq(from=0.1, to=0.3, by=0.05)) {
 		for (bs in seq(from=0.001, to=0.006, by=0.001)) {
@@ -47,11 +49,14 @@ for (bf in seq(from=0.001, to=0.006, by=0.001)) {
 				plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/sim/", dataFile=paste("output/data/sim/simData", bf, bs, bs, gs, ".RData"), envFile="output/data/sim/simEnv.RData", pat=5, rat=30, bf=bf, gf=gf, bs=bs, gs=gs)
 
 				# Fit parameters
-				fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, offsets, thresholds, plotConfig)
+				totalRSquare <- totalRSquare + fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, offsets, thresholds, plotConfig)
+				i <- i + 1
 			}
 		}
 	}
 }
+avRSquare <- totalRSquare / i
+print(paste("Average RSquare: ", avRSquare, " over ", i, " runs."))
 
 # fluData <- sim(0.002,0.1,500,10)
 # fluData1 <- sim(0.002,0.2,400,10)

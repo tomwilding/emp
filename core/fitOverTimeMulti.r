@@ -20,6 +20,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	# Initialise other parameters
 	rSquare <- 0
 	rSquareRefit <- 0 
+	totalRSqaure <- 0
 	# Step size for iterative fitting
 	step <- 1
 	# Initial t0 value
@@ -83,12 +84,16 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 			initConds <- initCondsMulti
 			# }
 		}
+		totalRSqaure <- totalRSqaure + rSquare
 		# Update the initial parameters for the next fitting
 		initParams <- multiParams
 	}
 	
 	# Save all params
 	save(evalList, file=plotConfig$dataFile)
+	avRS <- totalRSqaure / length(seq(from=minTruncation, to=maxTruncation, by=step))
+	print(avRS)
+	avRS
 	# save.image(plotConfig$envFile)
 }
 
