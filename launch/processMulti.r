@@ -31,7 +31,7 @@ for (bf in seq(from=0.001, to=0.006, by=0.001)) {
 				# Fitting epidemics
 				startOffset <- 1
 				endOffset <- 1
-				minTruncation <- 6
+				minTruncation <- 3
 				offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 				# Thresholds
