@@ -1,4 +1,4 @@
-evalSIRMulti <- function(times, data, initConds, params, ts, k, granularity) {
+evalSIRMulti <- function(times, data, initConds, params, epiTypes, ts, k, granularity) {
 	require(deSolve)
 	
 	fineTimes <- breakTime(times, granularity);
@@ -8,12 +8,17 @@ evalSIRMulti <- function(times, data, initConds, params, ts, k, granularity) {
 	eval <- c()
 
 	for (i in 1:k) {
-		paramsMulti <- params[(3*(i-1)+1):(3*i)]
-		initCondsMulti <- initConds[(3*(i-1)+1):(3*i)]
-		# Update S0
-		initCondsMulti[1] <- exp(paramsMulti[3])
-		# Update I0
-		initCondsMulti[2] <- I0
+		# Get sub epidemic type and parameters
+		subEpiNumParams <- epiTypes[i]
+		paramsMulti <- params[(subEpiNumParams * (i-1)+1) : (subEpiNumParams * i)]
+		initCondsMulti <- initConds[(subEpiNumParams * (i-1)+1) : (subEpiNumParams * i)]
+		if (subEpiNumParams > 2) {
+			# Update SIR epidemic parameters
+			# Update S0
+			initCondsMulti[1] <- exp(paramsMulti[3])
+			# Update I0
+			initCondsMulti[2] <- I0
+		}
 		# Get predictions given current parameters
 		preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti))
 		predInf <- (preds[,3])

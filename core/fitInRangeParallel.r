@@ -1,4 +1,4 @@
-fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, ts, k, range, actualFit, plotConfig) {
+fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, range, plotConfig) {
 	require(doMC)
 
 	# Ensure length of range is greater than 0
@@ -27,7 +27,6 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# EvaluateSIR over to plot fitted epidemics
 	# lines(1:length(offsetTimes), offsetData, col='steelblue')
 	# points(1:length(truncTimes), truncData, col='black', pch=16)
-
 	###################################### Parallel evaluation at all feasible time points #######################################
 	EvalOverTime <- foreach (t=range) %dopar% {
 		# time value t0 referenced from offset offsetData
@@ -35,13 +34,15 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 		# Find optimal beta and gamma by optimising them to minimise the least square function
 		# OptimSIRMulti passed in from call to setSolver
 		tryCatch({
-			optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, tsExplore, k)
+			optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, tsExplore, k)
 		}, warning = function(w) {
+			print(w)
 			print("optim warning")
 		}, error = function(e) {
+			 print(e)
 			print("optim failed")
 		})
-		pastEval <- evalSIRMulti(truncTimes, truncData, initConds, optimParams, tsExplore, k, 1)
+		pastEval <- evalSIRMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k, 1)
 		predInfectiousPast <- pastEval$multiInf
 
 		# rSquare error to determine best time to start fitting
@@ -68,14 +69,14 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	optimPastEval <- EvalOverTime[[maxRSIndex]][[3]]
 	# Evaluate over all fine granularity time
 	optimParams <- optimPastEval$multiParams
-	allEvalFine <- evalSIRMulti(offsetTimes, offsetData, initConds, optimParams, c(ts[1:k-1], optimTime), k, timeStep)
+	allEvalFine <- evalSIRMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:k-1], optimTime), k, timeStep)
 	# Evaluate over all time
-	allEval <- evalSIRMulti(offsetTimes, offsetData, initConds, optimParams,  c(ts[1:k-1], optimTime), k, 1) 
+	allEval <- evalSIRMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:k-1], optimTime), k, 1) 
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
 
 
-	# Plot inline
+	# Plot inline for dev
  	fineTimes <- breakTime(offsetTimes, timeStep)
  	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
  	setEPS()
