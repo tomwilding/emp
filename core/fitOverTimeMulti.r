@@ -55,7 +55,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 		# Try to improve fit if rSquare has deteriorated
 		lim <- thresholds$lim
 		diff <- thresholds$diff
-		incRes <- incResiduals(residuals, nResiduals)
+		incRes <- incResiduals(residuals, nResiduals, nSD=8)
 		if ((rSquare < lim) && incRes) {
 		# if (rSquare < lim) {
 			# Try k+1 epidemics
@@ -65,7 +65,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 			initCondsMulti <- c(initConds, startConds)
 			# Fit k+1 epidemics
 			eval <- fitInRangeParallel(setSolver(optimMethod, k+1), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, ts, k+1, c(minTRange:(i-maxTRange)), 2, plotConfig)
-			# TODO: Does the residuals array need to be updated here?
+			# TODO: Does the residuals array need to be updated here? = Only consider residuals in initial fitInRangeParallel above - will be updated in next loop
 			# residuals <- nIncResiduals[(i-(nResiduals-1)):i]
 			multiRSquare <- eval$optimRSquare
 			# If k+1 is significantly better then continue with k+1 fit
@@ -95,25 +95,29 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, of
 	# save.image(plotConfig$envFile)
 }
 
-incResiduals <- function(residuals, n) {
-	# # Get the last n residuals
+# Compare the last n residuals to sd of previous residuals before them
+incResiduals <- function(residuals, nRes, nSD) {
+	# Get the last n residuals
 	residuals <- (residuals[!is.na(residuals)])
-	
-	# # Initialise check variables
-	incResiduals <- TRUE
-	print(length(residuals)); print(n)
-	if (length(residuals) > 1) {
-		meanRes <- myMean(residuals[(1:length(residuals) - 1)])
-		sdRes <- mySd(residuals[1:(length(residuals) - 1)], meanRes)
-		print(sdRes)
-		for (i in 1:n) {
-			# Check magnitude of residuals
-			minResIndex <- length(residuals) - n
-			print(residuals[minResIndex + i])
-			incResiduals <- incResiduals && (abs(residuals[minResIndex + i]) > sdRes)
-			# readline()
+	# If less then one residual then set residual check to false
+	incResiduals <- FALSE
+	if (length(residuals) > nRes) {
+		# Get standard deviation of residuals before the ones considered
+		meanRes <- myMean(residuals[(1:(length(residuals) - 1 - nRes))])
+		sdRes <- mySd(residuals[1:(length(residuals) - 1 - nRes)], meanRes)
+		print(paste("sdRes ", sdRes))
+		# If current residual sd is above zero check if last n residuals are above set number of sd
+		if (sdRes > 0) {
+			# Assume incRes is True and check condition for all n residuals
+			incResiduals <- TRUE
+			for (i in 1:nRes) {
+				# Check magnitude of residuals
+				minResIndex <- length(residuals) - nRes
+				print(residuals[minResIndex + i])
+				incResiduals <- incResiduals && (abs(residuals[minResIndex + i]) > nSD * sdRes)
+			}
 		}
 		print(incResiduals)
 	}
-	incResiduals <- FALSE
+	incResiduals
 }
