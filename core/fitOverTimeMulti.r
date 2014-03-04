@@ -40,7 +40,12 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("### Fit k", quote=FALSE); print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE)
-		eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(minTRange:(i-maxTRange)), plotConfig)
+		epidemicType <- epiTypes[k]
+		if (epidemicType == 3) {
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(minTRange:(i-maxTRange)), plotConfig)
+		} else if (epidemicType == 1) {
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
+		}
 		# Store eval
 		evalList[[i]] <- eval
 
@@ -61,16 +66,20 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			epiTypes <- c(epiTypes, epidemicType)
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
+			print(paste("!!!Epidemic", epidemicType), quote=FALSE)
 			# Set initial parameters
 			initParamsMulti <- newParams(initParams, startParams, epidemicType)
 			initCondsMulti <- newParams(initConds, startConds, epidemicType)
-			# Fit k+1 epidemics
-			eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypes), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypes, ts, k+1, c(minTRange:(i-maxTRange)), plotConfig)
+			if (epidemicType == 3) {
+				# Fit k+1 epidemics with new SIR sub epidemic
+				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypes), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypes, ts, k+1, c(minTRange:(i-maxTRange)), plotConfig)
+			} else if (epidemicType == 1) {
+				# Fit k+1 epidemics with set t0 at i
+				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypes), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypes, ts, k+1, c((i-1):(i-1)), plotConfig)
+			}
 			# TODO: Does the residuals array need to be updated here? = Only consider residuals in initial fitInRangeParallel above - will be updated in next loop
 			# residuals <- nIncResiduals[(i-(nResiduals-1)):i]
 			multiRSquare <- eval$optimRSquare
-			# If k+1 is significantly better then continue with k+1 fit
-			print("!!!Set k+1", quote=FALSE)
 			# Set k+1 epidemics from now on
 			k <- k + 1
 			# Update parameters to continue fitting with k+1 epidemics

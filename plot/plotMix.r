@@ -37,7 +37,7 @@ initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10));
 # I0 from first data point
 initConds <- c(1,data[startOffset],0);
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=20)
 
 # Fit parameters
 reconstructPlot(1:length(data), data, offsets, thresholds, initParams, initConds, plotConfig)
