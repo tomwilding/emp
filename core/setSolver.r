@@ -1,12 +1,21 @@
-setSolver <- function(optimMethod, k) {
+setSolver <- function(optimMethod, k, epiTypes) {
 	# print("Set Solver")
+	# Set parscale for optimisation
+	parscale <- c()
+	for (t in epiTypes) {
+		if (t == 1) {
+			parscale <- c(parscale, c(1))
+		} else if (t == 3) {
+			parscale <- c(parscale, c(-1,-1,1))
+		}
+	}
+
 	# Select optimisation method
-	parscale <- rep(c(-1,-1,1), k)
 	switch(optimMethod,
 		LMS = {
 			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k) {
-				params <- optim(initParams, sseSIRMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes, method="Nelder-Mead", control=list(parscale))
-				# myOptim(initParams, sseSIRMulti, times, data, initConds, ts, k)
+				params <- optim(initParams, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes, method="Nelder-Mead", control=list(parscale=parscale))
+				# myOptim(initParams, sseMulti, times, data, initConds, ts, k)
 				optimParams <- params$par
 			}
 		},
@@ -21,21 +30,21 @@ setSolver <- function(optimMethod, k) {
 		{
 			print('Solver method not specified or not recognised, defaulting to LMS')
 			optimSIRMulti <- function(times, data, initConds, initParams, ts, k) { 
-				params <- optim(initParams, sseSIRMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, method="Nelder-Mead", control=list(parscale=c(-1,-1,1,-1,-1,1)))
+				params <- optim(initParams, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, method="Nelder-Mead", control=list(parscale=c(-1,-1,1,-1,-1,1)))
 				optimParams <- params$par
 			}
 		}
 	)
 }
 
-# myOptim <- function(initParams, sseSIRMulti, times, data, initConds, ts, k) {
+# myOptim <- function(initParams, sseMulti, times, data, initConds, ts, k) {
 # 	# Create parscale array for each sub epidemic parameter set
 # 	parscale <- rep(c(-1,-1,1), k)
 # 	# Flatten lists of parameters to send to optim
 # 	initParamsFlatten <- flatten(initParams)
 # 	initCondsFlatten <- flatten(initConds)
 # 	# Optimise over parameter array
-# 	params <- optim(initParamsFlatten$flattenList, sseSIRMulti, time=times, data=data, initConds=initCondsFlatten$flattenList, ts=ts, k=k, method="Nelder-Mead", control=list(parscale=parscale))
+# 	params <- optim(initParamsFlatten$flattenList, sseMulti, time=times, data=data, initConds=initCondsFlatten$flattenList, ts=ts, k=k, method="Nelder-Mead", control=list(parscale=parscale))
 # 	print(unflatten(params$par))
 # 	optimParams <- unflatten(params$par)
 # }

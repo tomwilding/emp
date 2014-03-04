@@ -1,27 +1,39 @@
-evalSIRMulti <- function(times, data, initConds, params, epiTypes, ts, k, granularity) {
+evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granularity) {
 	require(deSolve)
 	
 	fineTimes <- breakTime(times, granularity);
 	predInfectious <- numeric(length(fineTimes))
+	# Get initial I0
+	# Update for next epidemic according to unexplained offset from previous epidemic
 	I0 <- initConds[2]
 	predI <- 0
 	eval <- c()
+	subEpiNumParamsOffset <- 0
 
 	for (i in 1:k) {
 		# Get sub epidemic type and parameters
 		subEpiNumParams <- epiTypes[i]
-		paramsMulti <- params[(subEpiNumParams * (i-1)+1) : (subEpiNumParams * i)]
-		initCondsMulti <- initConds[(subEpiNumParams * (i-1)+1) : (subEpiNumParams * i)]
-		if (subEpiNumParams > 2) {
+		paramsMulti <- params[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
+		initCondsMulti <- initConds[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
+		subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
+		# Evaluate epidemic according to type
+		if (subEpiNumParams == 3) {
 			# Update SIR epidemic parameters
 			# Update S0
 			initCondsMulti[1] <- exp(paramsMulti[3])
-			# Update I0
+			# Update I0 computed using previous sub epidemics
 			initCondsMulti[2] <- I0
+
+			# Get predictions of SIR given current parameters
+			preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti))
+			predInf <- (preds[,3])
+		} else if (subEpiNumParams == 1) {
+			# Update Spike epidemic parameters
+			# Update I0 computed using previous sub epidemics
+			initCondsMulti[1] <- I0
+			preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimes, func=expDec, parms=paramsMulti))
+			predInf <- preds[,1]
 		}
-		# Get predictions given current parameters
-		preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti))
-		predInf <- (preds[,3])
 
 		# If t0 > 1 then set offset in predicted infectious
 		if (i > 1) {
@@ -48,6 +60,7 @@ evalSIRMulti <- function(times, data, initConds, params, epiTypes, ts, k, granul
 			# Only predict I0 for kth epidemic
 			t1Index <- which(fineTimes == times[ts[i+1]])
 			predI <- predInfectious[t1Index]
+			# Update I0 as unexplained prediction of Infectious for the next epidemic
 			I0 <- max(data[ts[i+1]] - predI, 1)
 		}
 	}

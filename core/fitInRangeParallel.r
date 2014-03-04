@@ -42,7 +42,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 			 print(e)
 			print("optim failed")
 		})
-		pastEval <- evalSIRMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k, 1)
+		pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k, 1)
 		predInfectiousPast <- pastEval$multiInf
 
 		# rSquare error to determine best time to start fitting
@@ -69,9 +69,9 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	optimPastEval <- EvalOverTime[[maxRSIndex]][[3]]
 	# Evaluate over all fine granularity time
 	optimParams <- optimPastEval$multiParams
-	allEvalFine <- evalSIRMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:k-1], optimTime), k, timeStep)
+	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:k-1], optimTime), k, timeStep)
 	# Evaluate over all time
-	allEval <- evalSIRMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:k-1], optimTime), k, 1) 
+	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:k-1], optimTime), k, 1) 
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
 
