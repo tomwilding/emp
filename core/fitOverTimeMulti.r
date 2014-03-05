@@ -121,14 +121,23 @@ getEpidemicType <- function(residuals, nRes, rSquare) {
 		# Get standard deviation of residuals before the ones considered
 		meanRes <- myMean(residuals[(1:(resLength - nRes))])
 		sdRes <- mySd(residuals[1:(resLength - nRes)], meanRes)
+		# Reset between epidemics
+		meanDiffRes <- myMeanDiff(residuals[1:(resLength - nRes)])
+		sdDiffRes <- mySdDiff(residuals[1:(resLength - nRes)], meanDiffRes)
+		diffRes <- abs(residuals[resLength - nRes + 1] - residuals[resLength - nRes])
 		print(paste("sdRes ", sdRes))
 		print(paste("RSq", rSquare))
+		print(paste("MeanDiffRes", meanDiffRes))
+		print(paste("SdDiffRes", sdDiffRes))
+		print(paste("DiffRes", diffRes))
 		# If current residual sd is above zero check if last n residuals are above set number of sd
 		if (sdRes > 0) {
 			# Index of first residual to check
 			startResIndex <- resLength - nRes
 			# Assume incRes is True and check condition for all n residuals
-			sameSign <- max(residuals[(startResIndex + 1):resLength]) < 0 || min(residuals[(startResIndex + 1):resLength]) > 0
+			# sameSign <- max(residuals[(startResIndex + 1):resLength]) < 0 || min(residuals[(startResIndex + 1):resLength]) > 0
+			sigIncRes <- diffRes > (meanDiffRes + 2 * sdDiffRes)
+
 			incResiduals <- TRUE
 			for (i in 1:nRes) {
 				# Check magnitude of residuals
@@ -136,16 +145,18 @@ getEpidemicType <- function(residuals, nRes, rSquare) {
 				minIncRes <- min(minIncRes, (abs(residuals[startResIndex + i])))
 			}
 		}
-		print(paste("SameSign",sameSign))
+		# print(paste("SameSign",sameSign))
 		# Set epidemic type according to residual limit
 		sirSD <- sdRes * 8
 		spikeSD <- sdRes * 2
 		# If minimum residual increase is more than required, then set type
-		if (minIncRes > spikeSD) { #&& sameSign) {
+		if (minIncRes > spikeSD && sigIncRes) { #&& sameSign) {
 			print("T1 Set")
+			# readline()
 			type <- 1
-		} else if (minIncRes > sirSD) { #&& sameSign) {
+		} else if (minIncRes > sirSD && sigIncRes) { #&& sameSign) {
 			print("T2 Set")
+			# readline()
 			type <- 3
 		}
 	}
