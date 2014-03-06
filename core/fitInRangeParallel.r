@@ -89,16 +89,16 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
  	daysText <- paste("Epochs after outbreak = ", i)
  	mtext(daysText, 3, cex=0.8)
  	# Plot offsetData points and actual offsetData lines
- 	lines(offsetTimes, offsetData, col='steelblue', lty=1)
- 	points(truncTimes, truncData, col='black', pch=16)
+ 	lines(1:length(offsetTimes), offsetData, col='steelblue', lty=1)
+ 	points(1:length(truncTimes), truncData, col='black', pch=16)
  	# lines(fineTimes, allEvalFine$multiInf, lty=1)
  	multiInf <- allEvalFine$multiInf
  	for(k in 1:(length(allEvalFine$subInf))) {
  		sub <- allEvalFine$subInf[[k]]
  		subParams <- allEvalFine$subParams[[k]]
  		# Print sub epidemic graph
- 		lines(fineTimes, sub, col=cl[k], lty=2)
- 		lines(fineTimes, multiInf, col="black")
+ 		lines(fineTimes - startOffset, sub, col=cl[k], lty=2)
+ 		lines(fineTimes - startOffset, multiInf, col="black")
  	}
  	dev.off()
 
