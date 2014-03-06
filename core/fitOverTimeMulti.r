@@ -71,8 +71,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			initConds <- newParams(initConds, startConds, epidemicType)
 			# Set k+1 epidemics from now on
 			k <- k + 1
-			# Update parameters to continue fitting with k+1 epidemics
+			# Set new epidemic start time
 			ts <- c(ts,i - 1)
+
 		}
 		totalRSqaure <- totalRSqaure + rSquare
 		# Update the initial parameters for the next fitting
