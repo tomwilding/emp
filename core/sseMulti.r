@@ -15,7 +15,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 			# Set Spike epidemic optimised parameters
 			gamma <- exp(paramsMulti[1])
 			I0 <- exp(paramsMulti[2])
-			if (gamma > 1 || beta <= 1e-6) {
+			if (gamma > 1 || gamma <= 1e-2) {
 				sse <- Inf
 				outOfBounds <- TRUE
 			}
@@ -27,7 +27,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 			S0 <- exp(paramsMulti[3])
 			I0 <- initCondsMulti[2]
 			# Force optimisation to advance within parameter ranges
-			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-6 || S0 < I0) {
+			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-2 || S0 < I0) {
 				sse <- Inf
 				outOfBounds <- TRUE
 			}

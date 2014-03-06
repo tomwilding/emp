@@ -80,6 +80,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
  	fineTimes <- breakTime(offsetTimes, timeStep)
  	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
  	setEPS()
+ 	r <- plotConfig$run
  	graphName <- paste("t", i, sep='')
  	graphName <- paste(graphName, ".eps", sep='')
  	postscript(paste(plotConfig$fileName, graphName, sep=''))	

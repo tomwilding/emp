@@ -2,7 +2,8 @@
 require('epi')
 
 fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
-data <- sumData(fluData[,2], 4)
+nSum <- 4
+data <- sumData(fluData[,2], nSum)
 
 # Fitting epidemics
 

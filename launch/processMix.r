@@ -27,7 +27,7 @@ minTruncation <- 3
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
-thresholds <- list(diff=0.05, lim=0.9)
+thresholds <- list(lim=0.8)
 
 # Init Params = beta, gamma, S0
 initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10));
