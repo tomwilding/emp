@@ -37,7 +37,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 		granularity <- 1
 		allPredInf <- evalMulti(times, data, initConds, params, epiTypes, ts, k, granularity)
 		predInf <- allPredInf$multiInf
-		sse <- sum((predInf - data)^2)
+		sse <- sum((predInf - data[1:(length(data)-2)])^2)
 	}
 	sse
 }

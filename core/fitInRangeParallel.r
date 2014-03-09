@@ -39,14 +39,14 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 			print(w)
 			print("optim warning")
 		}, error = function(e) {
-			 print(e)
+			print(e)
 			print("optim failed")
 		})
 		pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k, 1)
 		predInfectiousPast <- pastEval$multiInf
 
 		# rSquare error to determine best time to start fitting
-		rSquareErrorPast <- rSquareError(predInfectiousPast, truncData)
+		rSquareErrorPast <- rSquareError(predInfectiousPast, truncData[1:(length(truncData)-2)])
 		# Build list of optimisation results
 		list(t, rSquareErrorPast, pastEval)
 	}
@@ -77,7 +77,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 
 
 	# Plot inline for dev
- 	fineTimes <- breakTime(offsetTimes, timeStep)
+ 	fineTimes <- breakTime(offsetTimes[1:(length(offsetTimes)-2)], timeStep)
  	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
  	setEPS()
  	r <- plotConfig$run

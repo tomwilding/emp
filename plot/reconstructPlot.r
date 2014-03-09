@@ -4,12 +4,12 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
 	lim <- thresholds$lim
-	diff <- thresholds$diff
 	
 	# Colours for plotting
 	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
 
 	# Loop through all objects
+
 	end <- length(evalList)
 	for(i in minTruncation:end) {
 		# Set graph settings
@@ -19,8 +19,8 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		postscript(paste(plotConfig$fileName, graphName, sep=''))	
 		
 		# Take data set within specified offset
-		offsetTimes <- times[startOffset:(length(times)-endOffset)]
-		offsetData <- data[startOffset:(length(data)-endOffset)]
+		offsetTimes <- times[startOffset:(length(times)-endOffset-2)]
+		offsetData <- data[startOffset:(length(data)-endOffset-2)]
 		# Truncate data set
 		truncTimes <- offsetTimes[1:i]
 		truncData <- offsetData[1:i]

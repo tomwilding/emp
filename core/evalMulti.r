@@ -1,8 +1,8 @@
 evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granularity) {
 	require(deSolve)
-	
+	fineTimesEval <- breakTime(times[1:(length(times)-2)], granularity);
 	fineTimes <- breakTime(times, granularity);
-	predInfectious <- numeric(length(fineTimes))
+	predInfectious <- numeric(length(fineTimesEval))
 	# Get initial I0
 	# Update for next epidemic according to unexplained offset from previous epidemic
 	I0 <- initConds[2]
@@ -25,25 +25,29 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 			initCondsMulti[2] <- I0
 
 			# Get predictions of SIR given current parameters
-			preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti))
+			preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimesEval, func=sir, parms=paramsMulti))
 			predInf <- (preds[,3])
 		} else if (subEpiNumParams == 1) {
 			# Update Spike epidemic parameters
 			# Update I0 as unexplained prediction of Infectious for this epidemic
 			initCondsMulti[1] <- I0
-			preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimes, func=expDec, parms=paramsMulti))
+			preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimesEval, func=expDec, parms=paramsMulti))
 			predInf <- preds[,2]
 		}
 
 		# If t0 > 1 then set offset in predicted infectious
 		if (i > 1) {
 			# Find index to start fitting k+1 epidemic
+			# print(times)
+			# print(ts)
+			# print(ts[i])
+			# print(times[ts[i]])
 			t0Index <- which(fineTimes == (times[ts[i]]))
 			# Offset
 			zeros <- numeric(t0Index - 1)
 			predInf <- c(zeros, predInf)
 			# Truncate to length of data
-			predInf <- predInf[1:length(fineTimes)]
+			predInf <- predInf[1:length(fineTimesEval)]
 		}
 		# Add the predictions for the current epidemic to the previous predictions
 		predInfectious <- predInfectious + predInf
