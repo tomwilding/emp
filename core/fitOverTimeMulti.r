@@ -122,6 +122,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 	
 	# Ensure more than one residual before the last n residuals to calculate sdRes
 	resLength <- length(residuals)
+	# if (resLength > nRes + 1)
 	if (resLength > window + 1) {
 		# Get standard deviation of residuals before the ones considered
 		# absResiduals <- abs(residuals[1:(resLength - nRes)])
