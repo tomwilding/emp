@@ -33,7 +33,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	
 	# Number of increasing residuals
 	nRes <- 2
-	window <- 9
+	window <- 10
 	residuals <- c()
 
 	epiList <- numeric(minTruncation)
@@ -66,6 +66,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
 		# epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
 		if ((rSquare < lim) && (epidemicType > 0)) {
+		# if (epidemicType > 0) {
 			# Set new epidemic type in epidemic type array
 			epiTypesMulti <- c(epiTypes, epidemicType)
 			# Try k+1 epidemics
@@ -86,7 +87,6 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			multiRSquare <- eval$optimRSquare
 			# If K + 1 epidemic is better then set k + 1 from now on
 			# if (multiRSquare > rSquare) {
-				print("SET K + 1")
 				# Set k+1 epidemics from now on
 				k <- k + 1
 				# Update parameters to continue fitting with k+1 epidemics
@@ -119,15 +119,13 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 	sdRes <- 0
 	# Get the last n residuals
 	residuals <- (residuals[!is.na(residuals)])
-	# If less then one residual then set residual check to false
-	minIncRes <- Inf
 	
 	# Ensure more than one residual before the last n residuals to calculate sdRes
 	resLength <- length(residuals)
-	if (resLength > nRes + 1) {
+	if (resLength > window + 1) {
 		# Get standard deviation of residuals before the ones considered
-		absResiduals <- abs(residuals[1:(resLength - nRes)])
-		# absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
+		# absResiduals <- abs(residuals[1:(resLength - nRes)])
+		absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
 		meanRes <- myMean(absResiduals)
 		sdRes <- mySd(absResiduals, meanRes)
 		# Reset between epidemics
@@ -142,23 +140,21 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 		# print(paste("DiffRes", diffRes))
 		# If current residual sd is above zero check if last n residuals are above set number of sd
 		if (sdRes > 0) {
+			minIncRes1 <- Inf
 			# Index of first residual to check
-			startResIndex <- resLength - nRes
+			startResIndex <- resLength - nRes + 1
 			# Assume incRes is True and check condition for all n residuals
-			sameSign <- max(residuals[(startResIndex + 1):resLength]) < 0 || min(residuals[(startResIndex + 1):resLength]) > 0
+			# sameSign <- max(residuals[(startResIndex + 1):resLength]) < 0 || min(residuals[(startResIndex + 1):resLength]) > 0
 			# sigIncRes <- diffRes > (meanDiffRes + 2 * sdDiffRes)
-
-			incResiduals <- TRUE
-			for (i in 1:nRes) {
-				# Check magnitude of residuals
-				print(residuals[startResIndex + i])
-				minIncRes <- min(minIncRes, (abs(residuals[startResIndex + i])))
-			}
+			minIncRes <- min(abs(residuals[startResIndex:resLength]))
+			print(minIncRes)
 		}
 		# print(paste("SameSign",sameSign))
 		# Set epidemic type according to residual limit
-		sirSD <- sdRes * 2
-		spikeSD <- sdRes * 4
+		# sirSD <- meanRes + (sdRes * 2)
+		# spikeSD <- meanRes + (sdRes * 4)
+		sirSD <- meanRes + sdRes * 3
+		spikeSD <- meanRes + sdRes * 5
 		# If minimum residual increase is more than required, then set type
 		if (minIncRes > spikeSD) { #&& sameSign) {
 			print("Spike Set")

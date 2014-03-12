@@ -19,8 +19,8 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		postscript(paste(plotConfig$fileName, graphName, sep=''))	
 		
 		# Take data set within specified offset
-		offsetTimes <- times[startOffset:(length(times)-endOffset-2)]
-		offsetData <- data[startOffset:(length(data)-endOffset-2)]
+		offsetTimes <- times[startOffset:(length(times)-endOffset)]
+		offsetData <- data[startOffset:(length(data)-endOffset)]
 		# Truncate data set
 		truncTimes <- offsetTimes[1:i]
 		truncData <- offsetData[1:i]
@@ -45,7 +45,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 
 		# RSquare and labels
 		# Future RSqaure window to evaluate over
-		NF <- 7
+		NF <- 20
 		# Calculate RSqaure
 		rSquarePast <- eval$optimRSquare
 		

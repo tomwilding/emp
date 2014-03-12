@@ -3,7 +3,8 @@ require("epi")
 
 # Read data from file
 fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
-data <- sumData(fluData[,2], 4)
+# data <- sumData(fluData[,2], 4)
+data <- fluData[,2]
 times <- c(1:length(data))
 # print(data)
 # readline()

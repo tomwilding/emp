@@ -44,9 +44,8 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 		})
 		pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k, 1)
 		predInfectiousPast <- pastEval$multiInf
-
 		# rSquare error to determine best time to start fitting
-		rSquareErrorPast <- rSquareError(predInfectiousPast, truncData[1:(length(truncData)-2)])
+		rSquareErrorPast <- rSquareError(predInfectiousPast, truncData)
 		# Build list of optimisation results
 		list(t, rSquareErrorPast, pastEval)
 	}
@@ -69,6 +68,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	optimPastEval <- EvalOverTime[[maxRSIndex]][[3]]
 	# Evaluate over all fine granularity time
 	optimParams <- optimPastEval$multiParams
+	# TODO: Don't want to restrict eval - eval over all points in evalMulti after optim over all but last n
 	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:k-1], optimTime), k, timeStep)
 	# Evaluate over all time
 	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:k-1], optimTime), k, 1) 
@@ -77,7 +77,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 
 
 	# Plot inline for dev
- 	fineTimes <- breakTime(offsetTimes[1:(length(offsetTimes)-2)], timeStep)
+ 	fineTimes <- breakTime(offsetTimes, timeStep)
  	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
  	setEPS()
  	r <- plotConfig$run
