@@ -65,8 +65,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		lim <- thresholds$lim
 		epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
 		# epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
-		if ((rSquare < lim) && (epidemicType > 0)) {
-		# if (epidemicType > 0) {
+		# if ((rSquare < lim) && (epidemicType > 0)) {
+		if (epidemicType > 4) {
 			# Set new epidemic type in epidemic type array
 			epiTypesMulti <- c(epiTypes, epidemicType)
 			# Try k+1 epidemics

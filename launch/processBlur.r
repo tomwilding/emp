@@ -9,7 +9,7 @@ data <- fluData[,2]
 
 startOffset <- 1
 endOffset <- 1
-offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=14)
+offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5)
 
 # Threshold
 # thresholds <- list(diff=0.05, lim=0.96)
