@@ -46,7 +46,12 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# print(paste("Beta", exp(initParams[2])))
 		epidemicType <- epiTypes[k]
 		if (epidemicType == 3) {
-			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(minTRange:(i-maxTRange)), plotConfig)
+			if (k == 1) {
+				# If only 1 epidemic assume it starts at given time
+				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
+			} else {
+				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(minTRange:(i-maxTRange)), plotConfig)
+			}
 		} else if (epidemicType == 1) {
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
 		}
@@ -65,8 +70,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		lim <- thresholds$lim
 		epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
 		# epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
-		# if ((rSquare < lim) && (epidemicType > 0)) {
-		if (epidemicType > 4) {
+		if ((rSquare < lim) && (epidemicType > 0)) {
+		# if (epidemicType > 4) {
 			# Set new epidemic type in epidemic type array
 			epiTypesMulti <- c(epiTypes, epidemicType)
 			# Try k+1 epidemics
@@ -122,7 +127,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 	
 	# Ensure more than one residual before the last n residuals to calculate sdRes
 	resLength <- length(residuals)
-	# if (resLength > nRes + 1)
+	# if (resLength > nRes + 1) {
 	if (resLength > window + 1) {
 		# Get standard deviation of residuals before the ones considered
 		# absResiduals <- abs(residuals[1:(resLength - nRes)])
