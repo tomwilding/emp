@@ -33,7 +33,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	
 	# Number of increasing residuals
 	nRes <- 2
-	window <- 10
+	window <- 20
 	residuals <- c()
 
 	epiList <- numeric(minTruncation)
@@ -50,7 +50,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				# If only 1 epidemic assume it starts at given time
 				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
 			} else {
-				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(minTRange:(i-maxTRange)), plotConfig)
+				# Explore t0 from previous epidemic start point
+				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k-1]:(i-maxTRange)), plotConfig)
 			}
 		} else if (epidemicType == 1) {
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
@@ -71,7 +72,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
 		# epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
 		if ((rSquare < lim) && (epidemicType > 0)) {
-		# if (epidemicType > 4) {
+		# if (epidemicType > 0) {
 			# Set new epidemic type in epidemic type array
 			epiTypesMulti <- c(epiTypes, epidemicType)
 			# Try k+1 epidemics
@@ -81,8 +82,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			initParamsMulti <- newParams(initParams, startParams, epidemicType)
 			initCondsMulti <- newParams(initConds, startConds, epidemicType)
 			if (epidemicType == 3) {
-				# Fit k+1 epidemics with new SIR sub epidemic
-				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c(minTRange:(i-maxTRange)), plotConfig)
+				# Fit k+1 epidemics with new SIR sub epidemic exploring t0 from previous epidemic start point
+				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c(ts[k]:(i-maxTRange)), plotConfig)
 			} else if (epidemicType == 1) {
 				# Fit k+1 epidemics with set t0 at i
 				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i-1):(i-1)), plotConfig)
@@ -91,6 +92,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			# residuals <- nIncResiduals[(i-(nResiduals-1)):i]
 			multiRSquare <- eval$optimRSquare
 			# If K + 1 epidemic is better then set k + 1 from now on
+			print(multiRSquare)
+			print(rSquare)
+			if (multiRSquare > rSquare + (1 - lim)) {
 			# if (multiRSquare > rSquare) {
 				# Set k+1 epidemics from now on
 				k <- k + 1
@@ -101,7 +105,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				rSquare <- multiRSquare
 				initConds <- initCondsMulti
 				epiTypes <- epiTypesMulti
-			# }
+			}
 		}
 		totalRSqaure <- totalRSqaure + rSquare
 		# Update the initial parameters for the next fitting
@@ -160,7 +164,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 		# sirSD <- meanRes + (sdRes * 2)
 		# spikeSD <- meanRes + (sdRes * 4)
 		sirSD <- meanRes + sdRes * 3
-		spikeSD <- meanRes + sdRes * 5
+		spikeSD <- meanRes + sdRes * 8
 		# If minimum residual increase is more than required, then set type
 		if (minIncRes > spikeSD) { #&& sameSign) {
 			print("Spike Set")

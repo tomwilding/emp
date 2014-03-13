@@ -14,7 +14,7 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5)
 # Threshold
 # thresholds <- list(diff=0.05, lim=0.96)
 # thresholds <- list(diff=0.05, lim=0.7)
-thresholds <- list(lim=0.80)
+thresholds <- list(lim=0.8)
 
 # Init Params = beta, gamma, S0
 initParams <- c(log(0.005), log(0.5), log(data[startOffset]*10));
