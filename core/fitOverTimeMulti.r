@@ -51,7 +51,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
 			} else {
 				# Explore t0 from previous epidemic start point
-				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c((i - window):(i-maxTRange)), plotConfig)
+				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c((i - window):ts[k]), plotConfig)
 			}
 		} else if (epidemicType == 1) {
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
@@ -126,16 +126,18 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 	type <- 0
 	# Standard deviation of residuals
 	sdRes <- 0
+	# Lower limit of residual to determine outbreak
+	lowerLimit <- 1000
 	# Get the last n residuals
 	residuals <- (residuals[!is.na(residuals)])
 	
 	# Ensure more than one residual before the last n residuals to calculate sdRes
 	resLength <- length(residuals)
-	if (resLength > nRes + 1) {
-	# if (resLength > window + 1) {
+	# if (resLength > nRes + 1) {
+	if (resLength > window + 1) {
 		# Get standard deviation of residuals before the ones considered
-		absResiduals <- abs(residuals[1:(resLength - nRes)])
-		# absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
+		# absResiduals <- abs(residuals[1:(resLength - nRes)])
+		absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
 		meanRes <- myMean(absResiduals)
 		sdRes <- mySd(absResiduals, meanRes)
 		# Reset between epidemics
@@ -153,7 +155,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 			# Index of first residual to check
 			startResIndex <- resLength - nRes + 1
 			# Assume incRes is True and check condition for all n residuals
-			sameSign <- max(residuals[(startResIndex + 1):resLength]) < 0 || min(residuals[(startResIndex + 1):resLength]) > 0
+			sameSign <- max(residuals[startResIndex:resLength]) < 0 || min(residuals[startResIndex:resLength]) > 0
 			# sigIncRes <- diffRes > (meanDiffRes + 2 * sdDiffRes)
 			minIncRes <- min(abs(residuals[startResIndex:resLength]))
 			print(minIncRes)
@@ -165,10 +167,10 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 		sirSD <- meanRes + sdRes * 2
 		spikeSD <- meanRes + sdRes * 8
 		# If minimum residual increase is more than required, then set type
-		if (minIncRes > spikeSD) { #&& sameSign) {
+		if (minIncRes > spikeSD && minIncRes > lowerLimit && sameSign) {
 			print("Spike Set")
 			type <- 1
-		} else if (minIncRes > sirSD) { #&& sameSign) {
+		} else if (minIncRes > sirSD && minIncRes > lowerLimit && sameSign) {
 			print("SIR Set")
 			type <- 3
 		}

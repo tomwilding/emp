@@ -32,10 +32,10 @@ initConds <- c(1,data[startOffset],0);
 plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur/", dataFile="output/data/blur/blurData.RData", envFile="output/data/blur/blurEnv.RData", pat=12, rat=60)
 
 # Fit parameters
-# reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot RSq graph
 # plotRSq(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot Residuals
-plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
