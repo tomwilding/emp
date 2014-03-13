@@ -50,8 +50,10 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				# If only 1 epidemic assume it starts at given time
 				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
 			} else {
+				print(paste("min", ts[k] - window))
+				print(paste("max", i - maxTRange))
 				# Explore t0 from previous epidemic start point
-				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c((i - window):ts[k]), plotConfig)
+				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c((ts[k] - window):(i - maxTRange)), plotConfig)
 			}
 		} else if (epidemicType == 1) {
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
@@ -83,7 +85,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			initCondsMulti <- newParams(initConds, startConds, epidemicType)
 			if (epidemicType == 3) {
 				# Fit k+1 epidemics with new SIR sub epidemic exploring t0 from previous epidemic start point
-				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i - window):(i-maxTRange)), plotConfig)
+				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i - window):(i - maxTRange)), plotConfig)
 			} else if (epidemicType == 1) {
 				# Fit k+1 epidemics with set t0 at i
 				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i-1):(i-1)), plotConfig)
@@ -167,10 +169,10 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 		sirSD <- meanRes + sdRes * 2
 		spikeSD <- meanRes + sdRes * 8
 		# If minimum residual increase is more than required, then set type
-		if (minIncRes > spikeSD) {# && minIncRes > lowerLimit && sameSign) {
+		if (minIncRes > spikeSD && sameSign && minIncRes > lowerLimit) {
 			print("Spike Set")
 			type <- 1
-		} else if (minIncRes > sirSD) {# && minIncRes > lowerLimit && sameSign) {
+		} else if (minIncRes > sirSD && sameSign && minIncRes > lowerLimit) {
 			print("SIR Set")
 			type <- 3
 		}
