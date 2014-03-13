@@ -167,10 +167,10 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 		sirSD <- meanRes + sdRes * 2
 		spikeSD <- meanRes + sdRes * 8
 		# If minimum residual increase is more than required, then set type
-		if (minIncRes > spikeSD && minIncRes > lowerLimit && sameSign) {
+		if (minIncRes > spikeSD) {# && minIncRes > lowerLimit && sameSign) {
 			print("Spike Set")
 			type <- 1
-		} else if (minIncRes > sirSD && minIncRes > lowerLimit && sameSign) {
+		} else if (minIncRes > sirSD) {# && minIncRes > lowerLimit && sameSign) {
 			print("SIR Set")
 			type <- 3
 		}
