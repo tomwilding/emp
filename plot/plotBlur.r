@@ -1,4 +1,4 @@
-load("output/data/blur/blurData.RData")
+load("output/data/blur1/blurData.RData")
 require("epi")
 
 # Read data from file
@@ -21,7 +21,7 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5, m
 # Threshold
 # thresholds <- list(diff=0.05, lim=0.96)
 # thresholds <- list(diff=0.05, lim=0.7)
-thresholds <- list(lim=0.85)
+thresholds <- list(lim=0.9)
 # Init Params = beta, gamma, S0
 initParams <- c(log(0.005), log(0.5), log(data[startOffset]*10));
 
@@ -29,13 +29,16 @@ initParams <- c(log(0.005), log(0.5), log(data[startOffset]*10));
 # I0 from first data point
 initConds <- c(1,data[startOffset],0);
 
-plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur/", dataFile="output/data/blur/blurData.RData", envFile="output/data/blur/blurEnv.RData", pat=12, rat=250)
+plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur1/", dataFile="output/data/blur1/blurData.RDatasdsdsd", envFile="output/data/blur/blurEnv.RData", pat=12, rat=250)
 
 # Fit parameters
-reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot RSq graph
 # plotRSq(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot Residuals
 # plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+
+# t+1 prediction
+plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)

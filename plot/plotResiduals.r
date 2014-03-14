@@ -34,22 +34,28 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 		eval <- evalList[[i]]
 		res <- eval$residuals
 		if (i==length(evalList)) {
-			postscript(paste(plotConfig$fileName, "acf"))
-			acf(res)
-			dev.off()
+			# postscript(paste(plotConfig$fileName, "acf"))
+			# acf(res)
+			# dev.off()
 
-			postscript(paste(plotConfig$fileName, "pacf"))
-			pacf(res)
-			dev.off()
+			# postscript(paste(plotConfig$fileName, "pacf"))
+			# pacf(res)
+			# dev.off()
 
-			postscript(paste(plotConfig$fileName, "ar"))
-			ars <- ar(res)
-			print(ars)
-			future <- predict(ars, n.ahead=250)
-			all <- c(res, as.vector(future$pred))
-			plot(c(1:length(all)), all, type="l")
-			title("Autoregression")
-			dev.off()
+			# postscript(paste(plotConfig$fileName, "ar"))
+			# ars <- ar(res)
+			# print(ars)
+			# future <- predict(ars, n.ahead=250)
+			# all <- c(res, as.vector(future$pred))
+			# plot(c(1:length(all)), all, type="l")
+			# title("Autoregression")
+			# dev.off()
+
+			# Save res to csv
+			write.table(file="finalRes.csv", res, quote=FALSE, sep=",")
+
+			# Plot res
+			plot(1:length(res), res, type="l")
 		}
 
 		graphName <- paste("res", i, sep='')

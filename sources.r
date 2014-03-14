@@ -21,6 +21,7 @@ source('core/expDec.r')
 source('plot/reconstructPlot.r')
 source('plot/plotRSq.r')
 source('plot/plotResiduals.r')
+source('plot/plotPred.r')
 
 # Packages
 # install.packages("deSolve")
