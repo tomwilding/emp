@@ -38,7 +38,7 @@ plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent D
 # plotRSq(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot Residuals
-# plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # t+1 prediction
 plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)

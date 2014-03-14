@@ -34,13 +34,13 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 		eval <- evalList[[i]]
 		res <- eval$residuals
 		if (i==length(evalList)) {
-			# postscript(paste(plotConfig$fileName, "acf"))
-			# acf(res)
-			# dev.off()
+			postscript(paste(plotConfig$fileName, "acf"))
+			acf(res)
+			dev.off()
 
-			# postscript(paste(plotConfig$fileName, "pacf"))
-			# pacf(res)
-			# dev.off()
+			postscript(paste(plotConfig$fileName, "pacf"))
+			pacf(res)
+			dev.off()
 
 			# postscript(paste(plotConfig$fileName, "ar"))
 			# ars <- ar(res)
@@ -55,17 +55,19 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 			write.table(file="finalRes.csv", res, quote=FALSE, sep=",")
 
 			# Plot res
+			postscript(paste(plotConfig$fileName, "res"))
 			plot(1:length(res), res, type="l")
+			dev.off()
 		}
 
-		graphName <- paste("res", i, sep='')
-		graphName <- paste(graphName, ".eps", sep='')
-		postscript(paste(plotConfig$fileName, graphName, sep=''))	
+		# graphName <- paste("res", i, sep='')
+		# graphName <- paste(graphName, ".eps", sep='')
+		# postscript(paste(plotConfig$fileName, graphName, sep=''))	
 		
-		# Plot the graph
-		plot(truncTimes, res, type="l") 
+		# # Plot the graph
+		# plot(truncTimes, res, type="l") 
 
-		dev.off()
+		# dev.off()
 	}
 
 }

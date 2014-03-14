@@ -34,14 +34,24 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		evalPrev <- evalList[[i]]
 		allEval <- evalPrev$allEval$multiInf
 
+		# Update previous prediction using AR model
+		# Get past residuals
+		res <- evalPrev$residuals
+		# Fit AR model to all past residuals
+		arModel <- ar(res)
+		nextIncRes <- predict(arModel, n.ahead=1)$pred
+		print(nextIncRes)
+
+		# Plot prediction without AR
 		evalPreds[i] <- allEval[i]
+
+		# Plot prediction with AR
+		# evalPreds[i] <- allEval[i] + nextIncRes
 	}
 
-	# # Set graph settings
-	# setEPS()
-	# graphName <- paste("t", i, sep='')
-	# graphName <- paste(graphName, ".eps", sep='')
-	# postscript(paste(plotConfig$fileName, graphName, sep=''))	
+	# Set graph settings
+	setEPS()
+	postscript(paste(plotConfig$fileName, "allBlurPrediction", sep=''))	
 
 	# Main plot
 	par(mar=c(6.1,4.1,4.1,2.1))
@@ -52,4 +62,5 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 
 	# Plot actual data point at this time
 	lines(offsetTimes, evalPreds, col='red')
+	dev.off()
 }

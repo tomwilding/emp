@@ -33,7 +33,6 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		eval <- evalList[[i]]
 		allEval <- eval$allEval
 		allEvalFine <- eval$allEvalFine
-		print(length(allEvalFine))
 		# Print main graph
 
 		# Main plot
