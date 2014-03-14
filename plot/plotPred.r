@@ -50,24 +50,25 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		evalPredsAR[i] <- allEval[i] + nextIncRes
 	}
 
+	# Calculate SSE
 	# SSE of epi
 	print(evalPreds[(minTruncation + 1):length(evalPreds)])
 	print(evalPredsAR[(minTruncation + 1):length(evalPredsAR)])
-	sseEpi <- rSquareError(evalPreds[(minTruncation + 1):length(evalPreds)], offsetData[(minTruncation + 1):length(offsetData)])
+	sseEpi <- ssError(evalPreds[(minTruncation + 1):length(evalPreds)], offsetData[(minTruncation + 1):length(offsetData)])
 	
 	# SSE of AR
-	sseAR <- rSquareError(evalPredsAR[(minTruncation + 1):length(evalPredsAR)], offsetData[(minTruncation + 1):length(offsetData)])
+	sseAR <- ssError(evalPredsAR[(minTruncation + 1):length(evalPredsAR)], offsetData[(minTruncation + 1):length(offsetData)])
 
 	# SSE of offset data
 	# Shift data
 	shiftOffsetData <- c(0,offsetData)
 	print(shiftOffsetData[(minTruncation + 1):length(offsetData)])
 	print(offsetData[(minTruncation + 1):length(offsetData)])
-	sseDiff <- rSquareError(shiftOffsetData[(minTruncation + 1):length(offsetData)], offsetData[(minTruncation + 1):length(offsetData)])
+	sseDiff <- ssError(shiftOffsetData[(minTruncation + 1):length(offsetData)], offsetData[(minTruncation + 1):length(offsetData)])
 
 	print(paste("EpiRS", sseEpi))
 	print(paste("EpiARRS", sseAR))
-	# print(paste("ShiftRS", sseDiff))
+	print(paste("ShiftRS", sseDiff))
 
 	# Set graph settings
 	setEPS()

@@ -17,8 +17,7 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 		
 		# Graph settings
 		setEPS()
-
-
+		
 		# Take data set within specified offset
 		offsetTimes <- times[startOffset:(length(times)-endOffset)]
 		offsetData <- data[startOffset:(length(data)-endOffset)]

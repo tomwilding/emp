@@ -88,7 +88,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i - window):(i - maxTRange)), plotConfig)
 			} else if (epidemicType == 1) {
 				# Fit k+1 epidemics with set t0 at i
-				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i-1):(i-1)), plotConfig)
+				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i):(i)), plotConfig)
 			}
 			# TODO: Does the residuals array need to be updated here? = Only consider residuals in initial fitInRangeParallel above - will be updated in next loop
 			# residuals <- nIncResiduals[(i-(nResiduals-1)):i]
