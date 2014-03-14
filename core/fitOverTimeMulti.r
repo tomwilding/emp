@@ -32,7 +32,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	evalList <- c()
 	
 	# Number of increasing residuals
-	nRes <- 2
+	nRes <- 1
 	window <- 20
 	residuals <- c()
 
@@ -166,7 +166,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 		# Set epidemic type according to residual limit
 		# sirSD <- meanRes + (sdRes * 2)
 		# spikeSD <- meanRes + (sdRes * 4)
-		sirSD <- meanRes + sdRes * 2
+		sirSD <- meanRes + sdRes * 5
 		spikeSD <- meanRes + sdRes * 8
 		# If minimum residual increase is more than required, then set type
 		if (minIncRes > spikeSD && sameSign && minIncRes > lowerLimit) {

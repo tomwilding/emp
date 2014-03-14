@@ -5,6 +5,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	endOffset <- offsets$endOffset
 	lim <- thresholds$lim
 	evalPreds <- c()
+	evalPredsAR <- c()
 
 	# Colours for plotting
 	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
@@ -12,7 +13,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	# Loop through all objects
 
 	end <- length(evalList)
-	for(i in minTruncation:end) {
+	for(i in (minTruncation + 1):end) {
 		
 		# Take data set within specified offset
 		offsetTimes <- times[startOffset:(length(times)-endOffset)]
@@ -31,7 +32,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		# allEvalFine <- eval$allEvalFine
 
 		# Plot predicted data point for this time at previous fitting
-		evalPrev <- evalList[[i]]
+		evalPrev <- evalList[[i - 1]]
 		allEval <- evalPrev$allEval$multiInf
 
 		# Update previous prediction using AR model
@@ -40,14 +41,33 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		# Fit AR model to all past residuals
 		arModel <- ar(res)
 		nextIncRes <- predict(arModel, n.ahead=1)$pred
-		print(nextIncRes)
+		# print(nextIncRes)
 
 		# Plot prediction without AR
 		evalPreds[i] <- allEval[i]
 
 		# Plot prediction with AR
-		# evalPreds[i] <- allEval[i] + nextIncRes
+		evalPredsAR[i] <- allEval[i] + nextIncRes
 	}
+
+	# SSE of epi
+	print(evalPreds[(minTruncation + 1):length(evalPreds)])
+	print(evalPredsAR[(minTruncation + 1):length(evalPredsAR)])
+	sseEpi <- rSquareError(evalPreds[(minTruncation + 1):length(evalPreds)], offsetData[(minTruncation + 1):length(offsetData)])
+	
+	# SSE of AR
+	sseAR <- rSquareError(evalPredsAR[(minTruncation + 1):length(evalPredsAR)], offsetData[(minTruncation + 1):length(offsetData)])
+
+	# SSE of offset data
+	# Shift data
+	shiftOffsetData <- c(0,offsetData)
+	print(shiftOffsetData[(minTruncation + 1):length(offsetData)])
+	print(offsetData[(minTruncation + 1):length(offsetData)])
+	sseDiff <- rSquareError(shiftOffsetData[(minTruncation + 1):length(offsetData)], offsetData[(minTruncation + 1):length(offsetData)])
+
+	print(paste("EpiRS", sseEpi))
+	print(paste("EpiARRS", sseAR))
+	# print(paste("ShiftRS", sseDiff))
 
 	# Set graph settings
 	setEPS()
