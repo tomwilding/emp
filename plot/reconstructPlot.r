@@ -45,7 +45,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 
 		# RSquare and labels
 		# Future RSqaure window to evaluate over
-		NF <- 20
+		NF <- 7
 		# Calculate RSqaure
 		rSquarePast <- eval$optimRSquare
 		
