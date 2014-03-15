@@ -77,6 +77,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	mtext(daysText, 3, cex=0.8)
 
 	# Plot actual data point at this time
-	lines(offsetTimes, evalPredsAR, col='red')
+	lines(offsetTimes, evalPreds, col='red')
+	# abline(v=109)
 	dev.off()
 }

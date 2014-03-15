@@ -76,7 +76,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	endOffset <- offsets$endOffset
 
 
-	# # Plot inline for dev
+	# Plot inline for dev
  	# fineTimes <- breakTime(offsetTimes, timeStep)
  	# cl <- c("red","cyan","forestgreen","goldenrod2","red4")
  	# setEPS()
