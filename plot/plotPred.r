@@ -26,11 +26,6 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		timeStep <- 0.05
 		fineTimes <- breakTime(offsetTimes, timeStep)
 
-		# Get graph object for this iteration
-		# eval <- evalList[[i]]
-		# allEval <- eval$allEval
-		# allEvalFine <- eval$allEvalFine
-
 		# Plot predicted data point for this time at previous fitting
 		evalPrev <- evalList[[i - 1]]
 		allEval <- evalPrev$allEval$multiInf
@@ -82,6 +77,6 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	mtext(daysText, 3, cex=0.8)
 
 	# Plot actual data point at this time
-	lines(offsetTimes, evalPreds, col='red')
+	lines(offsetTimes, evalPredsAR, col='red')
 	dev.off()
 }
