@@ -58,8 +58,6 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		} else if (epidemicType == 1) {
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
 		}
-		# TODO: Store eval starts at i offset
-		evalList[[i]] <- eval
 
 		maxt <- eval$optimTime
 		ts[k] <- maxt
@@ -86,14 +84,14 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			initCondsMulti <- newParams(initConds, startConds, epidemicType)
 			if (epidemicType == 3) {
 				# Fit k+1 epidemics with new SIR sub epidemic exploring t0 from previous epidemic start point
-				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i - window):(i - maxTRange)), plotConfig)
+				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i - window):(i - maxTRange)), plotConfig)
 			} else if (epidemicType == 1) {
 				# Fit k+1 epidemics with set t0 at i
-				eval <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i):(i)), plotConfig)
+				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i):(i)), plotConfig)
 			}
 			# TODO: Does the residuals array need to be updated here? = Only consider residuals in initial fitInRangeParallel above - will be updated in next loop
 			# residuals <- nIncResiduals[(i-(nResiduals-1)):i]
-			multiRSquare <- eval$optimRSquare
+			multiRSquare <- evalMulti$optimRSquare
 			# If K + 1 epidemic is better then set k + 1 from now on
 			print(multiRSquare)
 			print(rSquare)
@@ -102,14 +100,17 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				# Set k+1 epidemics from now on
 				k <- k + 1
 				# Update parameters to continue fitting with k+1 epidemics
-				multiParams <- eval$multiParams
-				maxt <- eval$optimTime
+				multiParams <- evalMulti$multiParams
+				maxt <- evalMulti$optimTime
 				ts <- c(ts,maxt)
 				rSquare <- multiRSquare
 				initConds <- initCondsMulti
 				epiTypes <- epiTypesMulti
+				eval <- evalMulti
 			}
 		}
+		# TODO: Store eval starts at i offset
+		evalList[[i]] <- eval
 		totalRSqaure <- totalRSqaure + rSquare
 		# Update the initial parameters for the next fitting
 		initParams <- multiParams
