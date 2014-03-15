@@ -10,24 +10,17 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	# Colours for plotting
 	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
 
+	# Take data set within specified offset
+	offsetTimes <- times[startOffset:(length(times)-endOffset)]
+	offsetData <- data[startOffset:(length(data)-endOffset)]
+
 	# Loop through all objects
-
 	end <- length(evalList)
-	for(i in (minTruncation + 1):end) {
-		
-		# Take data set within specified offset
-		offsetTimes <- times[startOffset:(length(times)-endOffset)]
-		offsetData <- data[startOffset:(length(data)-endOffset)]
-		# Truncate data set
-		truncTimes <- offsetTimes[1:i]
-		truncData <- offsetData[1:i]
-
-		# Fine Times for evaluation
-		timeStep <- 0.05
-		fineTimes <- breakTime(offsetTimes, timeStep)
+	predOffset <- 1
+	for(i in (minTruncation + predOffset):end) {
 
 		# Plot predicted data point for this time at previous fitting
-		evalPrev <- evalList[[i - 1]]
+		evalPrev <- evalList[[i - predOffset]]
 		allEval <- evalPrev$allEval$multiInf
 
 		# Update previous prediction using AR model
@@ -47,27 +40,37 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 
 	# Calculate SSE
 	# SSE of epi
-	print(evalPreds[(minTruncation + 1):length(evalPreds)])
-	print(evalPredsAR[(minTruncation + 1):length(evalPredsAR)])
-	sseEpi <- ssError(evalPreds[(minTruncation + 1):length(evalPreds)], offsetData[(minTruncation + 1):length(offsetData)])
-	
+	inRangeEvalPreds <- evalPreds[(minTruncation + predOffset):length(evalPreds)]
+	inRangeData <- offsetData[(minTruncation + predOffset):length(offsetData)]
+	sseEpi <- ssError(inRangeEvalPreds, inRangeData)
+	rSqEpi <- rSquareError(inRangeEvalPreds, inRangeData)
+
 	# SSE of AR
-	sseAR <- ssError(evalPredsAR[(minTruncation + 1):length(evalPredsAR)], offsetData[(minTruncation + 1):length(offsetData)])
+	inRangeEvalPredsAR <- evalPredsAR[(minTruncation + predOffset):length(evalPredsAR)]
+	sseAR <- ssError(inRangeEvalPredsAR, inRangeData)
+	rSqAR <- rSquareError(inRangeEvalPredsAR, inRangeData)
 
 	# SSE of offset data
 	# Shift data
-	shiftOffsetData <- c(0,offsetData)
-	print(shiftOffsetData[(minTruncation + 1):length(offsetData)])
-	print(offsetData[(minTruncation + 1):length(offsetData)])
-	sseDiff <- ssError(shiftOffsetData[(minTruncation + 1):length(offsetData)], offsetData[(minTruncation + 1):length(offsetData)])
+	offsetPadding <- numeric(predOffset)
+	shiftOffsetData <- c(offsetPadding,offsetData)
+	inRangeShiftOffsetData <- shiftOffsetData[(minTruncation + predOffset):length(offsetData)]
+	sseDiff <- ssError(inRangeShiftOffsetData, inRangeData)
+	rSqDiff <- rSquareError(inRangeShiftOffsetData, inRangeData)
 
-	print(paste("EpiRS", sseEpi))
-	print(paste("EpiARRS", sseAR))
-	print(paste("ShiftRS", sseDiff))
+	print(paste("EpiSS", sseEpi))
+	print(paste("EpiARSS", sseAR))
+	print(paste("ShiftSS", sseDiff))
+	print(paste("EpiRS", rSqEpi))
+	print(paste("EpiARRS", rSqAR))
+	print(paste("ShiftRS", rSqDiff))
+	# print(paste("EpiMean", myMean(abs(inRangeEvalPreds - inRangeData))))
+	# print(paste("EpiARMean", myMean(abs(inRangeEvalPredsAR - inRangeData))))	
+	# print(paste("ShiftMean", myMean(abs(inRangeShiftOffsetData - inRangeData))))
 
 	# Set graph settings
 	setEPS()
-	postscript(paste(plotConfig$fileName, "allBlurPrediction", sep=''))	
+	postscript(paste(plotConfig$fileName, "allBlurPredictionAR", sep=''))	
 
 	# Main plot
 	par(mar=c(6.1,4.1,4.1,2.1))
@@ -77,7 +80,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	mtext(daysText, 3, cex=0.8)
 
 	# Plot actual data point at this time
-	lines(offsetTimes, evalPreds, col='red')
+	lines(offsetTimes, evalPredsAR, col='red')
 	# abline(v=109)
 	dev.off()
 }
