@@ -50,6 +50,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				# If only 1 epidemic assume it starts at given time
 				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
 			} else {
+
+				# print(paste("times", ts))
 				print(paste("min", ts[k] - window))
 				print(paste("max", i - maxTRange))
 				# Explore t0 from previous epidemic start point
@@ -168,8 +170,8 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 		# Set epidemic type according to residual limit
 		# sirSD <- meanRes + (sdRes * 2)
 		# spikeSD <- meanRes + (sdRes * 4)
-		sirSD <- meanRes + sdRes * 2
 		spikeSD <- meanRes + sdRes * 8
+		sirSD <- meanRes + sdRes * 3
 		# If minimum residual increase is more than required, then set type
 		if (minIncRes > spikeSD && sameSign && minIncRes > lowerLimit) {
 			print("Spike Set")

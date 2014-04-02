@@ -1,8 +1,8 @@
-load("output/data/blur1/blurData.RData")
+load("output/data/penta/pentaData.RData")
 require("epi")
 
 # Read data from file
-fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
+fluData <- read.csv("data/penta.csv", header = TRUE)
 # data <- sumData(fluData[,2], 4)
 data <- fluData[,2]
 times <- c(1:length(data))
@@ -12,11 +12,11 @@ times <- c(1:length(data))
 # times <- takeEveryOther(times)
 
 # Fitting multiple epidemics
-# load("data/blurData.RData")
+# load("data/pentaData.RData")
 # Only fit over a specific range
-startOffset <- 1
+startOffset <- 7
 endOffset <- 1
-offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5, minTRange=3, maxTRange=3)
+offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=10, minTRange=3, maxTRange=3)
 
 # Threshold
 # thresholds <- list(diff=0.05, lim=0.96)
@@ -29,10 +29,10 @@ initParams <- c(log(0.005), log(0.5), log(data[startOffset]*10));
 # I0 from first data point
 initConds <- c(1,data[startOffset],0);
 
-plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur1/", dataFile="output/data/blur1/blurData.RData", envFile="output/data/blur/blurEnv.RData", pat=12, rat=250)
+plotConfig <- list(title="Synthedemic Decomposition of Pentatonix Downloads", fileName="output/graphs/penta/", dataFile="output/data/penta/pentaData.RData", envFile="output/data/penta/pentaEnv.RData", pat=12, rat=250)
 
 # Fit parameters
-# reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot RSq graph
 # plotRSq(times, data, offsets, thresholds, initParams, initConds, plotConfig)
@@ -41,4 +41,4 @@ plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent D
 # plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # t+1 prediction
-plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)

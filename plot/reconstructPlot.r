@@ -48,11 +48,11 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		# Calculate RSqaure
 		rSquarePast <- eval$optimRSquare
 		
-		rSquareNF <- rSquareError(allEval$multiInf[i:(i+NF)], offsetData[i:(i+NF)])
-		RSqPastText <- paste("RSquare Past = ", signif(rSquarePast, digits=3))
-		RSqT1Text <- paste("RSquare Near Future = ", signif(rSquareNF, digits=3))
-		mtext(RSqPastText, 1, at=plotConfig$rat, padj=6, cex=0.7)
-		mtext(RSqT1Text, 1, at=plotConfig$rat, padj=8, cex=0.7)
+		# rSquareNF <- rSquareError(allEval$multiInf[i:(i+NF)], offsetData[i:(i+NF)])
+		# RSqPastText <- paste("RSquare Past = ", signif(rSquarePast, digits=3))
+		# RSqT1Text <- paste("RSquare Near Future = ", signif(rSquareNF, digits=3))
+		# mtext(RSqPastText, 1, at=plotConfig$rat, padj=6, cex=0.7)
+		# mtext(RSqT1Text, 1, at=plotConfig$rat, padj=8, cex=0.7)
 
 		# Plot rectangle of past time first to plot on top
 		rect(-1000000, -1000000, i + startOffset-1, 1000000, col=rgb(0.8,0.8,0.8), border=NA)
@@ -74,9 +74,9 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 			lines(fineTimes, multiInf, col="black")
 
 			# Params - Add IO to S0
-			S0 <- exp(subParams[3]) + subParams[4]
-			ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0)), collapse='')
-			mtext(ParamText, 1, at=plotConfig$pat, padj=6+(2*(k-1)), cex=0.7, col=cl[k])		
+			# S0 <- exp(subParams[3]) + subParams[4]
+			# ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0)), collapse='')
+			# mtext(ParamText, 1, at=plotConfig$pat, padj=6+(2*(k-1)), cex=0.7, col=cl[k])		
 
 			# Legend
 			legendText <- paste("Epidemic",1:k)

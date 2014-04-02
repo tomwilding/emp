@@ -28,20 +28,21 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		res <- evalPrev$residuals
 		# Fit AR model to all past residuals
 		arModel <- ar(res)
-		nextIncRes <- predict(arModel, n.ahead=1)$pred
+		nextIncRes <- predict(arModel, n.ahead=predOffset)$pred
 		# print(nextIncRes)
 
 		# Plot prediction without AR
 		evalPreds[i] <- allEval[i]
 
 		# Plot prediction with AR
-		evalPredsAR[i] <- allEval[i] + nextIncRes
+		evalPredsAR[i] <- allEval[i] + nextIncRes[predOffset]
 	}
 
 	# Calculate SSE
 	# SSE of epi
 	inRangeEvalPreds <- evalPreds[(minTruncation + predOffset):length(evalPreds)]
 	inRangeData <- offsetData[(minTruncation + predOffset):length(offsetData)]
+	inRangeTimes <- offsetTimes[(minTruncation + predOffset):length(offsetTimes)]
 	sseEpi <- ssError(inRangeEvalPreds, inRangeData)
 	rSqEpi <- rSquareError(inRangeEvalPreds, inRangeData)
 
@@ -50,13 +51,22 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	sseAR <- ssError(inRangeEvalPredsAR, inRangeData)
 	rSqAR <- rSquareError(inRangeEvalPredsAR, inRangeData)
 
+	# print(inRangeEvalPredsAR)
+	# print(inRangeData)
+
 	# SSE of offset data
 	# Shift data
 	offsetPadding <- numeric(predOffset)
-	shiftOffsetData <- c(offsetPadding,offsetData)
-	inRangeShiftOffsetData <- shiftOffsetData[(minTruncation + predOffset):length(offsetData)]
-	sseDiff <- ssError(inRangeShiftOffsetData, inRangeData)
-	rSqDiff <- rSquareError(inRangeShiftOffsetData, inRangeData)
+	shiftOffsetData <- c(offsetPadding,inRangeData)
+	inRangeShiftOffset <- shiftOffsetData[1:length(inRangeData)]
+	inRangeShiftData <- inRangeData
+	inRangeShiftData[1:predOffset] <- 0
+	sseDiff <- ssError(inRangeShiftOffset, inRangeShiftData)
+	rSqDiff <- rSquareError(inRangeShiftOffset, inRangeShiftData)
+
+	print(inRangeShiftOffset)
+	print(inRangeShiftData)
+	readline()
 
 	print(paste("EpiSS", sseEpi))
 	print(paste("EpiARSS", sseAR))
@@ -66,7 +76,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	print(paste("ShiftRS", rSqDiff))
 	# print(paste("EpiMean", myMean(abs(inRangeEvalPreds - inRangeData))))
 	# print(paste("EpiARMean", myMean(abs(inRangeEvalPredsAR - inRangeData))))	
-	# print(paste("ShiftMean", myMean(abs(inRangeShiftOffsetData - inRangeData))))
+	# print(paste("ShiftMean", myMean(abs(inRangeShiftOffset - inRangeData))))
 
 	# Set graph settings
 	setEPS()
@@ -74,7 +84,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 
 	# Main plot
 	par(mar=c(6.1,4.1,4.1,2.1))
-	plot(offsetTimes, offsetData, xlab='Epochs', ylab='Infected Individuals', col='steelblue', type="l")
+	plot(inRangeTimes, inRangeData, xlab='Epochs', ylab='Infected Individuals', col='steelblue', type="l")
 	title(main=plotConfig$title, cex.main=0.9, cex.axis=0.8)
 	daysText <- paste("Epochs after outbreak = ", i)
 	mtext(daysText, 3, cex=0.8)
