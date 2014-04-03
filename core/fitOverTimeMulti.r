@@ -36,6 +36,11 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	window <- 20
 	residuals <- c()
 
+	# At the start the start time is set to 0
+	startTimePrev <- ts[1]
+	startTimeCount <- 10
+	repeatStartTimes <- 5
+
 	epiList <- numeric(minTruncation)
 	
 	################################################# Decompose Epidemics ################################################
@@ -45,14 +50,19 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		print("### Fit k", quote=FALSE); print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE)
 		# print(paste("Beta", exp(initParams[2])))
 		epidemicType <- epiTypes[k]
+		# Determine if current epidemic start time is set
+		startTimeCount <- countStartTime(ts[k], startTimePrev, startTimeCount)
+		startTimePrev <- ts[k]
+		print("Count")
+		print(startTimeCount)
+		# Determine epidemic type and fit over required range
 		if (epidemicType == 3) {
-			if (k == 1) {
+			if (startTimeCount > repeatStartTimes) {
 				# If only 1 epidemic assume it starts at given time
 				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
 			} else {
-
 				# print(paste("times", ts))
-				print(paste("min", ts[k] - window))
+				print(paste("min", i - window))
 				print(paste("max", i - maxTRange))
 				# Explore t0 from previous epidemic start point
 				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c((i - window):(i - maxTRange)), plotConfig)
@@ -89,7 +99,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i - window):(i - maxTRange)), plotConfig)
 			} else if (epidemicType == 1) {
 				# Fit k+1 epidemics with set t0 at i
-				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i - 1):(i - 1)), plotConfig)
+				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c(i:i), plotConfig)
 			}
 			# TODO: Does the residuals array need to be updated here? = Only consider residuals in initial fitInRangeParallel above - will be updated in next loop
 			# residuals <- nIncResiduals[(i-(nResiduals-1)):i]
@@ -99,6 +109,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(rSquare)
 			if (multiRSquare > rSquare) {
 			# if (multiRSquare > rSquare + (1 - lim)) {
+				# Current epidemic start time is not set
+				startTimeCount <- 0
 				# Set k+1 epidemics from now on
 				k <- k + 1
 				# Update parameters to continue fitting with k+1 epidemics
@@ -134,6 +146,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 	sdRes <- 0
 	# Lower limit of residual to determine outbreak
 	lowerLimit <- 1000
+	upperLimit <- 4000
 	# Get the last n residuals
 	residuals <- (residuals[!is.na(residuals)])
 	
@@ -162,9 +175,9 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 			startResIndex <- resLength - nRes + 1
 			# Assume incRes is True and check condition for all n residuals
 			sameSign <- max(residuals[startResIndex:resLength]) < 0 || min(residuals[startResIndex:resLength]) > 0
-			# sigIncRes <- diffRes > (meanDiffRes + 2 * sdDiffRes)
 			minIncRes <- min(abs(residuals[startResIndex:resLength]))
 			print(minIncRes)
+			finalRes <- abs(residuals[resLength])
 		}
 		# print(paste("SameSign",sameSign))
 		# Set epidemic type according to residual limit
@@ -173,10 +186,10 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 		spikeSD <- meanRes + sdRes * 8
 		sirSD <- meanRes + sdRes * 2
 		# If minimum residual increase is more than required, then set type
-		if (minIncRes > spikeSD && sameSign && minIncRes > lowerLimit) {
+		if (minIncRes > spikeSD && minIncRes > lowerLimit && sameSign || finalRes > upperLimit) {
 			print("Spike Set")
 			type <- 1
-		} else if (minIncRes > sirSD && sameSign && minIncRes > lowerLimit) {
+		} else if (minIncRes > sirSD && minIncRes > lowerLimit && sameSign) {
 			print("SIR Set")
 			type <- 3
 		}
@@ -192,5 +205,11 @@ newParams <- function(initVec, startVec, epidemicType) {
 		# Update params for SIR epidemic
 		newVec <- c(initVec, startVec)
 	}
+}
 
+countStartTime <- function(startTime, startTimePrev, startTimeCount) {
+	if (startTime == startTimePrev) {
+		startTimeCount <- startTimeCount + 1
+	}
+	startTimeCount
 }
