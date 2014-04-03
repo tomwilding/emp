@@ -142,8 +142,8 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 	# if (resLength > nRes + 1) {
 	if (resLength > window + 1) {
 		# Get standard deviation of residuals before the ones considered
-		absResiduals <- abs(residuals[1:(resLength - nRes)])
-		# absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
+		# absResiduals <- abs(residuals[1:(resLength - nRes)])
+		absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
 		meanRes <- myMean(absResiduals)
 		sdRes <- mySd(absResiduals, meanRes)
 		# Reset between epidemics
