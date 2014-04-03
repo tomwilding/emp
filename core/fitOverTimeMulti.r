@@ -55,7 +55,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				print(paste("min", ts[k] - window))
 				print(paste("max", i - maxTRange))
 				# Explore t0 from previous epidemic start point
-				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c((ts[k] - window):(i - maxTRange)), plotConfig)
+				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c((i - window):(i - maxTRange)), plotConfig)
 			}
 		} else if (epidemicType == 1) {
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig)
