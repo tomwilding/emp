@@ -15,7 +15,7 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5)
 thresholds <- list(lim=0.9)
 
 # Init Params = beta, gamma, S0
-initParams <- c(log(0.005), log(0.5), log(data[startOffset]*10))
+initParams <- c(log(0.001), log(0.01), log(data[startOffset]*10))
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
 epiTypes <- c(3)
 # Init Conds = S0, I0, R0

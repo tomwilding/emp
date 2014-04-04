@@ -115,6 +115,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# Get all residuals up to current time
 	eval$residuals <- (offsetData[1:i]) - (allEval$multiInf[1:i])
 	# Set different multi and sub evals
+	eval$nextPred <- allEval$multiInf[i+1]
 	eval$pastEval <- optimPastEval
 	eval$allEval <- allEval
 	eval$allEvalFine <- allEvalFine

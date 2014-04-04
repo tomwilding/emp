@@ -6,7 +6,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 	lim <- thresholds$lim
 	
 	# Colours for plotting
-	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
+	cl <- c("red","cyan","forestgreen","goldenrod2","red4", "blue")
 
 	# Loop through all objects
 

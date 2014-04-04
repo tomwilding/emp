@@ -22,14 +22,15 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		# Plot predicted data point for this time at previous fitting
 		evalPrev <- evalList[[i - predOffset]]
 		allEval <- evalPrev$allEval$multiInf
-
+		
 		# Update previous prediction using AR model
 		# Get past residuals
-		res <- evalPrev$residuals
+		# lastEpiTime <- evalPrev$optimTimes[length(evalPrev$optimTimes)]
+		# prevResiduals <- evalPrev$residuals[lastEpiTime:i-1]
+		prevResiduals <- evalPrev$residuals
 		# Fit AR model to all past residuals
-		arModel <- ar(res)
+		arModel <- ar(prevResiduals)
 		nextIncRes <- predict(arModel, n.ahead=predOffset)$pred
-		# print(nextIncRes)
 
 		# Plot prediction without AR
 		evalPreds[i] <- allEval[i]
@@ -51,7 +52,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	sseAR <- ssError(inRangeEvalPredsAR, inRangeData)
 	rSqAR <- rSquareError(inRangeEvalPredsAR, inRangeData)
 
-	# print(inRangeEvalPredsAR)
+	# print(inRangeEvalPredsAR - inRangeData)
 	# print(inRangeData)
 
 	# SSE of offset data
@@ -59,21 +60,26 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	offsetPadding <- numeric(predOffset)
 	shiftOffsetData <- c(offsetPadding,inRangeData)
 	inRangeShiftOffset <- shiftOffsetData[1:length(inRangeData)]
-	inRangeShiftData <- inRangeData
-	inRangeShiftData[1:predOffset] <- 0
-	sseDiff <- ssError(inRangeShiftOffset, inRangeShiftData)
-	rSqDiff <- rSquareError(inRangeShiftOffset, inRangeShiftData)
+	sseDiff <- ssError(inRangeShiftOffset, inRangeData)
+	rSqDiff <- rSquareError(inRangeShiftOffset, inRangeData)
 
-	print(inRangeShiftOffset)
-	print(inRangeShiftData)
-	readline()
+	# Without repeat data points
+	inRangeShiftOffsetWithoutRepeats <- c(shiftOffsetData[1:115], shiftOffsetData[122:length(inRangeData)])
+	inRangeDataWithoutRepeats <- c(inRangeData[1:114], inRangeData[121:length(inRangeData)])
+	inRangeEvalPredsARWR <- c(inRangeEvalPredsAR[1:114], inRangeEvalPredsAR[121:length(inRangeEvalPredsAR)])
+	sseDiffWR <- ssError(inRangeShiftOffsetWithoutRepeats, inRangeDataWithoutRepeats)
+	sseARWR <- ssError(inRangeEvalPredsARWR, inRangeDataWithoutRepeats)
+	rSqARWR <- rSquareError(inRangeEvalPredsARWR, inRangeDataWithoutRepeats)
+	rSqDiffWR <- rSquareError(inRangeShiftOffsetWithoutRepeats, inRangeDataWithoutRepeats)
+	# print(inRangeEvalPredsARWR - inRangeDataWithoutRepeats)
+	# print(inRangeShiftOffsetWithoutRepeats - inRangeDataWithoutRepeats)
 
-	print(paste("EpiSS", sseEpi))
-	print(paste("EpiARSS", sseAR))
-	print(paste("ShiftSS", sseDiff))
-	print(paste("EpiRS", rSqEpi))
-	print(paste("EpiARRS", rSqAR))
-	print(paste("ShiftRS", rSqDiff))
+	# print(paste("EpiSS", sseEpi))
+	print(paste("EpiARSSWR", sseARWR))
+	print(paste("ShiftSSWR", sseDiffWR))
+	# print(paste("EpiRS", rSqEpi))
+	print(paste("EpiARRSWR", rSqARWR))
+	print(paste("ShiftRSWR", rSqDiffWR))
 	# print(paste("EpiMean", myMean(abs(inRangeEvalPreds - inRangeData))))
 	# print(paste("EpiARMean", myMean(abs(inRangeEvalPredsAR - inRangeData))))	
 	# print(paste("ShiftMean", myMean(abs(inRangeShiftOffset - inRangeData))))
@@ -90,7 +96,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	mtext(daysText, 3, cex=0.8)
 
 	# Plot actual data point at this time
-	lines(offsetTimes, evalPredsAR, col='red')
-	# abline(v=109)
+	lines(inRangeTimes, inRangeEvalPredsAR, col='red')
+	abline(v=106)
 	dev.off()
 }

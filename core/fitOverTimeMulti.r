@@ -80,6 +80,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# residuals <- eval$residuals
 		# print(residuals)
 
+		# Print next prediction
+		# print(eval$nextPred)
+
 		# Try to improve the fit if rSquare has deteriorated
 		lim <- thresholds$lim
 		epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
@@ -175,21 +178,21 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 			startResIndex <- resLength - nRes + 1
 			# Assume incRes is True and check condition for all n residuals
 			sameSign <- max(residuals[startResIndex:resLength]) < 0 || min(residuals[startResIndex:resLength]) > 0
-			minIncRes <- min(abs(residuals[startResIndex:resLength]))
-			print(minIncRes)
+			sirIncRes <- min(abs(residuals[startResIndex:resLength]))
+			print(sirIncRes)
 			finalRes <- abs(residuals[resLength])
 		}
 		# print(paste("SameSign",sameSign))
 		# Set epidemic type according to residual limit
 		# sirSD <- meanRes + (sdRes * 2)
 		# spikeSD <- meanRes + (sdRes * 4)
-		spikeSD <- meanRes + sdRes * 8
+		spikeSD <- meanRes + sdRes * 6
 		sirSD <- meanRes + sdRes * 2
 		# If minimum residual increase is more than required, then set type
-		if (minIncRes > spikeSD && minIncRes > lowerLimit && sameSign || finalRes > upperLimit) {
+		if (finalRes > spikeSD) {
 			print("Spike Set")
 			type <- 1
-		} else if (minIncRes > sirSD && minIncRes > lowerLimit && sameSign) {
+		} else if (sirIncRes > sirSD && sirIncRes > lowerLimit && sameSign) {
 			print("SIR Set")
 			type <- 3
 		}
