@@ -1,4 +1,5 @@
 setSolver <- function(optimMethod, k, epiTypes) {
+	require(bbmle)
 	# print("Set Solver")
 	# Set parscale for optimisation
 	parscale <- c()
@@ -20,22 +21,50 @@ setSolver <- function(optimMethod, k, epiTypes) {
 			}
 		},
 		MLE = {
-			optimSIRMulti <- function(times, data, initConds, initParams, ts, k) { 
+			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k) { 
 				namedParams <- nameParams(initParams)
-				mle <- mle2(minuslogl=buildSirNegLLMulti(initParams), start=namedParams, data=list(timeIn=times,  dataIn=data, initConds=initConds, ts=ts, k=k), method="Nelder-Mead", control=list(parscale=c(-1,-1,1,-1,-1,1)))
+				mle <- mle2(sirNegLL, start=namedParams, data=list(timeIn=times,  dataIn=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes), method="Nelder-Mead")
 				params <- as.list(coef(mle))
 				optimParams <- unnameParams(params)
+				# params <- optim(initParams, sirNegLL, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes, method="Nelder-Mead", control=list(parscale=parscale))
+				# optimParams <- params$par
 			}
 		},
 		{
 			print('Solver method not specified or not recognised, defaulting to LMS')
 			optimSIRMulti <- function(times, data, initConds, initParams, ts, k) { 
-				params <- optim(initParams, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, method="Nelder-Mead", control=list(parscale=c(-1,-1,1,-1,-1,1)))
+				params <- optim(initParams, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes, method="Nelder-Mead", control=list(parscale=parscale))
 				optimParams <- params$par
 			}
 		}
 	)
 }
+
+nameParams <- function(initParams) {
+	list(b=initParams[1], g=initParams[2], s0=initParams[3])
+}
+
+unnameParams <- function(params) {
+	c(params$b, params$g, params$s0)
+}
+
+sirNegLL <- function(b , g, s0, timeIn, dataIn, initConds, ts, k, epiTypes) {
+	granularity <- 1
+	params <- c(b,g,s0)
+	gamma <- exp(g)
+	if (gamma > 1 || gamma <= 1e-4) {
+		nll <- -Inf
+	} else {
+		eval <- evalMulti(timeIn, dataIn, initConds, params, epiTypes, ts, k, granularity)
+		nll <- -sum(dnorm(x=dataIn, mean=eval$multiInf, sd=1, log=TRUE))
+	}
+	nll
+}
+# sirNegLL <- function(params, times, data, initConds, epiTypes, ts, k) {
+# 	granularity <- 1
+# 	eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, granularity)
+# 	nll <- -sum(dpois(x=data, lambda=eval$multiInf, log=TRUE))	
+# }
 
 # myOptim <- function(initParams, sseMulti, times, data, initConds, ts, k) {
 # 	# Create parscale array for each sub epidemic parameter set

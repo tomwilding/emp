@@ -6,6 +6,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 	startParams <- initParams
 	startConds <- initConds
+
 	# Take data set within specified offset
 	offsetTimes <- times[startOffset:(length(times)-endOffset)]
 	offsetData <- data[startOffset:(length(data)-endOffset)]
@@ -101,8 +102,23 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				# Fit k+1 epidemics with new SIR sub epidemic exploring t0 from previous epidemic start point
 				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i - window):(i - maxTRange)), plotConfig)
 			} else if (epidemicType == 1) {
+				# Fit zero decay at the start of a spike
+				# if (length(initCondsMulti < 8)) {
+				# 	initCondsMulti[4] <- log(0.001)
+				# } else if (length(initCondsMulti == 8)) {
+				# 	initCondsMulti[8] <- log(0.001)
+				# } else {
+				# 	initCondsMulti[9] <- log(0.001)
+				# }
 				# Fit k+1 epidemics with set t0 at i
 				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c(i:i), plotConfig)
+				# if (length(initCondsMulti < 8)) {
+				# 	initCondsMulti[4] <- log(0.001)
+				# } else if (length(initCondsMulti == 8)) {
+				# 	initCondsMulti[8] <- log(0.001)
+				# } else {
+				# 	initCondsMulti[9] <- log(0.001)
+				# }
 			}
 			# TODO: Does the residuals array need to be updated here? = Only consider residuals in initial fitInRangeParallel above - will be updated in next loop
 			# residuals <- nIncResiduals[(i-(nResiduals-1)):i]
@@ -149,7 +165,6 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 	sdRes <- 0
 	# Lower limit of residual to determine outbreak
 	lowerLimit <- 1000
-	upperLimit <- 4000
 	# Get the last n residuals
 	residuals <- (residuals[!is.na(residuals)])
 	
@@ -179,8 +194,8 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 			# Assume incRes is True and check condition for all n residuals
 			sameSign <- max(residuals[startResIndex:resLength]) < 0 || min(residuals[startResIndex:resLength]) > 0
 			sirIncRes <- min(abs(residuals[startResIndex:resLength]))
-			print(sirIncRes)
 			finalRes <- abs(residuals[resLength])
+			print(finalRes)
 		}
 		# print(paste("SameSign",sameSign))
 		# Set epidemic type according to residual limit
@@ -202,7 +217,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 
 newParams <- function(initVec, startVec, epidemicType) {
 	if (epidemicType == 1) {
-		# Update params for spike epidemic take I0 and gamma from initial
+		# Update params for spike epidemic used I0 and gamma from initial
 		newVec <- c(initVec, startVec[2])
 	} else if (epidemicType == 3) {
 		# Update params for SIR epidemic

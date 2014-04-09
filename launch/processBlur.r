@@ -6,7 +6,6 @@ fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
 data <- fluData[,2]
 
 # Fitting epidemics
-
 startOffset <- 1
 endOffset <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5)

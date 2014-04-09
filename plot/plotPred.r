@@ -19,6 +19,9 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	# end <- 290 + minTruncation
 	predOffset <- 1
 
+	# AR model order
+	AROrder <- 4
+
 	for(i in (minTruncation + predOffset):end) {
 
 		# Plot predicted data point for this time at previous fitting
@@ -28,18 +31,20 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		# Update previous prediction using AR model
 		# Get past residuals
 		# lastEpiTime <- evalPrev$optimTimes[length(evalPrev$optimTimes)]
-		# prevResiduals <- evalPrev$residuals[lastEpiTime:i-1]
+		# prevResiduals <- evalPrev$residuals[lastEpiTime:length(evalPrev$residuals)]
 		prevResiduals <- evalPrev$residuals
 		# Fit AR model to all past residuals
 		arModel <- ar(prevResiduals, FALSE, 4)
+		# arimaModel <- arima(prevResiduals, order=c(4,0,0))
 		nextIncRes <- predict(arModel, n.ahead=predOffset)$pred
-
 		# Plot prediction without AR
 		evalPreds[i] <- allEval[i]
 
 		# Plot prediction with AR
 		evalPredsAR[i] <- allEval[i] + nextIncRes[predOffset]
 	}
+	# print(arModel)
+	# print(arimaModel)
 
 	# Calculate SSE
 	# SSE of epi
@@ -51,9 +56,9 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 
 	# SSE of AR
 	inRangeEvalPredsAR <- evalPredsAR[(minTruncation + predOffset):length(evalPredsAR)]
-	inRangeEvalPredsAR[101] <- inRangeData[100]
-	inRangeEvalPredsAR[222] <- inRangeData[221]
-	inRangeEvalPredsAR[227] <- inRangeData[226]
+	# inRangeEvalPredsAR[101] <- inRangeData[100]
+	# inRangeEvalPredsAR[222] <- inRangeData[221]
+	# inRangeEvalPredsAR[227] <- inRangeData[226]
 	sseAR <- ssError(inRangeEvalPredsAR, inRangeData)
 	rSqAR <- rSquareError(inRangeEvalPredsAR, inRangeData)
 
@@ -66,23 +71,32 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	rSqDiff <- rSquareError(inRangeShiftOffset, inRangeData)
 
 	# Without repeat data points
-	# inRangeShiftOffsetWR <- c(shiftOffsetData[1:115], shiftOffsetData[122:length(inRangeData)])
-	# inRangeDataWR <- c(inRangeData[1:114], inRangeData[121:length(inRangeData)])
-	# inRangeEvalPredsWR <- c(inRangeEvalPreds[1:114], inRangeEvalPreds[121:length(inRangeEvalPreds)])
-	# inRangeEvalPredsARWR <- c(inRangeEvalPredsAR[1:114], inRangeEvalPredsAR[121:length(inRangeEvalPredsAR)])
-	# sseDiffWR <- ssError(inRangeShiftOffsetWR, inRangeDataWR)
-	# sseEpiWR <- ssError(inRangeEvalPredsWR, inRangeDataWR)
-	# sseARWR <- ssError(inRangeEvalPredsARWR, inRangeDataWR)
-	# rSqARWR <- rSquareError(inRangeEvalPredsARWR, inRangeDataWR)
-	# rSqDiffWR <- rSquareError(inRangeShiftOffsetWR, inRangeDataWR)
-	# inRangeEvalPredsARWR[101] <- inRangeShiftOffsetWR[101]
+	inRangeShiftOffsetWR <- c(shiftOffsetData[1:115], shiftOffsetData[122:length(inRangeData)])
+	inRangeDataWR <- c(inRangeData[1:114], inRangeData[121:length(inRangeData)])
+	inRangeEvalPredsWR <- c(inRangeEvalPreds[1:114], inRangeEvalPreds[121:length(inRangeEvalPreds)])
+	inRangeEvalPredsARWR <- c(inRangeEvalPredsAR[1:114], inRangeEvalPredsAR[121:length(inRangeEvalPredsAR)])
+	sseEpiWR <- ssError(inRangeEvalPredsWR, inRangeDataWR)
+	sseARWR <- ssError(inRangeEvalPredsARWR, inRangeDataWR)
+	sseDiffWR <- ssError(inRangeShiftOffsetWR, inRangeDataWR)
+	rSqARWR <- rSquareError(inRangeEvalPredsARWR, inRangeDataWR)
+	rSqDiffWR <- rSquareError(inRangeShiftOffsetWR, inRangeDataWR)
+
+	# Calculate Akaike
+	n <- length(inRangeDataWR)
+	sigSqARWR <- sseARWR / n
+	sigSqDiffWR <- sseDiffWR / n
+	aicARWR <- log(sigSqARWR) + (n + 2*AROrder) / n
+	aicDiffWR <- log(sigSqDiffWR) + (n + 2*n) / n
 
 	# print(paste("EpiSS", sseEpi))
-	print(paste("EpiARSSWR", sseAR))
-	print(paste("ShiftSSWR", sseDiff))
-	print(paste("EpiWR", rSqEpi))
-	print(paste("EpiARRSWR", rSqAR))
-	print(paste("ShiftRSWR", rSqDiff))
+	print(paste("EpiARSSWR", sseARWR), quote=FALSE)
+	print(paste("ShiftSSWR", sseDiffWR), quote=FALSE)
+
+	print(paste("EpiARRSWR", rSqARWR), quote=FALSE)
+	print(paste("ShiftRSWR", rSqDiffWR), quote=FALSE)
+
+	print(paste("EpiARAICWR", aicARWR), quote=FALSE)
+	print(paste("ShiftAICWR", aicDiffWR), quote=FALSE)
 	# print(paste("EpiMean", myMean(abs(inRangeEvalPreds - inRangeData))))
 	# print(paste("EpiARMean", myMean(abs(inRangeEvalPredsAR - inRangeData))))	
 	# print(paste("ShiftMean", myMean(abs(inRangeShiftOffset - inRangeData))))
