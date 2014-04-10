@@ -20,15 +20,16 @@ allPositiveInfectious <- c(positiveInfectious,positiveInfectiousPad)
 allPositiveInfectious1 <- c(positiveInfectiousPad,positiveInfectious1)
 # Add together the different predicted infectious values truncated to required size
 data <- (allPositiveInfectious[1:totalLength]) + (allPositiveInfectious1[1:totalLength])
-# Fitting epidemics
+times <- c(1:length(data))
 
+# Fitting epidemics
 startOffset <- 1
 endOffset <- 1
-minTruncation <- 3 
+minTruncation <- 5
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
-thresholds <- list(diff=0.05, lim=0.9)
+thresholds <- list(lim=0.9)
 
 # Init Params = beta, gamma, S0
 initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10));
@@ -41,3 +42,6 @@ plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName
 
 # Fit parameters
 reconstructPlot(1:length(data), data, offsets, thresholds, initParams, initConds, plotConfig)
+
+# t+1 prediction
+plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)

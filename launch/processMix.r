@@ -23,7 +23,7 @@ data <- (allPositiveInfectious[1:totalLength]) + (allPositiveInfectious1[1:total
 # Fitting epidemics
 startOffset <- 1
 endOffset <- 1
-minTruncation <- 3
+minTruncation <- 5
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
