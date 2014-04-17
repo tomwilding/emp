@@ -41,6 +41,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	startTimePrev <- ts[1]
 	startTimeCount <- 10
 	repeatStartTimes <- 5
+	timeSinceOutbreak <- 0
 
 	epiList <- numeric(minTruncation)
 	
@@ -88,7 +89,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		lim <- thresholds$lim
 		epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
 		# epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
-		if ((rSquare < lim) && (epidemicType > 0)) {
+		if ((rSquare < lim) && (epidemicType > 0) && (timeSinceOutbreak > minTRange)) {
 		# if (epidemicType > 0) {
 			# Set new epidemic type in epidemic type array
 			epiTypesMulti <- c(epiTypes, epidemicType)
@@ -115,6 +116,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			# if (multiRSquare > rSquare + (1 - lim)) {
 				# Current epidemic start time is not set
 				startTimeCount <- 0
+				timeSinceOutbreak <- 0
 				# Set k+1 epidemics from now on
 				k <- k + 1
 				# Update parameters to continue fitting with k+1 epidemics
@@ -126,12 +128,19 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				epiTypes <- epiTypesMulti
 				eval <- evalMulti
 			}
+		} else if ((rSquare < lim) && (epidemicType == 1)) {
+			print("InHere")
+			# New spike outbreak detected - replace old I0
+			initConds[length(initConds)] <- offsetData[i]
+			ts[k] <- i
 		}
 		# TODO: Store eval starts at i offset
 		evalList[[i]] <- eval
 		totalRSqaure <- totalRSqaure + rSquare
 		# Update the initial parameters for the next fitting
 		initParams <- multiParams
+		# Increment time since outbreak
+		timeSinceOutbreak <- timeSinceOutbreak + 1
 	}
 	
 	# Save all params
