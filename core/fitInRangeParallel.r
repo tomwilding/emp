@@ -69,9 +69,9 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# Evaluate over all fine granularity time
 	optimParams <- optimPastEval$multiParams
 	# TODO: Don't want to restrict eval - eval over all points in evalMulti after optim over all but last n
-	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:k-1], optimTime), k, timeStep)
+	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, timeStep)
 	# Evaluate over all time
-	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:k-1], optimTime), k, 1) 
+	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, 1) 
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
 
@@ -93,13 +93,15 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
  	lines(offsetTimes, offsetData, col='steelblue', lty=1)
  	points(truncTimes, truncData, col='black', pch=16)
  	# lines(fineTimes, allEvalFine$multiInf, lty=1)
+ 	# multiInfCoarse <- allEval$multiInf
  	multiInf <- allEvalFine$multiInf
  	for(k in 1:(length(allEvalFine$subInf))) {
  		sub <- allEvalFine$subInf[[k]]
  		subParams <- allEvalFine$subParams[[k]]
  		# Print sub epidemic graph
  		lines(fineTimes, sub, col=cl[k], lty=2)
- 		lines(fineTimes, multiInf, col="black")
+ 		lines(fineTimes, multiInf, col='black')
+ 		# lines(offsetTimes, multiInfCoarse, col='green')
  	}
  	dev.off()
 
@@ -107,7 +109,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	eval$multiParams <- optimParams
 	eval$initConds <- initConds
 	eval$optimTime <- optimTime
-	eval$optimTimes <- c(ts[1:k-1], optimTime)
+	eval$optimTimes <- c(ts[1:(k-1)], optimTime)
 	eval$k <- k
 	eval$optimRSquare <- optimRSquare 
 	# Get final residual from allEval infectious

@@ -72,7 +72,6 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 			# Print sub epidemic graph
 			lines(fineTimes, sub, col=cl[k], lty=2)
 			lines(fineTimes, multiInf, col="black")
-
 			# Params - Add IO to S0
 			# S0 <- exp(subParams[3]) + subParams[4]
 			# ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0)), collapse='')

@@ -1,13 +1,13 @@
 # Read data from file
 require('epi')
 
-fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
-# nSum <- 4
+fluData <- read.csv("data/call.csv", header = TRUE)
+# nSum <- 2
 data <- fluData[,2]
 # data <- sumData(data, nSum)
 
 # Fitting epidemics
-startOffset <- 1
+startOffset <- 10
 endOffset <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5)
 
@@ -22,7 +22,7 @@ epiTypes <- c(3)
 # I0 from first data point
 initConds <- c(1,data[startOffset],0)
 
-plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur2/", dataFile="output/data/blur2/blurData.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=60)
+plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/call1/", dataFile="output/data/call1/callData.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=60)
 
 # Fit parameters
 fitOverTimeMulti("LMS", 1:length(data), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)

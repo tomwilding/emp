@@ -24,9 +24,6 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	# AR model order
 	AROrder <- 4
 
-	# Residual window
-	# window <- 4
-
 	for(i in (minTruncation + predOffset):end) {
 		# Plot predicted data point for this time at previous fitting
 		evalPrev <- evalList[[i - predOffset]]
@@ -34,10 +31,11 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		
 		# Update previous prediction using AR model
 		# Get past residuals
-		# lastEpiTime <- evalPrev$optimTimes[length(evalPrev$optimTimes)]
-		# prevResiduals <- evalPrev$residuals[lastEpiTime:length(evalPrev$residuals)]
 		prevResiduals <- evalPrev$residuals
-		# prevResidualsWindow <- prevResiduals[length(prevResiduals)-window:length(prevResiduals)]
+		# lastEpiTime <- min(4,evalPrev$optimTimes[length(evalPrev$optimTimes)])
+		# prevResiduals <- evalPrev$residuals[lastEpiTime:length(evalPrev$residuals)]
+		# window <- 4
+		# prevResidualsWindow <- prevResiduals[(length(prevResiduals)-window):length(prevResiduals)]
 		# Fit AR model to all past residuals
 		arModel <- ar(prevResiduals, FALSE, 4)
 		# arimaModel <- arima(prevResiduals, order=c(4,0,0))
@@ -94,17 +92,22 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	# rSqDiffWR <- rSquareError(inRangeShiftOffsetWR, inRangeDataWR)
 
 	# Calculate Akaike
-	n <- length(inRangeData)
-	sigSqAR <- sseAR / n
-	sigSqDiff <- sseDiff / n
-	aicAR <- log(sigSqAR) + (n + 2*AROrder) / n
-	aicDiff <- log(sigSqDiff) + (n + 2*n) / n
+	# n <- length(inRangeData)
+	# sigSqAR <- sseAR / n
+	# sigSqDiff <- sseDiff / n
+	# aicAR <- log(sigSqAR) + (n + 2*AROrder) / n
+	# aicDiff <- log(sigSqDiff) + (n + 2*n) / n
 
 	# n <- length(inRangeDataWR)
 	# sigSqARWR <- sseARWR / n
 	# sigSqDiffWR <- sseDiffWR / n
 	# aicARWR <- log(sigSqARWR) + (n + 2*AROrder) / n
 	# aicDiffWR <- log(sigSqDiffWR) + (n + 2*n) / n
+
+	# Mean Absolute Difference
+	m <- median(inRangeData)
+	madAR <- median(abs((inRangeEvalPredsAR - m)))
+	madDiff <- median(abs(inRangeShiftOffset - m))
 
 	print(paste("EpiSS", sseEpi))
 	print(paste("EpiARSS", sseAR), quote=FALSE)
@@ -116,8 +119,11 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	print(paste("ShiftRS", rSqDiff), quote=FALSE)
 	print(paste("MeanARRS", rSqMeanAR), quote=FALSE)
 	
-	print(paste("EpiARAIC", aicAR), quote=FALSE)
-	print(paste("ShiftAIC", aicDiff), quote=FALSE)
+	# print(paste("EpiARAIC", aicAR), quote=FALSE)
+	# print(paste("ShiftAIC", aicDiff), quote=FALSE)
+
+	print(paste("EpiARMAD", madAR), quote=FALSE)
+	print(paste("ShiftMAD", madDiff), quote=FALSE)
 
 
 	# print(paste("EpiMean", myMean(abs(inRangeEvalPreds - inRangeData))))
@@ -137,7 +143,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 
 	# Plot actual data point at this time
 	lines(inRangeTimes, inRangeEvalPredsAR, col='red')
-	# lines(inRangeTimes, inRangeEvalPreds, col='green')
+	lines(inRangeTimes, inRangeEvalPreds, col='black')
 	# lines(inRangeTimes, inRangeMeanPredsAR, col='blue')
 	# abline(v=106)
 	dev.off()

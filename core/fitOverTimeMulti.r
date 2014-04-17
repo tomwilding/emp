@@ -102,23 +102,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				# Fit k+1 epidemics with new SIR sub epidemic exploring t0 from previous epidemic start point
 				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c((i - window):(i - maxTRange)), plotConfig)
 			} else if (epidemicType == 1) {
-				# Fit zero decay at the start of a spike
-				# if (length(initCondsMulti < 8)) {
-				# 	initCondsMulti[4] <- log(0.001)
-				# } else if (length(initCondsMulti == 8)) {
-				# 	initCondsMulti[8] <- log(0.001)
-				# } else {
-				# 	initCondsMulti[9] <- log(0.001)
-				# }
 				# Fit k+1 epidemics with set t0 at i
 				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k+1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k+1, c(i:i), plotConfig)
-				# if (length(initCondsMulti < 8)) {
-				# 	initCondsMulti[4] <- log(0.001)
-				# } else if (length(initCondsMulti == 8)) {
-				# 	initCondsMulti[8] <- log(0.001)
-				# } else {
-				# 	initCondsMulti[9] <- log(0.001)
-				# }
 			}
 			# TODO: Does the residuals array need to be updated here? = Only consider residuals in initial fitInRangeParallel above - will be updated in next loop
 			# residuals <- nIncResiduals[(i-(nResiduals-1)):i]
@@ -204,6 +189,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 		spikeSD <- meanRes + sdRes * 6
 		sirSD <- meanRes + sdRes * 2
 		# If minimum residual increase is more than required, then set type
+		print(sirIncRes > sirSD && sirIncRes > lowerLimit && sameSign)
 		if (finalRes > spikeSD) {
 			print("Spike Set")
 			type <- 1
