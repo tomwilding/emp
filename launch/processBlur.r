@@ -1,15 +1,17 @@
 # Read data from file
 require('epi')
 
-fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
+fluData <- read.csv("data/blurred_lines_1.csv", header = TRUE)
 # nSum <- 4
 data <- fluData[,2]
 # data <- sumData(data, nSum)
 
 # Fitting epidemics
-startOffset <- 1
+minTruncation <- 5
+startOffset <- findStartOffset(data, minTruncation)
+# startOffset <- 1
 endOffset <- 1
-offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5)
+offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Threshold
 thresholds <- list(lim=0.9)

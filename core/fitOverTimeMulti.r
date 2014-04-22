@@ -89,7 +89,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		lim <- thresholds$lim
 		epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
 		# epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
-		if ((rSquare < lim) && (epidemicType > 0) && (timeSinceOutbreak > minTRange)) {
+		if ((rSquare < lim) && (epidemicType > 0)) {
 		# if (epidemicType > 0) {
 			# Set new epidemic type in epidemic type array
 			epiTypesMulti <- c(epiTypes, epidemicType)
@@ -187,6 +187,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 			startResIndex <- resLength - nRes + 1
 			# Assume incRes is True and check condition for all n residuals
 			sameSign <- max(residuals[startResIndex:resLength]) < 0 || min(residuals[startResIndex:resLength]) > 0
+			# continuouslyIncreasing <- sort(residuals[startResIndex:resLength]) == residuals[startResIndex:resLength]
 			sirIncRes <- min(abs(residuals[startResIndex:resLength]))
 			finalRes <- abs(residuals[resLength])
 			print(finalRes)
@@ -198,8 +199,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 		spikeSD <- meanRes + sdRes * 6
 		sirSD <- meanRes + sdRes * 2
 		# If minimum residual increase is more than required, then set type
-		print(sirIncRes > sirSD && sirIncRes > lowerLimit && sameSign)
-		if (finalRes > spikeSD) {
+		if (finalRes > spikeSD && finalRes > lowerLimit) {
 			print("Spike Set")
 			type <- 1
 		} else if (sirIncRes > sirSD && sirIncRes > lowerLimit && sameSign) {

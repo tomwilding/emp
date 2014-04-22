@@ -43,5 +43,8 @@ plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName
 # Fit parameters
 reconstructPlot(1:length(data), data, offsets, thresholds, initParams, initConds, plotConfig)
 
+# Plot Residuals
+plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+
 # t+1 prediction
 plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)

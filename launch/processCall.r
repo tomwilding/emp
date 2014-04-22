@@ -7,7 +7,7 @@ data <- fluData[,2]
 # data <- sumData(data, nSum)
 
 # Fitting epidemics
-startOffset <- 10
+startOffset <- 1
 endOffset <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5)
 

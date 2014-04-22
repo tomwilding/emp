@@ -7,6 +7,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	evalPreds <- c()
 	evalPredsAR <- c()
 	meanPredsAR <- c()
+	futurePredsRS <- c()
 
 	# Loop through all objects
 	predOffset <- 1
@@ -124,7 +125,6 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 
 	print(paste("EpiARMAD", madAR), quote=FALSE)
 	print(paste("ShiftMAD", madDiff), quote=FALSE)
-
 
 	# print(paste("EpiMean", myMean(abs(inRangeEvalPreds - inRangeData))))
 	# print(paste("EpiARMean", myMean(abs(inRangeEvalPredsAR - inRangeData))))	

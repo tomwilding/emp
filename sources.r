@@ -1,4 +1,5 @@
 # Source code
+source('aux/findStartOffset.r')
 source('aux/simSIR.r')
 source('aux/simExp.r')
 source('aux/takeEveryOther.r')
