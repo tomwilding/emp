@@ -1,4 +1,4 @@
-fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, range, plotConfig) {
+fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, range, plotConfig, plot) {
 	require(doMC)
 
 	# Ensure length of range is greater than 0
@@ -10,6 +10,12 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# Register multi core backend with n cores
 	n <- length(range)
 	registerDoMC(n)
+
+	# # Truncate data set to start time when k = 1
+	# if (k == 1) {
+	# 	offsetTimes <- offsetTimes[ts[k]:length(offsetTimes)]
+	# 	offsetData <- offsetData[ts[k]:length(offsetData)]
+	# }
 
 	# Truncate offsetData set
 	truncTimes <- offsetTimes[1:i]
@@ -28,54 +34,90 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# lines(1:length(offsetTimes), offsetData, col='steelblue')
 	# points(1:length(truncTimes), truncData, col='black', pch=16)
 	###################################### Parallel evaluation at all feasible time points #######################################
-	EvalOverTime <- foreach (t=range) %dopar% {
-		# time value t0 referenced from offset offsetData
-		tsExplore <- c(ts[1:k-1],t)
-		# Find optimal beta and gamma by optimising them to minimise the least square function
-		# OptimSIRMulti passed in from call to setSolver
-		tryCatch({
-			optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, tsExplore, k)
-		}, warning = function(w) {
-			print(w)
-			print("optim warning")
-		}, error = function(e) {
-			print(e)
-			print("optim failed")
-		})
-		pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k, 1)
-		predInfectiousPast <- pastEval$multiInf
-		# rSquare error to determine best time to start fitting
-		rSquareErrorPast <- rSquareError(predInfectiousPast, truncData)
-		# Build list of optimisation results
-		list(t, rSquareErrorPast, pastEval)
-	}
-
-	# Get maximal rSquare index within parallel combined list
-	maxRSIndex <- 1
-	maxRS <- EvalOverTime[[1]][[2]]
-	for (r in 1:length(EvalOverTime)) {
-		RS <- EvalOverTime[[r]][[2]]
-		if (RS > maxRS) {
-			maxRS <- RS
-			maxRSIndex <- r
+	if (k < 1) {
+		# Fit mean as prediction
+		allEval <- evalMulti(offsetTimes, truncData, initConds, optimParams, epiTypes, ts, k, 1)
+		allEvalFine <- evalMulti(offsetTimes, truncData, initConds, optimParams, epiTypes, ts, k, timeStep)
+		pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, ts, k, 1)
+		eval$optimTime <- i
+		eval$optimRSquare <- rSquareError(pastEval$multiInf, truncData)
+		eval$multiParams <- initParams
+		eval$pastEval <- pastEval
+		eval$allEvalFine <- allEvalFine
+		eval$residuals <- (offsetData[1:i]) - (allEval$multiInf[1:i])
+		eval$finalResidual <- offsetData[i] - allEval$multiInf[i]
+	} else {
+		EvalOverTime <- foreach (t=range) %dopar% {
+			# time value t0 referenced from offset offsetData
+			if (k == 1) {
+				tsExplore <- c(ts, t)
+			} else {
+				tsExplore <- c(ts[1:(k - 1)],t)
+			}
+			# Find optimal beta and gamma by optimising them to minimise the least square function
+			# OptimSIRMulti passed in from call to setSolver
+			tryCatch({
+				optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, tsExplore, k)
+			}, warning = function(w) {
+				print(w)
+				print("optim warning")
+			}, error = function(e) {
+				print(e)
+				print("optim failed")
+			})
+			pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k, 1)
+			predInfectiousPast <- pastEval$multiInf
+			# rSquare error to determine best time to start fitting
+			rSquareErrorPast <- rSquareError(predInfectiousPast, truncData)
+			# Build list of optimisation results
+			list(t, rSquareErrorPast, pastEval)
 		}
+
+		# Get maximal rSquare index within parallel combined list
+		maxRSIndex <- 1
+		maxRS <- EvalOverTime[[1]][[2]]
+		for (r in 1:length(EvalOverTime)) {
+			RS <- EvalOverTime[[r]][[2]]
+			if (RS > maxRS) {
+				maxRS <- RS
+				maxRSIndex <- r
+			}
+		}
+
+		# Get optimal values stored in parallel evaluation loop
+		optimTime <- EvalOverTime[[maxRSIndex]][[1]]
+		optimRSquare <- EvalOverTime[[maxRSIndex]][[2]]
+		# Optimal sub and combined epidemic parameters
+		optimPastEval <- EvalOverTime[[maxRSIndex]][[3]]
+		# Evaluate over all fine granularity time
+		optimParams <- optimPastEval$multiParams
+		# TODO: Don't want to restrict eval - eval over all points in evalMulti after optim over all but last n
+		allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, timeStep)
+		# Evaluate over all time
+		allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, 1) 
+		startOffset <- offsets$startOffset
+		endOffset <- offsets$endOffset
+
+		# Set values of eval
+		eval$multiParams <- optimParams
+		eval$initConds <- initConds
+		eval$optimTime <- optimTime
+		eval$optimTimes <- c(ts[1:(k-1)], optimTime)
+		eval$k <- k
+		eval$optimRSquare <- optimRSquare 
+		# Get final residual from allEval infectious
+		eval$finalResidual <- (offsetData[i] - allEval$multiInf[i])
+		# Get all residuals up to current time
+		eval$residuals <- (offsetData[1:i]) - (allEval$multiInf[1:i])
+		# Set different multi and sub evals
+		eval$nextPred <- allEval$multiInf[i+1]
+		eval$pastEval <- optimPastEval
+		eval$allEval <- allEval
+		eval$allEvalFine <- allEvalFine
 	}
 
-	# Get optimal values stored in parallel evaluation loop
-	optimTime <- EvalOverTime[[maxRSIndex]][[1]]
-	optimRSquare <- EvalOverTime[[maxRSIndex]][[2]]
-	# Optimal sub and combined epidemic parameters
-	optimPastEval <- EvalOverTime[[maxRSIndex]][[3]]
-	# Evaluate over all fine granularity time
-	optimParams <- optimPastEval$multiParams
-	# TODO: Don't want to restrict eval - eval over all points in evalMulti after optim over all but last n
-	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, timeStep)
-	# Evaluate over all time
-	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, 1) 
-	startOffset <- offsets$startOffset
-	endOffset <- offsets$endOffset
-
-
+	if (plot) {
+	allEvalFine <- eval$allEvalFine
 	# Plot inline for dev
  	fineTimes <- breakTime(offsetTimes, timeStep)
  	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
@@ -104,24 +146,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
  		# lines(offsetTimes, multiInfCoarse, col='green')
  	}
  	dev.off()
+ 	}
 
-	# Set values of eval
-	eval$multiParams <- optimParams
-	eval$initConds <- initConds
-	eval$optimTime <- optimTime
-	eval$optimTimes <- c(ts[1:(k-1)], optimTime)
-	eval$k <- k
-	eval$optimRSquare <- optimRSquare 
-	# Get final residual from allEval infectious
-	print(i)
-	print(offsetData[i])
-	eval$finalResidual <- (offsetData[i] - allEval$multiInf[i])
-	# Get all residuals up to current time
-	eval$residuals <- (offsetData[1:i]) - (allEval$multiInf[1:i])
-	# Set different multi and sub evals
-	eval$nextPred <- allEval$multiInf[i+1]
-	eval$pastEval <- optimPastEval
-	eval$allEval <- allEval
-	eval$allEvalFine <- allEvalFine
 	eval
 }

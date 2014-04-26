@@ -1,8 +1,9 @@
+print("pb")
 load("output/data/blur2/blurData.RData")
 require("epi")
 
 # Read data from file
-epiData <- read.csv("data/blurred_lines.csv", header = TRUE)
+epiData <- read.csv("data/blurred_lines_1.csv", header = TRUE)
 
 # nSum <- 4
 data <- epiData[,2]
@@ -10,11 +11,12 @@ data <- epiData[,2]
 times <- c(1:length(data))
 
 # Only fit over a specific range
+minTruncation <- 5
 startOffset <- 1
 endOffset <- 1
-offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5, minTRange=3, maxTRange=3)
+offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation, minTRange=3, maxTRange=3)
 
-thresholds <- list(lim=0.9)
+thresholds <- list(lim=0.8)
 
 # Init Params = beta, gamma, S0
 initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10));

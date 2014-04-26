@@ -6,8 +6,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	lim <- thresholds$lim
 	evalPreds <- c()
 	evalPredsAR <- c()
-	meanPredsAR <- c()
-	futurePredsRS <- c()
+	meanPredsAR <- c() 
 
 	# Loop through all objects
 	predOffset <- 1

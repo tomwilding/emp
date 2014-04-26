@@ -23,7 +23,7 @@ data <- (allPositiveInfectious[1:totalLength]) + (allPositiveInfectious1[1:total
 # Fitting epidemics
 startOffset <- 1
 endOffset <- 1
-minTruncation <- 5
+minTruncation <- 4
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
@@ -32,7 +32,7 @@ thresholds <- list(lim=0.9)
 # Init Params = beta, gamma, S0
 initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10));
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-epiTypes <- c(3)
+epiTypes <- c()
 # Init Conds = S0, I0, R0
 # I0 from first data point
 initConds <- c(1,data[startOffset],0);

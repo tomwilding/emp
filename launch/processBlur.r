@@ -8,18 +8,17 @@ data <- fluData[,2]
 
 # Fitting epidemics
 minTruncation <- 5
-startOffset <- findStartOffset(data, minTruncation)
-# startOffset <- 1
+startOffset <- 1
 endOffset <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Threshold
-thresholds <- list(lim=0.9)
+thresholds <- list(lim=0.85)
 
 # Init Params = beta, gamma, S0
 initParams <- c(log(0.001), log(0.01), log(data[startOffset]*10))
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-epiTypes <- c(3)
+epiTypes <- c()
 # Init Conds = S0, I0, R0
 # I0 from first data point
 initConds <- c(1,data[startOffset],0)
