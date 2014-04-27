@@ -52,8 +52,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Determine if current epidemic start time is set
 		startTimeCount <- countStartTime(ts[k], startTimePrev, startTimeCount)
 		startTimePrev <- ts[k]
-		print("Count")
-		print(startTimeCount)
+		print(paste("Count", startTimeCount))
 		# Determine epidemic type and fit over required range
 		if (epidemicType == 3) {
 			if (startTimeCount > repeatStartTimes || (k < 3)) {
@@ -130,8 +129,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			initCondsMulti <- newParams(initConds, startConds, epidemicType)
 			# Explore start range of SIR
 			if (epidemicType == 3) {
-				# Fit k+1 epidemics with new SIR sub epidemic exploring t0 from previous epidemic start point
-				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c((i - window):(i - maxTRange)), plotConfig, 1)
+				# Fit k+1 epidemics with new SIR sub epidemic exploring t0
+				startRange <- max(1, (i - window))
+				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c(startRange:(i - maxTRange)), plotConfig, 1)
 			} else {
 				# Fit k+1 epidemics with set t0 at i
 				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c(i:i), plotConfig, 1)
@@ -199,6 +199,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 	if (resLength > window + 1) {
 		# Get standard deviation of residuals before the ones considered
 		# absResiduals <- abs(residuals[1:(resLength - nRes)])
+		# minRes <- max(1, resLength - window)
 		absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
 		meanRes <- myMean(absResiduals)
 		sdRes <- mySd(absResiduals, meanRes)

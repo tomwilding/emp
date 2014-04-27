@@ -34,15 +34,17 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 		tsExplore <- c(ts[1:k-1],t)
 		# Find optimal beta and gamma by optimising them to minimise the least square function
 		# OptimSIRMulti passed in from call to setSolver
-		tryCatch({
-			optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, tsExplore, k)
-		}, warning = function(w) {
-			print(w)
-			print("optim warning")
-		}, error = function(e) {
-			print(e)
-			print("optim failed")
-		})
+		if (k > 1) {
+			tryCatch({
+				optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, tsExplore, k)
+			}, warning = function(w) {
+				print(w)
+				print("optim warning")
+			}, error = function(e) {
+				print(e)
+				print("optim failed")
+			})
+		}
 		pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k, 1)
 		predInfectiousPast <- pastEval$multiInf
 		# rSquare error to determine best time to start fitting
@@ -116,8 +118,6 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	eval$k <- k
 	eval$optimRSquare <- optimRSquare 
 	# Get final residual from allEval infectious
-	print(i)
-	print(offsetData[i])
 	eval$finalResidual <- (offsetData[i] - allEval$multiInf[i])
 	# Get all residuals up to current time
 	eval$residuals <- (offsetData[1:i]) - (allEval$multiInf[1:i])
