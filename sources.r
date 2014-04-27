@@ -26,6 +26,9 @@ source('plot/plotRSq.r')
 source('plot/plotResiduals.r')
 source('plot/plotPred.r')
 
+require(doMC)
+require(deSolve)
+
 # Packages
 # install.packages("deSolve")
 # install.packages("doMC")

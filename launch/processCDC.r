@@ -9,7 +9,7 @@ totalSpecimins <- fluData[,3]
 data <- totalSpecimins * percentPositive
 
 # Fitting epidemics
-startOffset <- 7
+startOffset <- 1
 endOffset <- 1
 minTruncation <- 5
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
@@ -29,4 +29,4 @@ epiTypes <- c(3)
 initConds <- c(1,data[startOffset],0);
 
 # Fit parameters at different times
-fitOverTimeMulti("MLE", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
+fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)

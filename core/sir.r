@@ -7,5 +7,6 @@ sir <- function(time, initConds, params) {
 	dS <- -beta*s*i
 	dI <- beta*s*i - gamma*i
 	dR <- gamma*i
-	list(c(dS,dI,dR))
+	dT <- 1
+	list(c(dS,dI,dR,dT))
 }

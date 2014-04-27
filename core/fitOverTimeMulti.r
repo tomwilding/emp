@@ -1,4 +1,4 @@
-fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig) {
+fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, epiTypes, offsets, target, plotConfig) {
 	
 	# Unpack starting parameters, conditions and offsets
 	startOffset <- offsets$startOffset
@@ -11,174 +11,47 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Max and min truncated data set sizes within offset data
 	minTruncation <- offsets$minTruncation
 	maxTruncation <- length(offsetData)
-	# Min and max t0 values to explore within offset data
-	minTRange <- 3
-	maxTRange <- 3
 	
-	# Initialise other parameters
-	rSquare <- 0
-	rSquareRefit <- 0 
-	totalRSqaure <- 0
-	# Step size for iterative fitting
-	step <- 1
 	# Initial t0 value
-	ts <- c(1)
+	# ts <- c(1, 23)
 	# Set the number of epidemics
-	k <- 1
-
-	# All evaluation vector
+	k <- 2
+	
 	evalList <- c()
-	
-	# Number of increasing residuals
-	nRes <- 2
-	window <- 20
-	residuals <- c()
 
-	# At the start the start time is set to 0
-	startTimePrev <- ts[1]
-	startTimeCount <- 10
-	repeatStartTimes <- 5
-	timeSinceOutbreak <- 0
-
-	epiList <- numeric(minTruncation)
-	
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from minTruncation within offset data
-	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
-		# Fit k epidemics
+	for (i in seq(from=minTruncation, to=maxTruncation, by=1)) {
 		print("### Fit k", quote=FALSE); print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE)
-		# print(paste("Beta", exp(initParams[2])))
-		epidemicType <- epiTypes[k]
-		# Determine if current epidemic start time is set
-		startTimeCount <- countStartTime(ts[k], startTimePrev, startTimeCount)
-		startTimePrev <- ts[k]
-		print("Count")
-		print(startTimeCount)
-		# Determine epidemic type and fit over required range
-		if (epidemicType == 3) {
-			if (startTimeCount > repeatStartTimes || (k < 3)) {
-				# If only 1 epidemic assume it starts at given time
-				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig, 1)
-			} else {
-				# print(paste("times", ts))
-				print(paste("min", i - window))
-				print(paste("max", i - maxTRange))
-				# Explore t0 from previous epidemic start point
-				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c((i - window):(i - maxTRange)), plotConfig, 1)
-			}
-		} else {
-			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig, 1)
-		}
-
-		maxt <- eval$optimTime
-		ts[k] <- maxt
+		
+		# Optimise k epidemics
+		eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, k)
+		# maxt <- eval$optimTime
+		# ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		multiParams <- eval$multiParams
-		# Get last residual and update residuals vector
-		residuals <- c(residuals, eval$finalResidual)
-		# residuals <- eval$residuals
-		# print(residuals)
-
-		# Print next prediction
-		# print(eval$nextPred)
-
-		# Try to improve the fit if rSquare has deteriorated
-		lim <- thresholds$lim
-		epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
-		# epidemicType <- getEpidemicType(residuals, nRes, window, rSquare)
-		
-		# Check for redundant epidemics
-		if (rSquare > lim && k > 2) {
-			prevEpidemicType <- epiTypes[k - 1]
-			curEpidemicType <- epiTypes[k]
-			print(">>> Fit k-1 epidemics", quote=FALSE)
-			initParamsLess <- reduceParams(initParams, curEpidemicType)
-			initCondsLess <- reduceParams(initConds, curEpidemicType)
-			evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypes[1:(k - 1)]), i, offsetTimes, offsetData, initCondsLess, initParamsLess, epiTypes[1:(k - 1)], ts[1:(k - 1)], k - 1, (ts[k - 1]:ts[k - 1]), plotConfig, 0)		
-			lessRSquare <- evalLess$optimRSquare
-			print(paste("lrs", lessRSquare))
-			print(lim)
-			print(lessRSquare > lim)
-			if (lessRSquare > lim) {
-				print("reduce epidemics")
-				startTimeCount <- 0
-				timeSinceOutbreak <- 0
-				# Set k+1 epidemics from now on
-				k <- k - 1
-				# Update parameters to continue fitting with k+1 epidemics
-				multiParams <- evalLess$multiParams
-				maxt <- evalLess$optimTime
-				ts <- ts[1 : k]
-				rSquare <- lessRSquare
-				initConds <- initCondsLess
-				epiTypes <- epiTypes[1 : k]
-				eval <- evalLess				
-			}
-		} else if (rSquare < lim && (epidemicType > 0)) {
-		# if (epidemicType > 0) {
-			# Set new epidemic type in epidemic type array
-			epiTypesMulti <- c(epiTypes, epidemicType)
-			# Try k+1 epidemics
-			print(">>> Fit k+1", quote=FALSE)
-			print(paste("!!!Epidemic", epidemicType), quote=FALSE)
-			# Set initial parameters
-			if (k == 1) {
-				startParams <- c(log(0.001), log(0.01), log(data[i]*10))
-				startConds <- c(1,data[i],0)
-			}
-			initParamsMulti <- newParams(initParams, startParams, epidemicType)
-			initCondsMulti <- newParams(initConds, startConds, epidemicType)
-			# Explore start range of SIR
-			if (epidemicType == 3) {
-				# Fit k+1 epidemics with new SIR sub epidemic exploring t0 from previous epidemic start point
-				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c((i - window):(i - maxTRange)), plotConfig, 1)
-			} else {
-				# Fit k+1 epidemics with set t0 at i
-				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c(i:i), plotConfig, 1)
-			}
-			# TODO: Does the residuals array need to be updated here? = Only consider residuals in initial fitInRangeParallel above - will be updated in next loop
-			# residuals <- nIncResiduals[(i-(nResiduals-1)):i]
-			multiRSquare <- evalMulti$optimRSquare
-			# If K + 1 epidemic is better then set k + 1 from now on
-			print(multiRSquare)
-			print(rSquare)
-			if (multiRSquare > rSquare) {
-			print("epiSet")
-			# if (multiRSquare > rSquare + (1 - lim)) {
-				# Current epidemic start time is not set
-				startTimeCount <- 0
-				timeSinceOutbreak <- 0
-				# Set k+1 epidemics from now on
-				k <- k + 1
-				# Update parameters to continue fitting with k+1 epidemics
-				multiParams <- evalMulti$multiParams
-				maxt <- evalMulti$optimTime
-				ts <- c(ts,maxt)
-				rSquare <- multiRSquare
-				initConds <- initCondsMulti
-				epiTypes <- epiTypesMulti
-				eval <- evalMulti
-			}
-		} else if ((rSquare < lim) && (epidemicType == 1)) {
-			print("Reset Exp start time")
-			# New spike outbreak detected - replace old I0
-			initConds[length(initConds)] <- offsetData[i]
-			ts[k] <- i
-		}
+		print(rSquare)
 		# TODO: Store eval starts at i index causing NA
 		evalList[[i]] <- eval
-		totalRSqaure <- totalRSqaure + rSquare
-		# Update the initial parameters for the next fitting
+
+		# # Check for redundant epidemics
+
+		# # If rSquare has deteriorated then fit k + 1 epidemics
+		# if (rSquare < target) {
+		# 	# Update k
+		# 	k <- k + 1
+			
+		# 	# Update parameters
+
+		# 	# Optimise k + 1 epidemics
+
+		# }
+		# Set start parameters to current optimised parameters
 		initParams <- multiParams
-		# Increment time since outbreak
-		timeSinceOutbreak <- timeSinceOutbreak + 1
 	}
 	
 	# Save all params
 	save(evalList, file=plotConfig$dataFile)
-	avRS <- totalRSqaure / length(seq(from=minTruncation, to=maxTruncation, by=step))
-	print(avRS)
-	avRS
 	# save.image(plotConfig$envFile)
 }
 
