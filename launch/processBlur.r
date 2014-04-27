@@ -1,7 +1,7 @@
 # Read data from file
 require('epi')
 
-fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
+fluData <- read.csv("data/blurred_lines_1.csv", header = TRUE)
 # nSum <- 4
 data <- fluData[,2]
 # data <- sumData(data, nSum)
@@ -17,12 +17,12 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minT
 thresholds <- list(lim=0.9)
 
 # Init Params = beta, gamma, S0
-initParams <- c(log(0.001), log(0.01), log(data[startOffset]*10))
+initParams <- c()
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-epiTypes <- c(3)
+epiTypes <- c(0)
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c(1,data[startOffset],0)
+initConds <- c()
 
 plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur2/", dataFile="output/data/blur2/blurData.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=60)
 

@@ -30,6 +30,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	###################################### Parallel evaluation at all feasible time points #######################################
 	EvalOverTime <- foreach (t=range) %dopar% {
 		# time value t0 referenced from offset offsetData
+		# TODO: Bad index when k=1
 		tsExplore <- c(ts[1:k-1],t)
 		# Find optimal beta and gamma by optimising them to minimise the least square function
 		# OptimSIRMulti passed in from call to setSolver

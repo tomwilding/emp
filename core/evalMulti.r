@@ -33,6 +33,8 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 			initCondsMulti[1] <- I0
 			preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimes, func=expDec, parms=paramsMulti))
 			predInf <- preds[,2]
+		} else if (subEpiNumParams == 0) {
+			predInf <- array(1, length(fineTimes)) * data[1]
 		}
 
 		# If t0 > 1 then set offset in predicted infectious
@@ -56,6 +58,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 		eval$subInf[[i]] <- predInf
 		eval$subParams[[i]] <- c(paramsMulti, I0)
 		eval$multiInf <- predInfectious
+		# TODO: Should not be paramsMulti?
 		eval$multiParams <- params
 		# Set I0 for next epidemic using combined predicted I0 at next t0
 		# TODO: Update I0 after or before setting it in eval??

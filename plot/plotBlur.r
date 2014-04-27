@@ -2,7 +2,7 @@ load("output/data/blur2/blurData.RData")
 require("epi")
 
 # Read data from file
-epiData <- read.csv("data/blurred_lines.csv", header = TRUE)
+epiData <- read.csv("data/blurred_lines_1.csv", header = TRUE)
 
 # nSum <- 4
 data <- epiData[,2]
