@@ -26,6 +26,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		
 		# Optimise k epidemics
 		eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, k, tmax)
+		eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, eval$multiParams, epiTypes, k, tmax)
 		# maxt <- eval$optimTime
 		# ts[k] <- maxt
 		rSquare <- eval$optimRSquare
@@ -48,7 +49,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 		# }
 		# Set start parameters to current optimised parameters
-		initParams <- multiParams
+		# initParams <- multiParams
 	}
 	
 	# Save all params
