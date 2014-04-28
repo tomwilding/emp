@@ -3,7 +3,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) 
 	predInfectious <- numeric(length(fineTimes))
 	# Get initial I0
 	# Update for next epidemic according to unexplained offset from previous epidemic
-	# I0 <- initConds[2]
+	I0 <- initConds[2]
 	predI <- 0
 	eval <- c()
 	subEpiNumParamsOffset <- 0
@@ -22,7 +22,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) 
 			# Update S0
 			initCondsMulti[1] <- exp(paramsMulti[3])
 			# Update I0 computed using previous sub epidemics
-			# initCondsMulti[2] <- I0
+			initCondsMulti[2] <- I0
 			# Get predictions of SIR given current parameters
 			preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti))
 			predInf <- (preds[,3])
@@ -30,7 +30,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) 
 			epiStartTime <- exp(paramsMulti[1])
 			# Update Spike epidemic parameters
 			# Update I0 as unexplained prediction of Infectious for this epidemic
-			# initCondsMulti[1] <- I0
+			initCondsMulti[1] <- I0
 			preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimes, func=expDec, parms=paramsMulti))
 			predInf <- preds[,2]
 		} else if (subEpiNumParams == 0) {
@@ -58,16 +58,18 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) 
 
 		# Set I0 for next epidemic using combined predicted I0 at next t0
 		# TODO: Update I0 after or before setting it in eval??
-		# if (i < k) {
-		# 	# Check if S0 < I0 - why would I0 be less than S0
-		# 	# S0 optimised from optim so at the start S0 < I0 in.
-		# 	# Only predict I0 for kth epidemic
-		# 	nextEpiStartTime <- round(params[4*i])
-		# 	t1Index <- which(fineTimes == nextEpiStartTime)
-		# 	predI <- predInfectious[t1Index]
-		# 	# Update I0 as unexplained prediction of Infectious for the next epidemic
-		# 	I0 <- max(data[nextEpiStartTime] - predI, 1)
-		# }
+		if (i < k) {
+			# Check if S0 < I0 - why would I0 be less than S0
+			# S0 optimised from optim so at the start S0 < I0 in.
+			# Only predict I0 for kth epidemic
+			nextEpiStartTime <- round(params[4*(i+1)])
+			t1Index <- which(fineTimes == nextEpiStartTime)
+			predI <- predInfectious[t1Index]
+			# Update I0 as unexplained prediction of Infectious for the next epidemic
+			I0 <- max(data[nextEpiStartTime] - predI, 1)
+			print(I0)
+		}
+
 	}
 	eval
 }
