@@ -1,4 +1,4 @@
-fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, k) {
+fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, k, tmax) {
 	# Ensure length of range is greater than 0
 	# assert_all_are_true(length(range) > 0)
 
@@ -27,7 +27,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# points(1:length(truncTimes), truncData, col='black', pch=16)
 	###################################### Parallel evaluation at all feasible time points #######################################
 	tryCatch({
-		optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, k)
+		optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, k, tmax)
 	}, warning = function(w) {
 		print(w)
 		print("optim warning")
@@ -35,16 +35,16 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 		print(e)
 		print("optim failed")
 	})
-	print(exp(optimParams))
-	pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, k, 1)
+
+	pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, k, 1, tmax)
 	predInfectiousPast <- pastEval$multiInf
 	# rSquare error to determine best time to start fitting
 	rSquareError <- rSquareError(predInfectiousPast, truncData)
 
 	# TODO: Don't want to restrict eval - eval over all points in evalMulti after optim over all but last n
-	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, k, timeStep)
+	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, k, timeStep, tmax)
 	# Evaluate over all time
-	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, k, 1) 
+	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, k, 1, tmax) 
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
 

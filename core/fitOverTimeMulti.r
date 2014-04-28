@@ -1,4 +1,4 @@
-fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, epiTypes, offsets, target, plotConfig) {
+fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, epiTypes, offsets, target, plotConfig, tmax) {
 	
 	# Unpack starting parameters, conditions and offsets
 	startOffset <- offsets$startOffset
@@ -25,11 +25,12 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		print("### Fit k", quote=FALSE); print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE)
 		
 		# Optimise k epidemics
-		eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, k)
+		eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, k, tmax)
 		# maxt <- eval$optimTime
 		# ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		multiParams <- eval$multiParams
+		print(multiParams)
 		print(rSquare)
 		# TODO: Store eval starts at i index causing NA
 		evalList[[i]] <- eval

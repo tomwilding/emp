@@ -1,5 +1,5 @@
 # Helper function for LMS to compute sse
-sseMulti <- function(params, times, data, initConds, epiTypes, k) {
+sseMulti <- function(params, times, data, initConds, epiTypes, k, tmax) {
 	# Calculate the sum of squared error at the current point
 	outOfBounds <- FALSE
 	subEpiNumParamsOffset <- 0
@@ -27,10 +27,10 @@ sseMulti <- function(params, times, data, initConds, epiTypes, k) {
 			beta <- exp(paramsMulti[1])
 			gamma <- exp(paramsMulti[2])
 			S0 <- exp(paramsMulti[3])
-			t0 <- exp(paramsMulti[4])
+			# t0 <- logisticTransform(paramsMulti[4], tmax)
 			I0 <- initCondsMulti[2]
 			# Force optimisation to advance within parameter ranges
-			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-6 || S0 < I0 || t0 < 0) {
+			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-6 || S0 < I0) {
 				sse <- Inf
 				outOfBounds <- TRUE
 			}
@@ -39,7 +39,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, k) {
 	# If parameters are in bounds then eval and get sse
 	if (!outOfBounds){
 		granularity <- 1
-		eval <- evalMulti(times, data, initConds, params, epiTypes, k, granularity)
+		eval <- evalMulti(times, data, initConds, params, epiTypes, k, granularity, tmax)
 		predInf <- eval$multiInf
 		sse <- sum((predInf - data)^2)
 	}
