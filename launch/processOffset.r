@@ -1,5 +1,5 @@
 require('epi')
-if (file.exists("optimParams")){file.remove("optimParams")}
+if (file.exists("optimParams.txt")){file.remove("optimParams.txt")}
 # Simulate data 
 fluData1 <- simSIR(0.002,0.1,400,10)
 # fluData1 <- simExp(0.2,400)

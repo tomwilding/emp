@@ -1,5 +1,5 @@
 require('epi')
-if (file.exists("optimParams")){file.remove("optimParams")}
+if (file.exists("optimParams.txt")){file.remove("optimParams.txt")}
 # Simulate data 
 fluData1 <- simSIR(0.002,0.1,400,10)
 # fluData1 <- simExp(0.2,400)
@@ -29,8 +29,6 @@ positiveInfectious1 <- c(positiveInfectiousPadStart1, positiveInfectious1, posit
 positiveInfectious2 <- c(positiveInfectiousPadStart2, positiveInfectious2)
 data <- positiveInfectious0 + positiveInfectious1 + positiveInfectious2
 
-print(length(data))
-print(totalLength)
 # data <- positiveInfectious1
 # data <- positiveInfectious
 tmax <- length(data)
@@ -47,16 +45,16 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minT
 target <- 0.9
 
 # Init Params = beta, gamma, S0
-# initParams <- c(log(0.001),log(0.1),log(data[startOffset]*10),0, log(0.001),log(0.1),log(data[startOffset]*10),log(60/108))
 initParams <- c(log(0.001),log(0.1),log(data[offset1 + 1]*10),0, log(0.001),log(0.1),log(data[offset1 + 1]*10),0)
+# initParams <- c()
 
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
 # epiTypes <- c(4, 4)
 epiTypes <- c(0, 4, 4)
 # Init Conds = S0, I0, R0
 # I0 from first data point
-# initConds <- c(1,data[startOffset],0,0 ,1,1,0,0)
-initConds <- c(1,data[offset1 + 1],0,0, 1,data[offset1 + 1],0,0)
+initConds <- c(1,data[offset1 + 1],0,0 ,1,data[offset1 + 1],0,0)
+# initConds <- c()
 
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 

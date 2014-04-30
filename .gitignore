@@ -4,3 +4,4 @@ epi/*
 */.DS_Store
 *.Rout
 *.RData
+*.txt

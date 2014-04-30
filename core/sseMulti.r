@@ -36,7 +36,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, k, tmax) {
 			}
 		}
 	}
-	write(paramsMulti, file="optimParams", append=TRUE)
+	write(paramsMulti, file="optimParams.txt", append=TRUE)
 	# If parameters are in bounds then eval and get sse
 	if (!outOfBounds){
 		granularity <- 1
