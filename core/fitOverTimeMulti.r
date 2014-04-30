@@ -23,29 +23,35 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Truncate the data to i data points from minTruncation within offset data
 	for (i in seq(from=minTruncation, to=maxTruncation, by=1)) {
 		print("### Fit k", quote=FALSE); print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE)
-		
+		write(paste(c("fitting "," of "), c(i, maxTruncation)), file="optimParams", append=TRUE)
+		write("", file="optimParams", append=TRUE)
+
 		# Optimise k epidemics
-		eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, k, tmax)
-		eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, eval$multiParams, epiTypes, k, tmax)
+		optimParams <- initParams
+		for (rep in 1 : 5) {
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, optimParams, epiTypes, k, tmax)
+			optimParams <- eval$multiParams
+		}
 		# maxt <- eval$optimTime
 		# ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		multiParams <- eval$multiParams
 		print(multiParams)
+		print(paste("R0", (exp(multiParams[1])*exp(multiParams[3])) / exp(multiParams[2])))
 		print(rSquare)
 		# TODO: Store eval starts at i index causing NA
 		evalList[[i]] <- eval
 
-		# # Check for redundant epidemics
+		# Check for redundant epidemics
 
 		# # If rSquare has deteriorated then fit k + 1 epidemics
 		# if (rSquare < target) {
 		# 	# Update k
 		# 	k <- k + 1
 			
-		# 	# Update parameters
+		# 	# Set parameters
 
-		# 	# Optimise k + 1 epidemics
+		# Optimise k + 1 epidemics
 
 		# }
 		# Set start parameters to current optimised parameters

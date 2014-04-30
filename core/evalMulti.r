@@ -63,7 +63,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity, 
 		# 	# Check if S0 < I0 - why would I0 be less than S0
 		# 	# S0 optimised from optim so at the start S0 < I0 in.
 		# 	# Only predict I0 for kth epidemic
-		# 	nextEpiStartTime <- round(params[4*(i+1)])
+		# 	nextEpiStartTime <- round(logisticTransform(params[4*(i+1)], tmax))
 		# 	t1Index <- which(fineTimes == nextEpiStartTime)
 		# 	predI <- predInfectious[t1Index]
 		# 	# Update I0 as unexplained prediction of Infectious for the next epidemic
