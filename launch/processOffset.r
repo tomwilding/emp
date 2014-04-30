@@ -35,23 +35,20 @@ times <- c(1:tmax)
 # Fitting epidemics
 startOffset <- 1
 endOffset <- 1
-minTruncation <- 60
+minTruncation <- 30
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Target rSquare error
 target <- 0.9
 
-# Init Params = beta, gamma, S0
-# initParams <- c(log(0.001),log(0.1),log(data[startOffset]*10),0, log(0.001),log(0.1),log(data[startOffset]*10),log(60/108))
-initParams <- c(log(0.001),log(0.1),log(data[offset1 + 1]*10),0)
-
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
 # epiTypes <- c(4, 4)
-epiTypes <- c(0, 4)
+epiTypes <- c(0)
+
+initParams <- c()
 # Init Conds = S0, I0, R0
 # I0 from first data point
-# initConds <- c(1,data[startOffset],0,0 ,1,1,0,0)
-initConds <- c(1,data[offset1 + 1],0,0)
+initConds <- c()
 
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/offset/", dataFile="output/data/offset/offsetData.RData", envFile="output/data/offset/offsetEnv.RData", pat=5, rat=30)
 

@@ -3,7 +3,6 @@ sseMulti <- function(params, times, data, initConds, epiTypes, k, tmax) {
 	# Calculate the sum of squared error at the current point
 	outOfBounds <- FALSE
 	subEpiNumParamsOffset <- 0
-	
 	for (i in 1:k) {
 		# Get sub epidemic type and parameters
 		subEpiNumParams <- epiTypes[i]

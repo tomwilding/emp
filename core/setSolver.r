@@ -39,26 +39,26 @@ setSolver <- function(optimMethod, k, epiTypes) {
 	)
 }
 
-nameParams <- function(initParams) {
-	list(b=initParams[1], g=initParams[2], s0=initParams[3])
-}
+# nameParams <- function(initParams) {
+# 	list(b=initParams[1], g=initParams[2], s0=initParams[3])
+# }
 
-unnameParams <- function(params) {
-	c(params$b, params$g, params$s0)
-}
+# unnameParams <- function(params) {
+# 	c(params$b, params$g, params$s0)
+# }
 
-sirNegLL <- function(b , g, s0, timeIn, dataIn, initConds, ts, k, epiTypes) {
-	granularity <- 1
-	params <- c(b,g,s0)
-	gamma <- exp(g)
-	if (gamma > 1 || gamma <= 1e-4) {
-		nll <- -Inf
-	} else {
-		eval <- evalMulti(timeIn, dataIn, initConds, params, epiTypes, ts, k, granularity, tmax)
-		nll <- -sum(dnorm(x=dataIn, mean=eval$multiInf, sd=1, log=TRUE))
-	}
-	nll
-}
+# sirNegLL <- function(b , g, s0, timeIn, dataIn, initConds, ts, k, epiTypes) {
+# 	granularity <- 1
+# 	params <- c(b,g,s0)
+# 	gamma <- exp(g)
+# 	if (gamma > 1 || gamma <= 1e-4) {
+# 		nll <- -Inf
+# 	} else {
+# 		eval <- evalMulti(timeIn, dataIn, initConds, params, epiTypes, ts, k, granularity, tmax)
+# 		nll <- -sum(dnorm(x=dataIn, mean=eval$multiInf, sd=1, log=TRUE))
+# 	}
+# 	nll
+# }
 # sirNegLL <- function(params, times, data, initConds, epiTypes, ts, k) {
 # 	granularity <- 1
 # 	eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, granularity)

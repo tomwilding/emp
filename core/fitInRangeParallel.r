@@ -26,15 +26,17 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# lines(1:length(offsetTimes), offsetData, col='steelblue')
 	# points(1:length(truncTimes), truncData, col='black', pch=16)
 	###################################### Parallel evaluation at all feasible time points #######################################
-	tryCatch({
-		optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, k, tmax)
-	}, warning = function(w) {
-		print(w)
-		print("optim warning")
-	}, error = function(e) {
-		print(e)
-		print("optim failed")
-	})
+	if (k > 1) {
+		tryCatch({
+			optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, k, tmax)
+		}, warning = function(w) {
+			print(w)
+			print("optim warning")
+		}, error = function(e) {
+			print(e)
+			print("optim failed")
+		})
+	}
 
 	pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, k, 1, tmax)
 	predInfectiousPast <- pastEval$multiInf
