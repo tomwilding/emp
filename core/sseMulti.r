@@ -3,6 +3,12 @@ sseMulti <- function(params, times, data, initConds, epiTypes, k, tmax) {
 	# Calculate the sum of squared error at the current point
 	outOfBounds <- FALSE
 	subEpiNumParamsOffset <- 0
+
+	if (k > 2) {
+		write("SSEParams", file="optimParams.txt", append=TRUE)		
+		write(params, file="optimParams.txt", append=TRUE)
+	}
+
 	for (i in 1:k) {
 		# Get sub epidemic type and parameters
 		subEpiNumParams <- epiTypes[i]
@@ -21,7 +27,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, k, tmax) {
 				outOfBounds <- TRUE
 			}
 		}
-		else if (subEpiNumParams == 4) {
+		else if (subEpiNumParams == 5) {
 			# Set SIR Epidemic optimised parameters
 			beta <- exp(paramsMulti[1])
 			gamma <- exp(paramsMulti[2])
@@ -36,7 +42,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, k, tmax) {
 			}
 		}
 	}
-	write(paramsMulti, file="optimParams.txt", append=TRUE)
+
 	# If parameters are in bounds then eval and get sse
 	if (!outOfBounds){
 		granularity <- 1

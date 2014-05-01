@@ -15,7 +15,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Initial t0 value
 	# ts <- c(1, 23)
 	# Set the number of epidemics
-	k <- 1
+	k <- 3
 	
 	evalList <- c()
 
@@ -23,14 +23,17 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Truncate the data to i data points from minTruncation within offset data
 	for (i in seq(from=minTruncation, to=maxTruncation, by=1)) {
 		print("### Fit k", quote=FALSE); print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE)
-		write(paste(c("fitting "," of "), c(i, maxTruncation)), file="optimParams.txt", append=TRUE)
-		write("", file="optimParams.txt", append=TRUE)
+		if ( k > 2 ) {
+			write(paste(c("fitting "," of "), c(i, maxTruncation)), file="optimParams.txt", append=TRUE)
+			write("", file="optimParams.txt", append=TRUE)
+		}
 
 		# Optimise k epidemics
 		optimParams <- initParams
-		for (rep in 1 : 5) {
+		for (rep in 1 : 10) {
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, optimParams, epiTypes, k, tmax)
 			optimParams <- eval$multiParams
+			if ( k > 2 ) {write("optimLoop", file="optimParams.txt", append=TRUE)}
 		}
 		# maxt <- eval$optimTime
 		# ts[k] <- maxt
@@ -115,7 +118,7 @@ newParams <- function(initVec, i, epidemicType) {
 		initParams[4] <- logit(i, tmax)
 		initParams <- c(initVec, initParams)
 	} else {
-		initParams <- c(log(0.001), log(0.1), log(data[i]*10), logit(i, tmax))
+		initParams <- c(log(0.001), log(0.1), log(data[i]*10), log(data[i]), logit(i, tmax))
 	}
 	print(initParams)
 	initParams
@@ -127,7 +130,7 @@ newConds <- function(initVec, i, epidemicType) {
 		initConds <- initVec
 		initConds <- c(initVec, initConds)
 	} else {
-		initConds <- c(1, data[i], 0, logit(i, tmax))
+		initConds <- c(1, data[i], 0, 0, 0)
 	}
 	initConds
 }

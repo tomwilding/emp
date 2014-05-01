@@ -5,8 +5,8 @@ setSolver <- function(optimMethod, k, epiTypes) {
 	for (t in epiTypes) {
 		if (t == 1) {
 			parscale <- c(parscale, c(1))
-		} else if (t == 4) {
-			parscale <- c(parscale, c(-1,-1,1,1))
+		} else if (t == 5) {
+			parscale <- c(parscale, c(-1,-1,1,1,1))
 		}
 	}
 

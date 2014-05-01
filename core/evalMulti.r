@@ -15,15 +15,15 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity, 
 		initCondsMulti <- initConds[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
 		subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
 		# Evaluate epidemic according to type
-		if (subEpiNumParams == 4) {
-			epiStartTime <- logisticTransform(paramsMulti[4], tmax)
+		if (subEpiNumParams == 5) {
+			epiStartTime <- logisticTransform(paramsMulti[5], tmax)
 			# epiStartTime <- exp(params[4])
 			# print(paste("t0", epiStartTime))
 			# Update SIR epidemic parameters
 			# Update S0
 			initCondsMulti[1] <- exp(paramsMulti[3])
 			# Update I0 computed using previous sub epidemics
-			# initCondsMulti[2] <- I0
+			initCondsMulti[2] <- exp(paramsMulti[4])
 			# Get predictions of SIR given current parameters
 			preds <- as.data.frame(lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti))
 			predInf <- (preds[,3])
