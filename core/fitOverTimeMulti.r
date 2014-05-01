@@ -15,15 +15,13 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Initial t0 value
 	# ts <- c(1, 23)
 	# Set the number of epidemics
-	k <- 3
+	k <- 1
 	
 	evalList <- c()
 
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from minTruncation within offset data
 	for (i in seq(from=minTruncation, to=maxTruncation, by=1)) {
-		print(paste("ICI", initConds))
-		print(paste("IPI", initParams))
 		print("### Fit k", quote=FALSE); print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE)
 		write(paste(c("fitting "," of "), c(i, maxTruncation)), file="optimParams.txt", append=TRUE)
 		write("", file="optimParams.txt", append=TRUE)
@@ -56,7 +54,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Optimise k + 1 epidemics
 		nResiduals <- 2
 		outbreakDetected <- detectOutbreak(eval$residuals, nResiduals)
-		if ((rSquare > 0 && rSquare < target) || (k < 2 && outbreakDetected)) {
+		if ((rSquare > 0 && rSquare < target || outbreakDetected)) {
 			print("Epi Detected")
 			readline()
 			k <- k + 1
@@ -88,9 +86,10 @@ detectOutbreak <- function(residuals, nResiduals) {
 		sdRes <- mySd(pastResiduals, meanRes)
 		# print(meanRes)
 		# print(sdRes)
-		# print(meanRes + 3*sdRes)
+		print(meanRes + 3*sdRes)
 		# Check n residuals are outside of range
 		for (i in 0:(nResiduals - 1)) {
+			print(residuals[length(residuals) - i])
 			outbreak <- outbreak && (residuals[length(residuals) - i] > (meanRes + 3*sdRes))
 		}
 	}
@@ -113,7 +112,6 @@ newParams <- function(initVec, i, epidemicType) {
 	if (length(initVec > 0)) {
 		# Update params for SIR epidemic
 		initParams <- initVec
-		initParams[3] <- data[i]
 		initParams[4] <- logit(i, tmax)
 		initParams <- c(initVec, initParams)
 	} else {
@@ -127,7 +125,6 @@ newConds <- function(initVec, i, epidemicType) {
 	if (length(initVec > 0)) {
 		# Update conds
 		initConds <- initVec
-		initConds[2] <- data[i]
 		initConds <- c(initVec, initConds)
 	} else {
 		initConds <- c(1, data[i], 0, logit(i, tmax))
