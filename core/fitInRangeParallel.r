@@ -1,13 +1,9 @@
-fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, k, tmax) {
+fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, k) {
 	# Ensure length of range is greater than 0
 	# assert_all_are_true(length(range) > 0)
 
 	# Define eval vector
 	eval <- c()
-
-	# Register multi core backend with n cores
-	n <- length(range)
-	registerDoMC(n)
 
 	# Truncate offsetData set
 	truncTimes <- offsetTimes[1:i]
@@ -28,7 +24,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	###################################### Parallel evaluation at all feasible time points #######################################
 	if (k > 1) {
 		tryCatch({
-			optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, k, tmax)
+			optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, k, i)
 		}, warning = function(w) {
 			print(w)
 			print("optim warning")
@@ -38,15 +34,15 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 		})
 	}
 
-	pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, k, 1, tmax)
+	pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, k, 1, i)
 	predInfectiousPast <- pastEval$multiInf
 	# rSquare error to determine best time to start fitting
 	rSquareError <- rSquareError(predInfectiousPast, truncData)
 
 	# TODO: Don't want to restrict eval - eval over all points in evalMulti after optim over all but last n
-	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, k, timeStep, tmax)
+	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, k, timeStep, i)
 	# Evaluate over all time
-	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, k, 1, tmax) 
+	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, k, 1, i) 
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
 
