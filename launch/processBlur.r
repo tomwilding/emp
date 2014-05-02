@@ -1,7 +1,7 @@
 # Read data from file
 require('epi')
 
-fluData <- read.csv("data/blurred_lines_1.csv", header = TRUE)
+fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
 # nSum <- 4
 data <- fluData[,2]
 # data <- sumData(data, nSum)

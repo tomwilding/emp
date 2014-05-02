@@ -5,7 +5,7 @@ fluData <- simSIR(0.002,0.1,500,10)
 fluData1 <- simExp(0.2,400)
 # Get data from dataframe
 # Ensure first is larger than second
-nSum <- 4
+# nSum <- 4
 positiveInfectious <- fluData$data[,3]
 positiveInfectious1 <- fluData1$data[,2]
 

@@ -4,7 +4,7 @@ fluData <- simSIR(0.002,0.1,500,10)
 fluData1 <- simExp(0.2,400)
 # Get data from dataframe
 # Ensure first is larger than second
-nSum <- 4
+# nSum <- 4
 positiveInfectious <- fluData$data[,3]
 positiveInfectious1 <- fluData1$data[,2]
 
@@ -19,11 +19,12 @@ allPositiveInfectious <- c(positiveInfectious,positiveInfectiousPad)
 allPositiveInfectious1 <- c(positiveInfectiousPad,positiveInfectious1)
 # Add together the different predicted infectious values truncated to required size
 data <- (allPositiveInfectious[1:totalLength]) + (allPositiveInfectious1[1:totalLength])
+data <- c(array(0,30), data)
 
 # Fitting epidemics
 startOffset <- 1
 endOffset <- 1
-minTruncation <- 5
+minTruncation <- 4
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds

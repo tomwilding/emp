@@ -66,6 +66,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c((i - window):(i - maxTRange)), plotConfig, 1)
 			}
 		} else {
+			# No epidemic
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig, 1)
 		}
 
@@ -189,7 +190,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 	# Standard deviation of residuals
 	sdRes <- 0
 	# Lower limit of residual to determine outbreak
-	lowerLimit <- 1000
+	lowerLimit <- 1
 	# Get the last n residuals
 	residuals <- (residuals[!is.na(residuals)])
 	
@@ -222,21 +223,22 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 			# continuouslyIncreasing <- sort(residuals[startResIndex:resLength]) == residuals[startResIndex:resLength]
 			sirIncRes <- min(abs(residuals[startResIndex:resLength]))
 			finalRes <- abs(residuals[resLength])
-			print(finalRes)
-		}
-		# print(paste("SameSign",sameSign))
-		# Set epidemic type according to residual limit
-		# sirSD <- meanRes + (sdRes * 2)
-		# spikeSD <- meanRes + (sdRes * 4)
-		spikeSD <- meanRes + sdRes * 6
-		sirSD <- meanRes + sdRes * 2
-		# If minimum residual increase is more than required, then set type
-		if (finalRes > spikeSD && finalRes > lowerLimit) {
-			print("Spike Set")
-			type <- 1
-		} else if (sirIncRes > sirSD && sirIncRes > lowerLimit && sameSign) {
-			print("SIR Set")
-			type <- 3
+			print(paste("FR", finalRes))
+			print(paste("SIR", sirIncRes))
+			# print(paste("SameSign",sameSign))
+			# Set epidemic type according to residual limit
+			# sirSD <- meanRes + (sdRes * 2)
+			# spikeSD <- meanRes + (sdRes * 4)
+			spikeSD <- meanRes + sdRes * 6
+			sirSD <- meanRes + sdRes * 2
+			# If minimum residual increase is more than required, then set type
+			if (finalRes > spikeSD && finalRes > lowerLimit) {
+				print("Spike Set")
+				type <- 1
+			} else if (sirIncRes > sirSD && sirIncRes > lowerLimit && sameSign) {
+				print("SIR Set")
+				type <- 3
+			}
 		}
 	}
 	type
