@@ -31,7 +31,8 @@ data <- positiveInfectious0 + positiveInfectious1 + positiveInfectious2
 
 # data <- positiveInfectious1
 # data <- positiveInfectious
-times <- c(1:length(data))
+tmax <- length(data)
+times <- c(1:tmax)
 # print(maxt)
 
 # Fitting epidemics
@@ -44,12 +45,11 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minT
 target <- 0.95
 
 # Init Params = beta, gamma, S0
-# initParams <- c(log(0.001),log(0.1),log(10),log(1),0, log(0.001),log(0.1),log(10),log(1),0)
+# initParams <- c(log(0.001),log(0.1),log(data[offset1 + 1]),log(data[offset1 + 1]),0, log(0.001),log(0.1),log(data[offset1 + 1]),log(data[offset1 + 1]),0)
 # initParams <- c(log(0.001),log(0.1),log(10),log(1),0)
 initParams <- c()
 
 # Init Conds = S0, I0, R0
-# I0 from first data point
 # initConds <- c(1,1,0,0,0 ,1,1,0,0,0)
 # initConds <- c(1,1,0,0,0)
 initConds <- c()

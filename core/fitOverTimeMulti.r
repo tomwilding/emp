@@ -123,7 +123,7 @@ newParams <- function(initVec, i, epidemicType, nRes, eval) {
 		initParams <- c(initVec, initParams)
 	# Initial parameters
 	} else {
-		initParams <- c(log(0.001), log(0.1), log(initialInf * 10), log(initialInf), logit(initTime, i))
+		initParams <- c(log(0.001), log(0.1), log(10), log(1), logit(initTime, i))
 	}
 	print(initParams)
 	initParams
