@@ -1,9 +1,9 @@
 require('epi')
 if (file.exists("optimParams.txt")){file.remove("optimParams.txt")}
 # Simulate data 
-fluData1 <- simSIR(0.002,0.1,400,10)
+fluData1 <- simSIR(0.002,0.1,400,1)
 # fluData1 <- simExp(0.2,400)
-fluData2 <- simSIR(0.002,0.1,500,10)
+# fluData2 <- simSIR(0.002,0.1,500,10)
 # Get data from dataframe
 # Ensure first is larger than second
 # nSum <- 4
@@ -35,7 +35,7 @@ times <- c(1:tmax)
 # Fitting epidemics
 startOffset <- 1
 endOffset <- 1
-minTruncation <- 30
+minTruncation <- 169
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Target rSquare error
@@ -43,14 +43,17 @@ target <- 0.9
 
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
 # epiTypes <- c(4, 4)
-epiTypes <- c(0)
+epiTypes <- c(0, 5)
 
-initParams <- c()
+
+# initParams <- c()
+initParams <- c(log(0.001),log(0.1),10,1,0)
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c()
+# initConds <- c()
+initConds <- c(1,1,0,0,0)
 
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/offset/", dataFile="output/data/offset/offsetData.RData", envFile="output/data/offset/offsetEnv.RData", pat=5, rat=30)
 
 # Fit parameters
-fitOverTimeMulti("LMS", times, data, initConds, initParams, epiTypes, offsets, target, plotConfig, tmax)
+fitOverTimeMulti("LMS", times, data, initConds, initParams, epiTypes, offsets, target, plotConfig)

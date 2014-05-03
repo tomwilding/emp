@@ -32,11 +32,10 @@ sseMulti <- function(params, times, data, initConds, epiTypes, k, tmax) {
 			beta <- exp(paramsMulti[1])
 			gamma <- exp(paramsMulti[2])
 			S0 <- exp(paramsMulti[3])
-			# t0 <- logisticTransform(paramsMulti[4], tmax)
-			R0 <- (beta * S0) / gamma
 			I0 <- exp(paramsMulti[4])
+			# t0 <- logisticTransform(paramsMulti[4], tmax)
 			# Force optimisation to advance within parameter ranges
-			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-6 || S0 < I0 || R0 > 10) {
+			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-6 || S0 < I0) {
 				sse <- Inf
 				outOfBounds <- TRUE
 			}

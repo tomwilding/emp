@@ -24,7 +24,10 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	###################################### Parallel evaluation at all feasible time points #######################################
 	if (k > 1) {
 		tryCatch({
-			optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, k, i)
+			optimParams <- initParams
+			# for (rep in 1 : 10) {
+				optimParams <- optimSIRMulti(truncTimes, truncData, initConds, optimParams, epiTypes, k, i)
+			# }
 		}, warning = function(w) {
 			print(w)
 			print("optim warning")

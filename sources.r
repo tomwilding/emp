@@ -22,6 +22,7 @@ source('core/fitInRangeParallel.r')
 source('core/setSolver.r')
 source('core/sir.r')
 source('core/expDec.r')
+source('core/gradientSearch.r')
 
 source('plot/reconstructPlot.r')
 source('plot/plotRSq.r')

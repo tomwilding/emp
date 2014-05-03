@@ -15,13 +15,15 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Initial t0 value
 	# ts <- c(1, 23)
 	# Set the number of epidemics
-	k <- 1
+	k <- 2
 	
 	evalList <- c()
 
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from minTruncation within offset data
 	for (i in seq(from=minTruncation, to=maxTruncation, by=1)) {
+		# gradientSearch(times[1:i], data[1:i])
+		
 		print("### Fit k", quote=FALSE); print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE)
 		if ( k > 2 ) {
 			write(paste(c("fitting "," of "), c(i, maxTruncation)), file="optimParams.txt", append=TRUE)
@@ -30,7 +32,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 		# Optimise k epidemics
 		optimParams <- initParams
-		for (rep in 1 : 10) {
+		for (rep in 1 : 20) {
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, optimParams, epiTypes, k)
 			optimParams <- eval$multiParams
 			if ( k > 2 ) {write("optimLoop", file="optimParams.txt", append=TRUE)}
@@ -65,8 +67,6 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			lastestEpidemicType <- 5;
 			epiTypes[k] <- lastestEpidemicType
 			# Update parameters
-			print(paste("ip",initParams))
-			print(paste("ic", initConds))
 			initParams <- newParams(initParams, i, lastestEpidemicType, nResiduals, eval)
 			initConds <- newConds(initConds, i, lastestEpidemicType, nResiduals)
 		}
@@ -123,9 +123,8 @@ newParams <- function(initVec, i, epidemicType, nRes, eval) {
 		initParams <- c(initVec, initParams)
 	# Initial parameters
 	} else {
-		initParams <- c(log(0.001), log(0.1), log(10), log(1), logit(initTime, i))
+		initParams <- c(log(0.001), log(0.1), log(100), log(10), logit(initTime, i))
 	}
-	print(initParams)
 	initParams
 }
 
