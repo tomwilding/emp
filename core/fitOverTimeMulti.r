@@ -74,6 +74,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		multiParams <- eval$multiParams
+		print(multiParams)
 		# Get last residual and update residuals vector
 		residuals <- c(residuals, eval$finalResidual)
 		# residuals <- eval$residuals
@@ -190,18 +191,18 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 	# Standard deviation of residuals
 	sdRes <- 0
 	# Lower limit of residual to determine outbreak
-	lowerLimit <- 1
+	lowerLimit <- 10
 	# Get the last n residuals
 	residuals <- (residuals[!is.na(residuals)])
 	
 	# Ensure more than one residual before the last n residuals to calculate sdRes
 	resLength <- length(residuals)
-	# if (resLength > nRes + 1) {
-	if (resLength > window + 1) {
+	if (resLength > nRes + 1) {
+	# if (resLength > window + 1) {
 		# Get standard deviation of residuals before the ones considered
-		# absResiduals <- abs(residuals[1:(resLength - nRes)])
+		absResiduals <- abs(residuals[1:(resLength - nRes)])
 		# minRes <- max(1, resLength - window)
-		absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
+		# absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
 		meanRes <- myMean(absResiduals)
 		sdRes <- mySd(absResiduals, meanRes)
 		# Reset between epidemics
@@ -229,7 +230,7 @@ getEpidemicType <- function(residuals, nRes, window, rSquare) {
 			# Set epidemic type according to residual limit
 			# sirSD <- meanRes + (sdRes * 2)
 			# spikeSD <- meanRes + (sdRes * 4)
-			spikeSD <- meanRes + sdRes * 6
+			spikeSD <- meanRes + sdRes * 100
 			sirSD <- meanRes + sdRes * 2
 			# If minimum residual increase is more than required, then set type
 			if (finalRes > spikeSD && finalRes > lowerLimit) {

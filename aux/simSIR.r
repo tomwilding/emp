@@ -21,15 +21,15 @@ simSIR <- function(b,g,S0,I0){
 	x0 <- c(S=S0, I=I0, R=0)                      # Initial state vector
 	nu <- matrix(c(-1,0,1,-1,0,1),nrow=3,byrow=T) # State-change matrix
 	a  <- c("beta*S*I", "gamma*I")                # Propensity vector
-	tf <- 100                                     # Final time
+	tf <- 200                                     # Final time
 	simName <- "sir"
 
 	# Run the simulations
 	# nf <- layout(matrix(c(1,2,3,4),ncol=2, byrow=T))
 
 	# Direct method
-	set.seed(2)
-	out <- ssa(x0,a,nu,parms,tf,method="D",simName,censusInterval=0.3)
+	set.seed(1)
+	out <- ssa(x0,a,nu,parms,tf,method="D",simName,censusInterval=1)
 	# plot(out$data[,1], out$data[,3])
 	# print(out$data[,3])
 	# readline()
