@@ -1,4 +1,4 @@
-evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity, tmax) {
+evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity, ts) {
 	fineTimes <- breakTime(times, granularity);
 	predInfectious <- numeric(length(fineTimes))
 	# Get initial I0
@@ -16,7 +16,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity, 
 		subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
 		# Evaluate epidemic according to type
 		if (subEpiNumParams == 5) {
-			epiStartTime <- logisticTransform(paramsMulti[5], tmax)
+			epiStartTime <- logisticTransform(paramsMulti[5], ts[k])
 			# epiStartTime <- exp(params[4])
 			# print(paste("t0", epiStartTime))
 			# Update SIR epidemic parameters

@@ -13,6 +13,7 @@ source('aux/myMeanDiff.r')
 source('aux/mySdDiff.r')
 source('aux/logisticTransform.r')
 source('aux/logit.r')
+source('aux/orderRange.r')
 
 source('core/fitOverTimeSingle.r')
 source('core/fitOverTimeMulti.r')

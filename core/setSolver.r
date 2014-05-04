@@ -13,8 +13,8 @@ setSolver <- function(optimMethod, k, epiTypes) {
 	# Select optimisation method
 	switch(optimMethod,
 		LMS = {
-			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, k, tmax) {
-				params <- optim(initParams, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, k=k, tmax=tmax, method="Nelder-Mead", control=list(parscale=parscale))
+			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, k, ts) {
+				params <- optim(initParams, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, k=k, ts=ts, method="Nelder-Mead", control=list(parscale=parscale))
 				# myOptim(initParams, sseMulti, times, data, initConds, ts, k)
 				optimParams <- params$par
 			}

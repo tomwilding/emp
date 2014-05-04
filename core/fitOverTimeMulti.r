@@ -15,8 +15,12 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Initial t0 value
 	# ts <- c(1, 23)
 	# Set the number of epidemics
-	k <- 2
+	k <- 1
 	
+	# Epidemic start times
+	ts <- c()
+
+	# Eval store	 
 	evalList <- c()
 
 	################################################# Decompose Epidemics ################################################
@@ -32,13 +36,11 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 		# Optimise k epidemics
 		optimParams <- initParams
-		for (rep in 1 : 20) {
-			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, optimParams, epiTypes, k)
+		for (rep in 1 : 10) {
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, optimParams, epiTypes, k, ts)
 			optimParams <- eval$multiParams
 			if ( k > 2 ) {write("optimLoop", file="optimParams.txt", append=TRUE)}
 		}
-		# maxt <- eval$optimTime
-		# ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		multiParams <- eval$multiParams
 		print(multiParams)
@@ -66,6 +68,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			# lastestEpidemicType <- determineEpidemicType()
 			lastestEpidemicType <- 5;
 			epiTypes[k] <- lastestEpidemicType
+			# Update start times
+			ts <- c(ts, i)
 			# Update parameters
 			initParams <- newParams(initParams, i, lastestEpidemicType, nResiduals, eval)
 			initConds <- newConds(initConds, i, lastestEpidemicType, nResiduals)
@@ -90,19 +94,18 @@ detectOutbreak <- function(residuals, nResiduals) {
 		sdRes <- mySd(pastResiduals, meanRes)
 		# print(meanRes)
 		# print(sdRes)
-		print(meanRes + 3*sdRes)
+		print(paste("lim", meanRes + 3*sdRes))
 		# Check n residuals are outside of range
 		for (i in 0:(nResiduals - 1)) {
-			print(residuals[length(residuals) - i])
 			res <- residuals[length(residuals) - i]
-			outbreak <- outbreak && (res > (meanRes + 3*sdRes) && (res > 1))
+			outbreak <- outbreak && (res > (meanRes + 3*sdRes))
 		}
 	}
 	outbreak
 }
 
 # Compare the last n residuals to sd of previous residuals before them
-determineEpidemicType <- function(residuals, nRes, window, rSquare) {
+determineEpidemicType <- function(residuals, nResisuals, window, rSquare) {
 	incRes <- c()
 	type <- 0
 	# Standard deviation of residuals
@@ -111,24 +114,24 @@ determineEpidemicType <- function(residuals, nRes, window, rSquare) {
 	residuals <- (residuals[!is.na(residuals)])
 }
 
-newParams <- function(initVec, i, epidemicType, nRes, eval) {
-	initTime <- i - nRes
+newParams <- function(initVec, i, epidemicType, nResisuals, eval) {
+	initTime <- i - nResisuals
 	initialInf <- data[initTime + 1]
 
 	# Update parameters
 	if (length(initVec > 0)) {
 		initParams <- initVec[1:5]
 		# Update start time
-		initParams[5] <- logit(initTime, i)
+		initParams[5] <- i
 		initParams <- c(initVec, initParams)
 	# Initial parameters
 	} else {
-		initParams <- c(log(0.001), log(0.1), log(100), log(10), logit(initTime, i))
+		initParams <- c(log(0.001), log(0.1), log(orderRange(initialInf)*10), log(orderRange(initialInf)), logit(initTime, i))
 	}
 	initParams
 }
 
-newConds <- function(initVec, i, epidemicType, nRes) {
+newConds <- function(initVec, i, epidemicType, nResisuals) {
 	if (length(initVec > 0)) {
 		# Update conds
 		initConds <- initVec[1:5]
