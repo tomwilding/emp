@@ -37,20 +37,13 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 			predInf <- array(1, length(fineTimes)) * data[1]
 		}
 
-		# If t0 > 1 then set offset in predicted infectious
-		if (i > 1) {
-			# Find index to start fitting k+1 epidemic
-			# print(times)
-			# print(ts)
-			# print(ts[i])
-			# print(times[ts[i]])
-			t0Index <- which(fineTimes == (times[ts[i]]))
-			# Offset
-			zeros <- numeric(t0Index - 1)
-			predInf <- c(zeros, predInf)
-			# Truncate to length of data
-			predInf <- predInf[1:length(fineTimes)]
-		}
+		# Find index to start fitting k+1 epidemic
+		t0Index <- which(fineTimes == (times[ts[i]]))
+		# Offset
+		zeros <- numeric(t0Index - 1)
+		predInf <- c(zeros, predInf)
+		# Truncate to length of data
+		predInf <- predInf[1:length(fineTimes)]
 		# Add the predictions for the current epidemic to the previous predictions
 		predInfectious <- predInfectious + predInf
 

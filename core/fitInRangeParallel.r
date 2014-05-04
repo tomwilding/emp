@@ -8,8 +8,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	eval <- c()
 
 	# Register multi core backend with n cores
-	n <- length(range)
-	registerDoMC(n)
+	registerDoMC(8)
 
 	# Truncate offsetData set
 	truncTimes <- offsetTimes[1:i]
@@ -29,14 +28,14 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# points(1:length(truncTimes), truncData, col='black', pch=16)
 	###################################### Parallel evaluation at all feasible time points #######################################
 	EvalOverTime <- foreach (t=range) %dopar% {
+		tsExplore <- c(ts[1:(k-1)],t)
 		# time value t0 referenced from offset offsetData
 		if (k > 1) {
-			tsExplore <- c(ts[1:(k-1)],t)
 			# Find optimal beta and gamma by optimising them to minimise the least square function
 			# OptimSIRMulti passed in from call to setSolver
 			optimParams <- initParams
 			tryCatch({
-				for (i in 1:5) {
+				for (i in 1:10) {
 					optimParams <- optimSIRMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k)
 				}
 			}, warning = function(w) {
@@ -77,9 +76,6 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, timeStep)
 	# Evaluate over all time
 	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, 1) 
-	startOffset <- offsets$startOffset
-	endOffset <- offsets$endOffset
-
 
 	# Plot inline for dev
 	if (p) {

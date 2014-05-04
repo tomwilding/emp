@@ -7,11 +7,11 @@ fluData <- read.csv("data/FluView_Data.csv", header = FALSE)
 percentPositive <- fluData[,11] / 100
 totalSpecimins <- fluData[,3]
 data <- totalSpecimins * percentPositive
-
+data <- c(numeric(30), data)
 # Fitting epidemics
-startOffset <- 1
+startOffset <- 4
 endOffset <- 1
-minTruncation <- 5
+minTruncation <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 # Thresholds
 thresholds <- list(diff=0.05, lim=0.9)
