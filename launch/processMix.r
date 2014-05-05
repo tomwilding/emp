@@ -8,10 +8,11 @@ fluData1 <- simSIR(0.001,0.02,400,1)
 # nSum <- 4
 positiveInfectious <- fluData$data[,3]
 positiveInfectious1 <- fluData1$data[,3]
+# positiveInfectious1 <- fluData1$data[,2]
 
 # Offset of t0 for second epidemic
 offset <- 30
-offset1 <-40
+offset1 <-50
 
 # Padding of zeros to offset data
 set.seed(1)
@@ -21,7 +22,10 @@ positiveInfectious1 <- c(positiveInfectiousPad1Start,positiveInfectious1)
 totalLength <- length(positiveInfectious1)
 # Combine data with padding offset zeros
 positiveInfectious <- c(positiveInfectiousPadStart, positiveInfectious)
-positiveInfectiousPadEnd <- numeric(totalLength - length(positiveInfectious))
+positiveInfectiousPadEnd <- c()
+if (totalLength - length(positiveInfectious) > 0) {	
+	positiveInfectiousPadEnd <- numeric(totalLength - length(positiveInfectious))
+}
 positiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 
 # Add together the different predicted infectious values truncated to required size

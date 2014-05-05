@@ -78,8 +78,10 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		maxt <- eval$optimTime
 		ts[k] <- maxt
 		rSquare <- eval$optimRSquare
-		multiParams <- eval$multiParams
-		print(multiParams)
+		optimParams <- eval$multiParams
+		optimConds <- eval$initConds
+		print("optimParams")
+		print(optimParams)
 		# Get last residual and update residuals vector
 		residuals <- c(residuals, eval$finalResidual)
 		
@@ -94,19 +96,18 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k-1 epidemics", quote=FALSE)
 			initParamsLess <- reduceParams(initParams, curEpidemicType)
 			initCondsLess <- reduceParams(initConds, curEpidemicType)
-			evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypes[1:(k - 1)]), i, offsetTimes, offsetData, initCondsLess, initParamsLess, epiTypes[1:(k - 1)], ts[1:(k - 1)], k - 1, (ts[k - 1]:ts[k - 1]), plotConfig, 0)		
+			evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypes[1:(k - 1)]), i, offsetTimes, offsetData, initCondsLess, initParamsLess, epiTypes[1:(k - 1)], ts[1:(k - 1)], k - 1, (ts[k - 1]:ts[k - 1]), plotConfig, 1)		
 			lessRSquare <- evalLess$optimRSquare
 			print(paste("lrs", lessRSquare))
 			print(lim)
 			print(lessRSquare > lim)
-			if (lessRSquare > lim) {
+			if (lessRSquare > rSquare) {
 				print("reduce epidemics")
 				startTimeCount <- 0
 				timeSinceOutbreak <- 0
 				# Set k+1 epidemics from now on
 				k <- k - 1
 				# Update parameters to continue fitting with k+1 epidemics
-				multiParams <- evalLess$multiParams
 				maxt <- evalLess$optimTime
 				ts <- ts[1 : k]
 				rSquare <- lessRSquare
@@ -132,18 +133,18 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				startParams <- c(log(0.001), log(0.01), log(data[i]*10))
 				startConds <- c(1,data[i],0)
 			}
-			initParamsMulti <- newParams(initParams, startParams, epidemicType)
-			initCondsMulti <- newParams(initConds, startConds, epidemicType)
+			initParamsMulti <- newParams(optimParams, startParams, epidemicType)
+			initCondsMulti <- newParams(optimConds, startConds, epidemicType)
 			print("k+1 params")
 			print(initParamsMulti)
 			# Explore start range of SIR
 			if (epidemicType == 3) {
 				# Fit k + 1 epidemics with new SIR sub epidemic exploring t0
 				searchStart <- max(1, (i - searchRange))
-				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c(searchStart:(i - maxTRange)), plotConfig, 0)
+				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c(searchStart:(i - maxTRange)), plotConfig, 1)
 			} else {
 				# Fit k + 1 epidemics with set t0 at i
-				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c(i:i), plotConfig, 0)
+				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c(i:i), plotConfig, 1)
 			}
 			# TODO: Does the residuals array need to be updated here? = Only consider residuals in initial fitInRangeParallel above - will be updated in next loop
 			# residuals <- nIncResiduals[(i-(nResiduals-1)):i]
@@ -160,9 +161,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				# Set k+1 epidemics from now on
 				k <- k + 1
 				# Update parameters to continue fitting with k+1 epidemics
-				multiParams <- evalMulti$multiParams
 				maxt <- evalMulti$optimTime
-				ts <- c(ts,maxt)
+				ts <- c(ts, maxt)
 				rSquare <- multiRSquare
 				initParams <- initParamsMulti
 				initConds <- initCondsMulti
@@ -232,15 +232,15 @@ getEpidemicType <- function(residuals, nRes, rSquare, window, k) {
 			# Assume incRes is True and check condition for all n residuals
 			sameSign <- max(residuals[startResIndex:resLength]) < 0 || min(residuals[startResIndex:resLength]) > 0
 			# continuouslyIncreasing <- sort(residuals[startResIndex:resLength]) == residuals[startResIndex:resLength]
-			sirRes <- min(abs(residuals[startResIndex:resLength]))
-			finalRes <- abs(residuals[resLength])
+			sirRes <- min(residuals[startResIndex:resLength])
+			finalRes <- residuals[resLength]
 			print(paste("FRes", finalRes))
 			print(paste("SIRes", sirRes))
 			# print(paste("SameSign",sameSign))
 			# Set epidemic type according to residual limit
 			# sirSD <- meanRes + (sdRes * 2)
 			# spikeSD <- meanRes + (sdRes * 4)
-			spikeLim <- meanRes + sdRes * 1000
+			spikeLim <- meanRes + sdRes * 100
 			sirLim <- meanRes + sdRes * 3
 			# If minimum residual increase is more than required, then set type
 			if ((finalRes > spikeLim) && (finalRes > lowerLimit)) {
