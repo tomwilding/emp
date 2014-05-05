@@ -34,7 +34,6 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	
 	# Number of increasing residuals
 	nRes <- 2
-	searchRange <- 20
 	residuals <- c()
 
 	# Track epidemic start time
@@ -60,12 +59,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Determine epidemic type and fit over required range
 		if (epidemicType == 3) {
 			# SIR Epidemic
-			if (startTimeCount < repeatStartTimes && (k > 1)) {
-				print(paste("min", i - searchRange))
-				print(paste("max", i - maxTRange))
-				searchStart <- max(1, i - searchRange)
+			if ((startTimeCount < repeatStartTimes) && (k > 1)) {
 				# Explore t0 from previous epidemic start point
-				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c((searchStart):(i - maxTRange)), plotConfig, 1)
+				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(minTruncation:(i - minTruncation)), plotConfig, 1)
 			} else {
 				# Epidemic starts at this time point
 				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig, 1)
@@ -96,7 +92,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k-1 epidemics", quote=FALSE)
 			initParamsLess <- reduceParams(initParams, curEpidemicType)
 			initCondsLess <- reduceParams(initConds, curEpidemicType)
-			evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypes[1:(k - 1)]), i, offsetTimes, offsetData, initCondsLess, initParamsLess, epiTypes[1:(k - 1)], ts[1:(k - 1)], k - 1, (ts[k - 1]:ts[k - 1]), plotConfig, 1)		
+			evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypes[1:(k - 1)]), i, offsetTimes, offsetData, initCondsLess, initParamsLess, epiTypes[1:(k - 1)], ts[1:(k - 1)], k - 1, (ts[k - 1]:ts[k - 1]), plotConfig, 0)		
 			lessRSquare <- evalLess$optimRSquare
 			print(paste("lrs", lessRSquare))
 			print(lim)
@@ -140,8 +136,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			# Explore start range of SIR
 			if (epidemicType == 3) {
 				# Fit k + 1 epidemics with new SIR sub epidemic exploring t0
-				searchStart <- max(1, (i - searchRange))
-				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c(searchStart:(i - maxTRange)), plotConfig, 1)
+				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c(minTruncation:(i - minTruncation)), plotConfig, 1)
 			} else {
 				# Fit k + 1 epidemics with set t0 at i
 				evalMulti <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMulti), i, offsetTimes, offsetData, initCondsMulti, initParamsMulti, epiTypesMulti, ts, k + 1, c(i:i), plotConfig, 1)
