@@ -11,6 +11,7 @@ source('aux/myMean.r')
 source('aux/mySd.r')
 source('aux/myMeanDiff.r')
 source('aux/mySdDiff.r')
+source('aux/orderOf.r')
 
 source('core/fitOverTimeSingle.r')
 source('core/fitOverTimeMulti.r')
