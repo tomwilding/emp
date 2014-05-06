@@ -45,7 +45,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Truncate the data to i data points from minTruncation within offset data
 	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
 		# Fit k epidemics
-		print("------------------------------------------------")
+		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
 		# print(paste("Beta", exp(initParams[2])))
 		epidemicType <- epiTypes[k]
@@ -109,11 +109,11 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				epiTypes <- epiTypes[1 : k]
 				eval <- evalLess				
 			}
-		} 
+		}
 
 		# Try to improve the fit if rSquare has deteriorated
 		outbreakDetected <- detectOutbreak(residuals, nRes, startTimePrev)
-		print(paste("outbreakDetected", outbreakDetected))
+		print(paste("OutbreakDetected", outbreakDetected))
 		if ((timeSinceOutbreak > minTruncation) && ((rSquare > 0 && rSquare < lim) || outbreakDetected)) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
@@ -222,15 +222,17 @@ detectOutbreak <- function(residuals, nRes, startTimePrev) {
 			# Index of first residual to check
 			startResIndex <- resLength - nRes + 1
 			# Assume incRes is True and check condition for all n residuals
-			sameSign <- max(residuals[startResIndex:resLength]) < 0 || min(residuals[startResIndex:resLength]) > 0
+			# sameSign <- max(residuals[startResIndex : resLength]) < 0 || min(residuals[startResIndex : resLength]) > 0
 			# continuouslyIncreasing <- sort(residuals[startResIndex:resLength]) == residuals[startResIndex:resLength]
-			outbreakRes <- min(residuals[startResIndex:resLength])
+			outbreakRes <- min(residuals[startResIndex : resLength])
+			expRes <- residuals[resLength]
 			print(paste("OutbreakRes", outbreakRes))
-			# print(paste("SameSign",sameSign))
+			print(paste("ExpRes", expRes))
 			# Set epidemic type according to residual limit
 			outbreakLim <- (meanRes + (sdRes * 6))
+			expLim <- (meanRes + (sdRes * 10))
 			# If minimum residual increase is more than required, then set type
-			outbreak <- (outbreakRes > outbreakLim)
+			outbreak <- ((outbreakRes > outbreakLim) || (expRes > expLim))
 		}
 	}
 	outbreak	

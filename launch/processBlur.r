@@ -1,7 +1,7 @@
 # Read data from file
 require('epi')
 
-fluData <- read.csv("data/blurred_lines.csv", header = TRUE)
+fluData <- read.csv("data/blurred_lines_1.csv", header = TRUE)
 # nSum <- 4
 data <- fluData[,2]
 # data <- sumData(data, nSum)
@@ -14,7 +14,7 @@ endOffset <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Threshold
-thresholds <- list(lim=0.9)
+thresholds <- list(lim=0.8)
 
 # Init Params = beta, gamma, S0
 initParams <- c()
