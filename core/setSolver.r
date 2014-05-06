@@ -1,5 +1,5 @@
 setSolver <- function(optimMethod, k, epiTypes) {
-	require(bbmle)
+	# require(bbmle)
 	# print("Set Solver")
 	# Set parscale for optimisation
 	parscale <- c()
