@@ -28,10 +28,10 @@ source('plot/plotResiduals.r')
 source('plot/plotPred.r')
 
 # Packages
-# install.packages("deSolve")
-# install.packages("doMC")
-# install.packages("foreach")
-# install.packages("GillespieSSA")
+install.packages("deSolve")
+install.packages("doMC")
+install.packages("foreach")
+install.packages("GillespieSSA")
 
 ## Create package (functions and descriptions)
 # source('sources.r') # To get dependencies

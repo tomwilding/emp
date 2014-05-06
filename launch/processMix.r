@@ -1,4 +1,4 @@
-require('epi')
+# require('epi')
 # Simulate data 
 fluData <- simSIR(0.001,0.05,400,1)
 # fluData1 <- simExp(0.2,200)
