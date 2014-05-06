@@ -1,5 +1,5 @@
 #!/bin/bash
-i=0
+i=1
 if [ $# = 0 ]; then
 	echo Not Enough Args
 fi
