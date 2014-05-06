@@ -214,6 +214,7 @@ detectOutbreak <- function(residuals, nRes, startTimePrev) {
 		print(paste("meanRes", meanRes))
 		print(paste("sdRes ", sdRes))
 		print(paste("Outbreaklim", meanRes + sdRes * 6))
+		print(paste("Explim", meanRes + sdRes * 10))
 		# print(paste("MeanDiffRes", meanDiffRes))
 		# print(paste("SdDiffRes", sdDiffRes))
 		# print(paste("DiffRes", diffRes))
