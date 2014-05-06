@@ -235,7 +235,7 @@ getEpidemicType <- function(residuals, nRes, rSquare, window, k) {
 			# Set epidemic type according to residual limit
 			# sirSD <- meanRes + (sdRes * 2)
 			# spikeSD <- meanRes + (sdRes * 4)
-			spikeLim <- meanRes + sdRes * 100
+			spikeLim <- meanRes + sdRes * 6
 			sirLim <- meanRes + sdRes * 3
 			# If minimum residual increase is more than required, then set type
 			if ((finalRes > spikeLim) && (finalRes > lowerLimit)) {

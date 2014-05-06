@@ -40,7 +40,7 @@ minTruncation <- 4
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
-thresholds <- list(lim=0.99)
+thresholds <- list(lim=0.95)
 
 # Init Params = beta, gamma, S0
 initParams <- c();
