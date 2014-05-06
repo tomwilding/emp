@@ -35,7 +35,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 			# OptimSIRMulti passed in from call to setSolver
 			optimParams <- initParams
 			tryCatch({
-				# for (i in 1:10) {
+				# for (i in 1:5) {
 					optimParams <- optimSIRMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k)
 				# }
 			}, warning = function(w) {
