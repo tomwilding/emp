@@ -1,4 +1,4 @@
-load("output/data/blur2/blurData.RData")
+load("output/data/blur2/blurDataN.RData")
 require("epi")
 
 # Read data from file
@@ -14,16 +14,16 @@ startOffset <- 1
 endOffset <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5, minTRange=3, maxTRange=3)
 
-thresholds <- list(lim=0.9)
+thresholds <- list(lim=0.8)
 
 # Init Params = beta, gamma, S0
-initParams <- c(log(0.001), log(0.1), log(data[startOffset]*10));
+initParams <- c();
 
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c(1,data[startOffset],0);
+initConds <- c();
 
-plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur2/", dataFile="output/data/blur2/blurData.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=250)
+plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur2/", dataFile="output/data/blur2/blurDataN.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=250)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)

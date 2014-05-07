@@ -57,13 +57,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Determine epidemic type and fit over required range
 		if (epidemicType == 3) {
 			# SIR Epidemic
-			if ((startTimeCount < repeatStartTimes) && (k > 1)) {
-				# Explore t0 from previous epidemic start point
-				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startTimePrev:(i - minTruncation)), plotConfig, 1)
-			} else {
-				# Epidemic starts at this time point
-				eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig, 1)
-			}
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startTimePrev:(i - minTruncation)), plotConfig, 1)
 		} else {
 			# Spike Epidemic or No epidemic
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig, 1)
@@ -127,7 +121,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			initCondsSIR <- c(optimConds, startCondsSIR)
 			epiTypesSIR <- c(epiTypes, 3)
 			# Fit SIR epidemic searching t0 range
-			evalSIR <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesSIR), i, offsetTimes, offsetData, initCondsSIR, initParamsSIR, epiTypesSIR, ts, k + 1, c(minTruncation:(i - minTruncation)), plotConfig, 1)
+			evalSIR <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesSIR), i, offsetTimes, offsetData, initCondsSIR, initParamsSIR, epiTypesSIR, ts, k + 1, c(startTime:(i - minTruncation)), plotConfig, 1)
 			SIRRSquare <- evalSIR$optimRSquare
 			print(paste("SIRRS", SIRRSquare))
 
@@ -140,7 +134,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			initCondsEXP <- c(optimConds, startCondsEXP)
 			epiTypesEXP <- c(epiTypes, 1)		
 			# Fit EXP epidemic with t0 set at i
-			evalEXP <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesEXP), i, offsetTimes, offsetData, initCondsEXP, initParamsEXP, epiTypesEXP, ts, k + 1, c(i:i), plotConfig, 1)
+			evalEXP <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesEXP), i, offsetTimes, offsetData, initCondsEXP, initParamsEXP, epiTypesEXP, ts, k + 1, c(startTime:i), plotConfig, 1)
 			EXPRSquare <- evalEXP$optimRSquare
 			print(paste("EXPRS", EXPRSquare))
 
@@ -148,30 +142,26 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 			# If K + 1 epidemic is better then set k + 1 from now on
 			print(paste("RS", rSquare))
+
 			if (maxRSquare > rSquare) {	
 				# Current epidemic start time is not set
 				startTimeCount <- 0
 				timeSinceOutbreak <- 0
 				# Set k+1 epidemics from now on
 				k <- k + 1
-				# Update parameters
 				if (SIRRSquare > EXPRSquare) {
 					print("SIREpiSet")
 					eval <- evalSIR
-					ts <- c(ts, eval$optimTime)
-					rSquare <- SIRRSquare
-					initParams <- initParamsSIR
-					initConds <- initCondsSIR
-					epiTypes <- epiTypesSIR
 				} else {
 					print("EXPEpiSet")
 					eval <- evalEXP
-					ts <- c(ts, eval$optimTime)
-					rSquare <- EXPRSquare
-					initParams <- initParamsEXP
-					initConds <- initCondsEXP
-					epiTypes <- epiTypesEXP
 				}
+				# Update parameters
+				ts <- c(ts, eval$optimTime)
+				rSquare <- eval$optimRSquare
+				initParams <- eval$multiParams
+				initConds <- eval$initConds
+				epiTypes <- eval$epiTypes
 			}
 		}
 		# } else if ((rSquare < lim) && (epidemicType == 1)) {
@@ -213,8 +203,8 @@ detectOutbreak <- function(residuals, nRes, startTimePrev) {
 
 		print(paste("meanRes", meanRes))
 		print(paste("sdRes ", sdRes))
-		print(paste("Outbreaklim", meanRes + sdRes * 6))
-		print(paste("Explim", meanRes + sdRes * 10))
+		print(paste("Outbreaklim", meanRes + sdRes * 3))
+		print(paste("Explim", meanRes + sdRes * 6))
 		# print(paste("MeanDiffRes", meanDiffRes))
 		# print(paste("SdDiffRes", sdDiffRes))
 		# print(paste("DiffRes", diffRes))

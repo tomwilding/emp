@@ -1,5 +1,5 @@
 scp -r tw610@shell3.doc.ic.ac.uk:/homes/tw610/emr/graphs/harlem Desktop/harlem1
 
- scp -r tw610@shell3.doc.ic.ac.uk:/homes/tw610/emp/output/data/blur/blurData.RData output/data/blur
+scp -r tw610@shell3.doc.ic.ac.uk:/homes/tw610/emp/output/data/blur/blurData.RData output/data/blur
 
 ps aux | grep tw610 | wc -l
