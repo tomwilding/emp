@@ -82,29 +82,39 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		
 		# Check for redundant epidemics
 		if (rSquare > lim && k > 1) {
-			prevEpidemicType <- epiTypes[k - 1]
-			curEpidemicType <- epiTypes[k]
-			print(">>> Fit k-1 epidemics", quote=FALSE)
-			initParamsLess <- reduceParams(initParams, curEpidemicType)
-			initCondsLess <- reduceParams(initConds, curEpidemicType)
-			evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypes[1:(k - 1)]), i, offsetTimes, offsetData, initCondsLess, initParamsLess, epiTypes[1:(k - 1)], ts[1:(k - 1)], k - 1, (ts[k - 1]:ts[k - 1]), plotConfig, 0)		
-			lessRSquare <- evalLess$optimRSquare
-			print(paste("lrs", lessRSquare))
-			print(paste("lim",lim))
-			outbreakDetected <- detectOutbreak(evalLess$residuals, nRes, startTimePrev)
-			print(paste("OutbreakDetectedReduce", outbreakDetected))
-			if (lessRSquare > lim && !outbreakDetected) {
+			maxRSquareLess <- 0
+			for(e in 1:k) {
+				print(">>> Fit k-1 epidemics", quote=FALSE)
+				initParamsLess <- reduceParams(initParams, epiTypes, e)
+				initCondsLess <- reduceParams(initConds, epiTypes, e)
+				epiTypesLess <- removeAtIndex(epiTypes, e)
+				tsLess <- removeAtIndex(ts, e)
+				evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypesLess), i, offsetTimes, offsetData, initCondsLess, initParamsLess, epiTypesLess, tsLess, k - 1, c(tsLess[k - 1]:tsLess[k - 1]), plotConfig, 0)		
+				lessRSquare <- evalLess$optimRSquare
+				if (lessRSquare > maxRSquareLess) {
+					maxRSquareLess <- lessRSquare
+					maxt <- evalLess$optimTime
+					maxTsLess <- tsLess
+					initParams <- initParamsLess
+					initConds <- initCondsLess
+					epiTypes <- epiTypesLess
+					eval <- evalLess	
+				}
+				print(paste("lrs", maxRSquareLess))
+				print(paste("lim",lim))
+			}
+			if (maxRSquareLess > lim) {
 				print("reduce epidemics")
 				# Set k - 1 epidemics from now on
 				k <- k - 1
 				# Update parameters to continue fitting with k+1 epidemics
 				maxt <- evalLess$optimTime
-				ts <- ts[1 : k]
-				rSquare <- lessRSquare
-				initParams <- initParamsLess
-				initConds <- initCondsLess
-				epiTypes <- epiTypes[1 : k]
-				eval <- evalLess				
+				ts <- maxTsLess
+				rSquare <- maxRSquareLess
+				initParams <- maxInitParamsLess
+				initConds <- maxInitCondsLess
+				epiTypes <- maxEpiTypesLess
+				eval <- maxEvalLess				
 			}
 		}
 
@@ -232,14 +242,36 @@ detectOutbreak <- function(residuals, nRes, startTimePrev) {
 	outbreak	
 }
 
-reduceParams <- function(initVec, epidemicType) {
-	if (epidemicType == 1) {
-		# Update params for spike epidemic used I0 and gamma from initial
-		newVec <- initVec[1:(length(initVec) - 1)]
-	} else if (epidemicType == 3) {
-		# Update params for SIR epidemic
-		newVec <- initVec[1:(length(initVec) - 3)]
+reduceParams <- function(initVec, epiTypes, index) {
+	epidemicType <- epiTypes[index]
+	if (index == 1) {
+		initVec <- initVec[(epidemicType + 1) : length(initVec)]
+	} else if (index == length(epiTypes)) {
+		initVec <- initVec[1:(length(initVec) - epidemicType)]
+	} else {
+		startOffset <- 0
+		for (i in 1:(index - 1)) {
+			startOffset <- startOffset + epiTypes[i]
+		}
+		if (epidemicType == 1) {
+			# Update params for spike epidemic used I0 and gamma from initial
+			newVec <- c(initVec[1:startOffset], initVec[(startOffset + 2):length(initVec)])
+		} else if (epidemicType == 3) {
+			# Update params for SIR epidemic
+			newVec <- c(initVec[1:startOffset], initVec[(startOffset + 4):length(initVec)])
+		}
 	}
+}
+
+removeAtIndex <- function(array, index) {
+	if (index == 1) {
+		arrayLess <- array[2:length(array)]
+	}
+	else if (index == length(array)) {
+		arrayLess <- array[1:(length(array) - 1)]
+	} else {
+		arrayLess <- c(array[1:(index-1)], array[(index + 1):length(array)])
+	}	
 }
 
 countStartTime <- function(startTimeNew, startTime, startTimeCount) {
