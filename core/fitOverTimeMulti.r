@@ -47,6 +47,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
+		print(ts)
 		# print(paste("Beta", exp(initParams[2])))
 		epidemicType <- epiTypes[k]
 		# Determine if current epidemic start time is set
@@ -56,11 +57,13 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		print(paste("Count", startTimeCount))
 		# Determine epidemic type and fit over required range
 		if (epidemicType == 3) {
+			startSearch <- max(1, (startTime - minTruncation))
+			print(paste("k range", c(startSearch:(startTime + minTruncation))))
 			# SIR Epidemic
-			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startTimePrev:(i - minTruncation)), plotConfig, 1)
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startSearch:(startTime + minTruncation)), plotConfig, 1)
 		} else {
 			# Spike Epidemic or No epidemic
-			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(ts[k]:ts[k]), plotConfig, 1)
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startTime:startTime), plotConfig, 1)
 		}
 		# Update parameters
 		maxt <- eval$optimTime
@@ -88,11 +91,11 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			lessRSquare <- evalLess$optimRSquare
 			print(paste("lrs", lessRSquare))
 			print(paste("lim",lim))
-			if (lessRSquare > lim) {
+			outbreakDetected <- detectOutbreak(evalLess$residuals, nRes, startTimePrev)
+			print(paste("OutbreakDetectedReduce", outbreakDetected))
+			if (lessRSquare > lim && !outbreakDetected) {
 				print("reduce epidemics")
-				startTimeCount <- 0
-				timeSinceOutbreak <- 0
-				# Set k+1 epidemics from now on
+				# Set k - 1 epidemics from now on
 				k <- k - 1
 				# Update parameters to continue fitting with k+1 epidemics
 				maxt <- evalLess$optimTime
@@ -106,28 +109,28 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		}
 
 		# Try to improve the fit if rSquare has deteriorated
-		outbreakDetected <- detectOutbreak(residuals, nRes, startTimePrev)
+		outbreakDetected <- detectOutbreak(eval$residuals, nRes, startTime)
 		print(paste("OutbreakDetected", outbreakDetected))
-		if ((timeSinceOutbreak > minTruncation) && ((rSquare > 0 && rSquare < lim) || outbreakDetected)) {
+		if (((rSquare > 0 && rSquare < lim) || outbreakDetected) && timeSinceOutbreak > minTruncation) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
-			
 			# Try SIR
 			if (k == 1) {
-				startParamsSIR <- c(log(0.001), log(0.01), log(orderOf(data[i])*10))
+				startParamsSIR <- c(log(0.001), log(0.1), log(orderOf(data[i])*10))
 				startCondsSIR <- c(1,orderOf(data[i]),0)
 			}
 			initParamsSIR <- c(optimParams, startParamsSIR)
 			initCondsSIR <- c(optimConds, startCondsSIR)
 			epiTypesSIR <- c(epiTypes, 3)
 			# Fit SIR epidemic searching t0 range
+			print(paste("k+1 range", c(startTime:(i - minTruncation))))
 			evalSIR <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesSIR), i, offsetTimes, offsetData, initCondsSIR, initParamsSIR, epiTypesSIR, ts, k + 1, c(startTime:(i - minTruncation)), plotConfig, 1)
 			SIRRSquare <- evalSIR$optimRSquare
 			print(paste("SIRRS", SIRRSquare))
 
 			# Try EXP
 			if (k == 1) {
-				startParamsEXP <- c(log(0.01))
+				startParamsEXP <- c(log(0.1))
 				startCondsEXP <- c(orderOf(data[i]))
 			}
 			initParamsEXP <- c(optimParams, startParamsEXP)
@@ -203,8 +206,8 @@ detectOutbreak <- function(residuals, nRes, startTimePrev) {
 
 		print(paste("meanRes", meanRes))
 		print(paste("sdRes ", sdRes))
-		print(paste("Outbreaklim", meanRes + sdRes * 3))
-		print(paste("Explim", meanRes + sdRes * 6))
+		print(paste("Outbreaklim", meanRes + sdRes * 6))
+		print(paste("Explim", meanRes + sdRes * 10))
 		# print(paste("MeanDiffRes", meanDiffRes))
 		# print(paste("SdDiffRes", sdDiffRes))
 		# print(paste("DiffRes", diffRes))

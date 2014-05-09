@@ -9,31 +9,36 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 	predI <- 0
 	eval <- c()
 	subEpiNumParamsOffset <- 0
+	paramsMulti <- c()
 
 	for (i in 1:k) {
 		# Get sub epidemic type and parameters
 		subEpiNumParams <- epiTypes[i]
-		paramsMulti <- params[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
-		initCondsMulti <- initConds[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
-		subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
-		# Evaluate epidemic according to type
-		if (subEpiNumParams == 3) {
-			# Update SIR epidemic parameters
-			# Update S0
-			initCondsMulti[1] <- exp(paramsMulti[3])
-			# Update I0 computed using previous sub epidemics
-			initCondsMulti[2] <- I0
+		if (subEpiNumParams > 0) {
+			paramsMulti <- params[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
+			initCondsMulti <- initConds[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
+			subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
 
-			# Get predictions of SIR given current parameters
-			preds <- lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti)
-			predInf <- (preds[,3])
-		} else if (subEpiNumParams == 1) {
-			# Update Spike epidemic parameters
-			# Update I0 as unexplained prediction of Infectious for this epidemic
-			initCondsMulti[1] <- I0
-			preds <- lsoda(y=initCondsMulti, times=fineTimes, func=expDec, parms=paramsMulti)
-			predInf <- preds[,2]
-		} else if (subEpiNumParams == 0) {
+			# Evaluate epidemic according to type
+			if (subEpiNumParams == 3) {
+				# Update SIR epidemic parameters
+				# Update S0
+				initCondsMulti[1] <- exp(paramsMulti[3])
+				# Update I0 computed using previous sub epidemics
+				initCondsMulti[2] <- I0
+
+				# Get predictions of SIR given current parameters
+				preds <- lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti)
+				predInf <- (preds[,3])
+			} else if (subEpiNumParams == 1) {
+				# Update Spike epidemic parameters
+				# Update I0 as unexplained prediction of Infectious for this epidemic
+				initCondsMulti[1] <- I0
+				preds <- lsoda(y=initCondsMulti, times=fineTimes, func=expDec, parms=paramsMulti)
+				predInf <- preds[,2]
+			}
+		} else {
+			# No epidemic detected
 			predInf <- array(1, length(fineTimes)) * data[1]
 		}
 
@@ -49,9 +54,8 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 
 		# Record sub epidemic parameters
 		eval$subInf[[i]] <- predInf
-		eval$subParams[[i]] <- c(paramsMulti, I0)
+		eval$subParams[[i]] <- paramsMulti
 		eval$multiInf <- predInfectious
-		# TODO: Should not be paramsMulti?
 		eval$multiParams <- params
 		# Set I0 for next epidemic using combined predicted I0 at next t0
 		# TODO: Update I0 after or before setting it in eval??
