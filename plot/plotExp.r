@@ -1,19 +1,21 @@
-load("output/data/mix/mixData.RData")
+load("output/data/exp/expData.RData")
 require('epi')
 # Simulate data 
+# require('epi')
+# Simulate data 
 fluData <- simSIR(0.001,0.05,400,1)
-# fluData1 <- simExp(0.2,200)
-fluData1 <- simSIR(0.001,0.02,400,1)
+fluData1 <- simExp(0.2,300)
+# fluData1 <- simSIR(0.001,0.02,400,1)
 # Get data from dataframe
 # Ensure first is larger than second
 # nSum <- 4
 positiveInfectious <- fluData$data[,3]
-positiveInfectious1 <- fluData1$data[,3]
-# positiveInfectious1 <- fluData1$data[,2]
+# positiveInfectious1 <- fluData1$data[,3]
+positiveInfectious1 <- fluData1$data[,2]
 
 # Offset of t0 for second epidemic
-offset <- 30
-offset1 <-50
+offset <- 10
+offset1 <- 35
 
 # Padding of zeros to offset data
 set.seed(1)
@@ -30,8 +32,11 @@ if (totalLength - length(positiveInfectious) > 0) {
 positiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 
 # Add together the different predicted infectious values truncated to required size
+print(length(positiveInfectious))
+print(length(positiveInfectious1))
 data <- positiveInfectious + positiveInfectious1
 times <- c(1:length(data))
+# data <- allPositiveInfectious
 
 # Fitting epidemics
 startOffset <- 1
@@ -50,7 +55,7 @@ epiTypes <- c(0)
 # I0 from first data point
 initConds <- c();
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/exp/", dataFile="output/data/exp/expData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)

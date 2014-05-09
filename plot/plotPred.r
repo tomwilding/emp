@@ -23,7 +23,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	meanPred <- myMean(inRangeData)
 
 	# AR model order
-	AROrder <- 4
+	# AROrder <- 4
 
 	for(i in (minTruncation + predOffset):end) {
 		# Plot predicted data point for this time at previous fitting
@@ -38,16 +38,16 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		# window <- 4
 		# prevResidualsWindow <- prevResiduals[(length(prevResiduals)-window):length(prevResiduals)]
 		# Fit AR model to all past residuals
-		arModel <- ar(prevResiduals, FALSE, 4)
+		arModel <- ar(prevResiduals, FALSE)
 		# arimaModel <- arima(prevResiduals, order=c(4,0,0))
 		nextIncRes <- predict(arModel, n.ahead=predOffset)$pred
-		# Plot prediction without AR
-		evalPreds[i] <- allEval[i]
 
 		# Plot prediction with AR
 		# for (j in 0:(length(nextIncRes) - 1)) {
-		# 	evalPredsAR[i - j] <- allEval[i - j] + nextIncRes[length(nextIncRes) - j]
+		#	evalPredsAR[i - j] <- allEval[i - j] + nextIncRes[length(nextIncRes) - j]
 		# }
+		# Plot prediction without AR
+		evalPreds[i] <- allEval[i]
 		evalPredsAR[i] <- allEval[i] + nextIncRes[length(nextIncRes)]
 		meanPredsAR[i] <- meanPred + nextIncRes[length(nextIncRes)]
 	}

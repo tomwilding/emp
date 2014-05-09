@@ -130,7 +130,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 			# Try EXP
 			if (k == 1) {
-				startParamsEXP <- c(log(0.1))
+				startParamsEXP <- c(log(1e-6))
 				startCondsEXP <- c(orderOf(data[i]))
 			}
 			initParamsEXP <- c(optimParams, startParamsEXP)
