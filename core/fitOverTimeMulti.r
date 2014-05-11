@@ -42,7 +42,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=startTruncation, to=maxTruncation, by=step)) {
+	for (i in seq(from=20, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -91,9 +91,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			lessRSquare <- evalLess$optimRSquare
 			print(paste("lrs", lessRSquare))
 			print(paste("lim",lim))
-			outbreakInRange <- detectOutbreakInRange(minTruncation, evalLess$residuals, nRes, startTimePrev, k)
-			print(paste("OutbreakDetectedReduce", outbreakInRange))
-			if (lessRSquare > lim && !outbreakInRange) {
+			# outbreakInRange <- detectOutbreakInRange(minTruncation, evalLess$residuals, nRes, startTimePrev, k)
+			# print(paste("OutbreakDetectedReduce", outbreakInRange))
+			if (lessRSquare > lim) {
 				print("reduce epidemics")
 				# Set k - 1 epidemics from now on
 				k <- k - 1
@@ -120,8 +120,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 					startParamsMore <- c(log(0.001), log(0.1), log(orderOf(data[i])*10))
 					startCondsMore <- c(1,orderOf(data[i]),0)
 				}
-				initParamsMore <- c(optimParams, c(log(0.001), log(0.1), log(orderOf(data[i])*10)))
-				initCondsMore <- c(optimConds, c(1,orderOf(data[i]),0))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.1), log(orderOf(data[i])*10)))
+				initCondsMore <- c(initConds, c(1,orderOf(data[i]),0))
 				epiTypesMore <- c(epiTypes, 3)
 				# Fit More epidemic searching t0 range
 				print(paste("k+1 range", c(startTime:(i - minTruncation))))
@@ -175,6 +175,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				initConds <- initCondsMore
 				epiTypes <- epiTypesMore
 			}
+			# prevParams <- optimParams
+			# prevConds <- optimConds
 		}
 		# } else if ((rSquare < lim) && (epidemicType == 1)) {
 		# 	print("Reset Exp start time")
@@ -207,15 +209,15 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 	resLength <- length(residuals)
 	if (resLength > nRes + 1) {
 		# Get standard deviation of residuals before the ones considered
-		absResiduals <- abs(residuals[startTime : (resLength - nRes)])
+		inRangeResiduals <- residuals[startTime : (resLength - nRes)]
 		# minRes <- max(1, resLength - window)
-		# absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
-		meanRes <- myMean(absResiduals)
-		sdRes <- mySd(absResiduals, meanRes)
+		# inRangeResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
+		meanRes <- myMean(inRangeResiduals)
+		sdRes <- mySd(inRangeResiduals, meanRes)
 
 		print(paste("meanRes", meanRes))
 		print(paste("sdRes ", sdRes))
-		print(paste("Outbreaklim", meanRes + sdRes * 2))
+		print(paste("Outbreaklim", meanRes + sdRes * 3))
 		print(paste("Explim", meanRes + sdRes * 6))
 		# print(paste("MeanDiffRes", meanDiffRes))
 		# print(paste("SdDiffRes", sdDiffRes))
@@ -246,9 +248,9 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 }
 
 detectOutbreakInRange <- function(minTruncation, residuals, nRes, startTime, k) {
-	outbreakInRange <- 1
+	outbreakInRange <- 0
 	for (i in (startTime + minTruncation):length(residuals)) {
-		outbreakInRange <- outbreakInRange && detectOutbreak(residuals[1:i], nRes, startTime, k)
+		outbreakInRange <- outbreakInRange || detectOutbreak(residuals[1:i], nRes, startTime, k)
 	}
 	outbreakInRange
 }
