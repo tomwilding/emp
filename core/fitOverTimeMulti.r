@@ -109,62 +109,72 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		}
 
 		# Try to improve the fit if rSquare has deteriorated
-		outbreakDetected <- detectOutbreak(eval$residuals, nRes, startTime)
-		print(paste("OutbreakDetected", outbreakDetected))
-		if (((rSquare > 0 && rSquare < lim) || outbreakDetected) && timeSinceOutbreak > minTruncation) {
+		minSearchRange <- max(1, i - 30)
+		outbreak <- detectOutbreak(eval$residuals, nRes, minSearchRange)
+		print(paste("Outbreak", outbreak))
+		if (((rSquare > 0 && rSquare < lim) || outbreak > 0) && timeSinceOutbreak > minTruncation) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
-			# Try SIR
-			if (k == 1) {
-				startParamsSIR <- c(log(0.001), log(0.1), log(orderOf(data[i])*10))
-				startCondsSIR <- c(1,orderOf(data[i]),0)
+			if (outbreak == 3 || outbreak == 0) {
+				# Try SIR
+				if (k == 1) {
+					startParamsMore <- c(log(0.001), log(0.1), log(orderOf(data[i])*10))
+					startCondsMore <- c(1,orderOf(data[i]),0)
+				}
+				initParamsMore <- c(optimParams, c(log(0.001), log(0.1), log(orderOf(data[i])*10)))
+				initCondsMore <- c(optimConds, c(1,orderOf(data[i]),0))
+				epiTypesMore <- c(epiTypes, 3)
+				# Fit More epidemic searching t0 range
+				print(paste("k+1 range", c(startTime:(i - minTruncation))))
+				evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, ts, k + 1, c(startTime:(i - minTruncation)), plotConfig, 1)
+				RSquareMore <- evalMore$optimRSquare
+				# print(paste("SIRRS", SIRRSquare))
+
+				# # Try EXP
+				# if (k == 1) {
+				# 	startParamsEXP <- c(log(0.0001))
+				# 	startCondsEXP <- c(orderOf(data[i]))
+				# }
+				# initParamsEXP <- c(optimParams, startParamsEXP)
+				# initCondsEXP <- c(optimConds, startCondsEXP)
+				# epiTypesEXP <- c(epiTypes, 1)		
+				# # Fit EXP epidemic with t0 set at i
+				# evalEXP <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesEXP), i, offsetTimes, offsetData, initCondsEXP, initParamsEXP, epiTypesEXP, ts, k + 1, c(startTime:i), plotConfig, 1)
+				# EXPRSquare <- evalEXP$optimRSquare
+				# print(paste("EXPRS", EXPRSquare))
+
+				# maxRSquare <- max(SIRRSquare, EXPRSquare)
+
+				# # If K + 1 epidemic is better then set k + 1 from now on
+				# print(paste("RS", rSquare))
+
+			} else if (outbreak == 1) {
+				# EXP Detected
+				if (k == 1) {
+					startParamsMore <- c(log(0.0001))
+					startCondsMore <- c(orderOf(data[i]))
+				}
+				initParamsMore <- c(optimParams, c(log(0.0001)))
+				initCondsMore <- c(optimConds, c(orderOf(data[i])))
+				epiTypesMore <- c(epiTypes, 1)		
+				# Fit More epidemic with t0 set at i
+				evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, ts, k + 1, c(startTime:i), plotConfig, 1)
+				RSquareMore <- evalMore$optimRSquare
 			}
-			initParamsSIR <- c(optimParams, startParamsSIR)
-			initCondsSIR <- c(optimConds, startCondsSIR)
-			epiTypesSIR <- c(epiTypes, 3)
-			# Fit SIR epidemic searching t0 range
-			print(paste("k+1 range", c(startTime:(i - minTruncation))))
-			evalSIR <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesSIR), i, offsetTimes, offsetData, initCondsSIR, initParamsSIR, epiTypesSIR, ts, k + 1, c(startTime:(i - minTruncation)), plotConfig, 1)
-			SIRRSquare <- evalSIR$optimRSquare
-			print(paste("SIRRS", SIRRSquare))
 
-			# Try EXP
-			if (k == 1) {
-				startParamsEXP <- c(log(1e-6))
-				startCondsEXP <- c(orderOf(data[i]))
-			}
-			initParamsEXP <- c(optimParams, startParamsEXP)
-			initCondsEXP <- c(optimConds, startCondsEXP)
-			epiTypesEXP <- c(epiTypes, 1)		
-			# Fit EXP epidemic with t0 set at i
-			evalEXP <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesEXP), i, offsetTimes, offsetData, initCondsEXP, initParamsEXP, epiTypesEXP, ts, k + 1, c(startTime:i), plotConfig, 1)
-			EXPRSquare <- evalEXP$optimRSquare
-			print(paste("EXPRS", EXPRSquare))
-
-			maxRSquare <- max(SIRRSquare, EXPRSquare)
-
-			# If K + 1 epidemic is better then set k + 1 from now on
-			print(paste("RS", rSquare))
-
-			if (maxRSquare > rSquare) {	
+			if (RSquareMore > rSquare) {	
 				# Current epidemic start time is not set
 				startTimeCount <- 0
 				timeSinceOutbreak <- 0
 				# Set k+1 epidemics from now on
 				k <- k + 1
-				if (SIRRSquare > EXPRSquare) {
-					print("SIREpiSet")
-					eval <- evalSIR
-				} else {
-					print("EXPEpiSet")
-					eval <- evalEXP
-				}
+				eval <- evalMore
 				# Update parameters
 				ts <- c(ts, eval$optimTime)
 				rSquare <- eval$optimRSquare
-				initParams <- eval$multiParams
-				initConds <- eval$initConds
-				epiTypes <- eval$epiTypes
+				initParams <- initParamsMore
+				initConds <- initCondsMore
+				epiTypes <- epiTypesMore
 			}
 		}
 		# } else if ((rSquare < lim) && (epidemicType == 1)) {
@@ -192,13 +202,13 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 }
 
 
-detectOutbreak <- function(residuals, nRes, startTimePrev) {
-	outbreak <- FALSE
+detectOutbreak <- function(residuals, nRes, startTime) {
+	outbreak <- 0
 	# Ensure more than one residual before the last n residuals to calculate sdRes
 	resLength <- length(residuals)
 	if (resLength > nRes + 1) {
 		# Get standard deviation of residuals before the ones considered
-		absResiduals <- abs(residuals[startTimePrev : (resLength - nRes)])
+		absResiduals <- abs(residuals[startTime : (resLength - nRes)])
 		# minRes <- max(1, resLength - window)
 		# absResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
 		meanRes <- myMean(absResiduals)
@@ -226,7 +236,11 @@ detectOutbreak <- function(residuals, nRes, startTimePrev) {
 			outbreakLim <- (meanRes + (sdRes * 6))
 			expLim <- (meanRes + (sdRes * 10))
 			# If minimum residual increase is more than required, then set type
-			outbreak <- ((outbreakRes > outbreakLim) || (expRes > expLim))
+			if (outbreakRes > outbreakLim) {
+				outbreak <- 3
+			} else if (expRes > expLim) {
+				outbreak <- 1
+			}
 		}
 	}
 	outbreak	
