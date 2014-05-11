@@ -11,7 +11,6 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Max and min truncated data set sizes within offset data
 	minTruncation <- offsets$minTruncation
 	maxTruncation <- length(offsetData)
-	startTruncation <- 20
 
 	# Min and max t0 values to explore within offset data
 	minTRange <- 3
@@ -19,8 +18,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	
 	# Initialise other parameters
 	rSquare <- 0
-	rSquareRefit <- 0 
 	totalRSquare <- 0
+	
 	# Step size for iterative fitting
 	step <- 1
 	# Initial t0 value
@@ -37,10 +36,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Track epidemic start time
 	startTime <- ts[1]
 	startTimeCount <- 10
-	repeatStartTimes <- 5
 	timeSinceOutbreak <- 0
 
-	epiList <- numeric(startTruncation)
+	startTruncation <- 20
 	
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
@@ -83,7 +81,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		print(paste("timeSinceOutbreak", timeSinceOutbreak))
 		
 		# Check for redundant epidemics
-		if (rSquare > lim && k > 1) {
+		if ((rSquare > lim) && (k > 1)) {
 			prevEpidemicType <- epiTypes[k - 1]
 			curEpidemicType <- epiTypes[k]
 			print(">>> Fit k-1 epidemics", quote=FALSE)
@@ -93,9 +91,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			lessRSquare <- evalLess$optimRSquare
 			print(paste("lrs", lessRSquare))
 			print(paste("lim",lim))
-			outbreakDetected <- detectOutbreak(evalLess$residuals, nRes, startTimePrev, k)
-			print(paste("OutbreakDetectedReduce", outbreakDetected))
-			if (lessRSquare > lim && !outbreakDetected) {
+			outbreakInRange <- detectOutbreakInRange(minTruncation, evalLess$residuals, nRes, startTimePrev, k)
+			print(paste("OutbreakDetectedReduce", outbreakInRange))
+			if (lessRSquare > lim && !outbreakInRange) {
 				print("reduce epidemics")
 				# Set k - 1 epidemics from now on
 				k <- k - 1
@@ -217,8 +215,8 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 
 		print(paste("meanRes", meanRes))
 		print(paste("sdRes ", sdRes))
-		print(paste("Outbreaklim", meanRes + sdRes * 6))
-		print(paste("Explim", meanRes + sdRes * 10))
+		print(paste("Outbreaklim", meanRes + sdRes * 2))
+		print(paste("Explim", meanRes + sdRes * 6))
 		# print(paste("MeanDiffRes", meanDiffRes))
 		# print(paste("SdDiffRes", sdDiffRes))
 		# print(paste("DiffRes", diffRes))
@@ -245,6 +243,14 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 		}
 	}
 	outbreak	
+}
+
+detectOutbreakInRange <- function(minTruncation, residuals, nRes, startTime, k) {
+	outbreakInRange <- 1
+	for (i in (startTime + minTruncation):length(residuals)) {
+		outbreakInRange <- outbreakInRange && detectOutbreak(residuals[1:i], nRes, startTime, k)
+	}
+	outbreakInRange
 }
 
 reduceParams <- function(initVec, epidemicType) {
