@@ -109,8 +109,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		}
 
 		# Try to improve the fit if rSquare has deteriorated
-		minSearchRange <- max(1, i - 30)
-		outbreak <- detectOutbreak(eval$residuals, nRes, minSearchRange)
+		outbreak <- detectOutbreak(eval$residuals, nRes, startTime)
 		print(paste("Outbreak", outbreak))
 		if (((rSquare > 0 && rSquare < lim) || outbreak > 0) && timeSinceOutbreak > minTruncation) {
 			# Try k+1 epidemics
