@@ -11,7 +11,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Max and min truncated data set sizes within offset data
 	minTruncation <- offsets$minTruncation
 	maxTruncation <- length(offsetData)
-	
+	startTruncation <- 20
+
 	# Min and max t0 values to explore within offset data
 	minTRange <- 3
 	maxTRange <- 3
@@ -39,11 +40,11 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	repeatStartTimes <- 5
 	timeSinceOutbreak <- 0
 
-	epiList <- numeric(minTruncation)
+	epiList <- numeric(startTruncation)
 	
 	################################################# Decompose Epidemics ################################################
-	# Truncate the data to i data points from minTruncation within offset data
-	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
+	# Truncate the data to i data points from 20 within offset data
+	for (i in seq(from=startTruncation, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -58,9 +59,10 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Determine epidemic type and fit over required range
 		if (epidemicType == 3) {
 			startSearch <- max(1, (startTime - minTruncation))
+			endSearch <- min((startTime + minTruncation), (i - minTruncation))
 			print(paste("k range", c(startSearch:(startTime + minTruncation))))
 			# SIR Epidemic
-			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startSearch:(startTime + minTruncation)), plotConfig, 1)
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startSearch:endSearch), plotConfig, 1)
 		} else {
 			# Spike Epidemic or No epidemic
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startTime:startTime), plotConfig, 1)
@@ -91,7 +93,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			lessRSquare <- evalLess$optimRSquare
 			print(paste("lrs", lessRSquare))
 			print(paste("lim",lim))
-			outbreakDetected <- detectOutbreak(evalLess$residuals, nRes, startTimePrev)
+			outbreakDetected <- detectOutbreak(evalLess$residuals, nRes, startTimePrev, k)
 			print(paste("OutbreakDetectedReduce", outbreakDetected))
 			if (lessRSquare > lim && !outbreakDetected) {
 				print("reduce epidemics")
@@ -109,9 +111,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		}
 
 		# Try to improve the fit if rSquare has deteriorated
-		outbreak <- detectOutbreak(eval$residuals, nRes, startTime)
+		outbreak <- detectOutbreak(eval$residuals, nRes, startTime, k)
 		print(paste("Outbreak", outbreak))
-		if (((rSquare > 0 && rSquare < lim) || outbreak > 0) && timeSinceOutbreak > minTruncation) {
+		if ((timeSinceOutbreak > minTruncation) && ((rSquare > 0 && rSquare < lim) || outbreak > 0)) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 3 || outbreak == 0) {
@@ -201,7 +203,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 }
 
 
-detectOutbreak <- function(residuals, nRes, startTime) {
+detectOutbreak <- function(residuals, nRes, startTime, k) {
 	outbreak <- 0
 	# Ensure more than one residual before the last n residuals to calculate sdRes
 	resLength <- length(residuals)
@@ -232,12 +234,12 @@ detectOutbreak <- function(residuals, nRes, startTime) {
 			print(paste("OutbreakRes", outbreakRes))
 			print(paste("ExpRes", expRes))
 			# Set epidemic type according to residual limit
-			outbreakLim <- (meanRes + (sdRes * 6))
-			expLim <- (meanRes + (sdRes * 10))
+			outbreakLim <- (meanRes + (sdRes * 2))
+			expLim <- (meanRes + (sdRes * 6))
 			# If minimum residual increase is more than required, then set type
 			if (outbreakRes > outbreakLim) {
 				outbreak <- 3
-			} else if (expRes > expLim) {
+			} else if (expRes > expLim && k > 1) {
 				outbreak <- 1
 			}
 		}
