@@ -16,7 +16,7 @@ setSolver <- function(optimMethod, k, epiTypes) {
 		LMS = {
 			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k) {
 				optimParams <- initParams
-				for (i in 1 : 5) {
+				for (i in 1 : 10) {
 					params <- optim(optimParams, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes, method="Nelder-Mead", control=list(parscale=parscale))
 					# myOptim(initParams, sseMulti, times, data, initConds, ts, k)
 					optimParams <- params$par

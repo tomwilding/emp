@@ -26,8 +26,8 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 			# Set SIR Epidemic optimised parameters
 			beta <- exp(paramsMulti[1])
 			gamma <- exp(paramsMulti[2])
+			I0 <- initConds[2]
 			S0 <- exp(paramsMulti[3])
-			I0 <- initCondsMulti[2]
 			R0 <- beta*S0 / I0
 			# Force optimisation to advance within parameter ranges
 			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-2 || S0 < I0 || R0 > 10) {
