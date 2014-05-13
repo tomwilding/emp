@@ -15,9 +15,13 @@ setSolver <- function(optimMethod, k, epiTypes) {
 	switch(optimMethod,
 		LMS = {
 			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k) {
-				params <- optim(initParams, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes, method="Nelder-Mead", control=list(parscale=parscale))
-				# myOptim(initParams, sseMulti, times, data, initConds, ts, k)
-				optimParams <- params$par
+				optimParams <- initParams
+				for (i in 1 : 5) {
+					params <- optim(optimParams, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes, method="Nelder-Mead", control=list(parscale=parscale))
+					# myOptim(initParams, sseMulti, times, data, initConds, ts, k)
+					optimParams <- params$par
+				}
+				optimParams
 			}
 		},
 		MLE = {

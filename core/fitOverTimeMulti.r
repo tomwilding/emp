@@ -111,7 +111,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Try to improve the fit if rSquare has deteriorated
 		outbreak <- detectOutbreak(eval$residuals, nRes, startTime, k)
 		print(paste("Outbreak", outbreak))
-		if ((timeSinceOutbreak > minTruncation) && ((rSquare > 0 && rSquare < lim) || outbreak > 0)) {
+		if ((timeSinceOutbreak > minTruncation) && (rSquare < lim) && (outbreak > 0)) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 3 || outbreak == 0) {
@@ -217,7 +217,7 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 
 		print(paste("meanRes", meanRes))
 		print(paste("sdRes ", sdRes))
-		print(paste("Outbreaklim", meanRes + sdRes * 3))
+		print(paste("Outbreaklim", meanRes + sdRes * 2))
 		print(paste("Explim", meanRes + sdRes * 6))
 		# print(paste("MeanDiffRes", meanDiffRes))
 		# print(paste("SdDiffRes", sdDiffRes))
@@ -234,7 +234,7 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 			print(paste("OutbreakRes", outbreakRes))
 			print(paste("ExpRes", expRes))
 			# Set epidemic type according to residual limit
-			outbreakLim <- (meanRes + (sdRes * 3))
+			outbreakLim <- (meanRes + (sdRes * 2))
 			expLim <- (meanRes + (sdRes * 6))
 			# If minimum residual increase is more than required, then set type
 			if (outbreakRes > outbreakLim) {
