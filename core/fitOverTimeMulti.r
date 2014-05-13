@@ -57,8 +57,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		startTimePrev <- ts[max(1, (k - 1))]
 		print(paste("Count", startTimeCount))
 		# Determine epidemic type and fit over required range
-		startSearch <- max(1, startTime - 20)
-		endSearch <- max(1, (i - minTruncation))
+		startSearch <- max(1, startTime - 10)
+		endSearch <- min((startTime + 10), (i - minTruncation))
 		if (epidemicType == 3) {
 			print(paste("k range", c(startSearch:endSearch)))
 			# SIR Epidemic
@@ -127,6 +127,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				epiTypesMore <- c(epiTypes, 3)
 				# Fit More epidemic searching t0 range
 				startSearch <- startTime
+				endSearch <- max(1, (i - minTruncation))
 				print(paste("k+1 range", c(startSearch:endSearch)))
 				evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, ts, k + 1, c(startSearch:endSearch), plotConfig, 1)
 				RSquareMore <- evalMore$optimRSquare
