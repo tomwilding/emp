@@ -14,7 +14,7 @@ endOffset <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Threshold
-thresholds <- list(lim=0.90)
+thresholds <- list(lim=0.85)
 
 # Init Params = beta, gamma, S0
 initParams <- c()
@@ -27,7 +27,7 @@ epiTypes <- c(0)
 initConds <- c()
 # initConds <- c(1,1,0,0)
 
-plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur/", dataFile="output/data/blur2/blurData90IShort.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=60)
+plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur/", dataFile="output/data/blur2/blurData85IShort.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=60)
 
 # Fit parameters
 fitOverTimeMulti("LMS", 1:length(data), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
