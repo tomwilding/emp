@@ -25,7 +25,7 @@ epiTypes <- c(0)
 # Init Conds = S0, I0, R0
 # I0 from first data point
 initConds <- c()
-initConds <- c(1,1,0,0, 1)
+# initConds <- c(1,1,0,0)
 
 plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blur/", dataFile="output/data/blur2/blurData90I.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=60)
 
