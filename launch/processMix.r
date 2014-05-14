@@ -2,7 +2,7 @@
 # Simulate data 
 fluData <- simSIR(0.001,0.05,400,1)
 # fluData1 <- simExp(0.2,200)
-fluData1 <- simSIR(0.001,0.02,400,1)
+fluData1 <- simSIR(0.001,0.1,400,1)
 # Get data from dataframe
 # Ensure first is larger than second
 # nSum <- 4

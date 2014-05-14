@@ -125,7 +125,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				initParamsMore <- c(initParams, c(log(0.001), log(0.1), log(10)))
 				initCondsMore <- c(initConds, c(1,1,0))
 				epiTypesMore <- c(epiTypes, 3)
-				# Fit More epidemic searching t0 range
+				# Fit More epidemic searching t0 range from previous epidemic
 				startSearch <- startTime
 				endSearch <- max(1, (i - minTruncation))
 				print(paste("k+1 range", c(startSearch:endSearch)))
