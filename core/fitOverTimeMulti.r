@@ -11,10 +11,6 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Max and min truncated data set sizes within offset data
 	minTruncation <- offsets$minTruncation
 	maxTruncation <- length(offsetData)
-
-	# Min and max t0 values to explore within offset data
-	minTRange <- 3
-	maxTRange <- 3
 	
 	# Initialise other parameters
 	rSquare <- 0
@@ -44,7 +40,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=20, to=maxTruncation, by=step)) {
+	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -58,7 +54,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		print(paste("Count", startTimeCount))
 		# Determine epidemic type and fit over required range
 		startSearch <- max(1, startTime - 10)
-		endSearch <- min((startTime + 10), (i - minTruncation))
+		endSearch <- max(1, min((startTime + 10), (i - minTruncation)))
 		if (epidemicType == 3) {
 			print(paste("k range", c(startSearch:endSearch)))
 			# SIR Epidemic

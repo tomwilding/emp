@@ -23,17 +23,17 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 			}
 		}
 		else if (subEpiNumParams == 3) {
-			# Set SIR Epidemic optimised parameters
-			beta <- exp(paramsMulti[1])
-			gamma <- exp(paramsMulti[2])
-			I0 <- initConds[2]
-			S0 <- exp(paramsMulti[3])
-			R0 <- beta*S0 / I0
-			# Force optimisation to advance within parameter ranges
-			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-2 || S0 < I0 || R0 > 10) {
-				sse <- Inf
-				outOfBounds <- TRUE
-			}
+			# # Set SIR Epidemic optimised parameters
+			# beta <- exp(paramsMulti[1])
+			# gamma <- exp(paramsMulti[2])
+			# I0 <- initConds[2]
+			# S0 <- exp(paramsMulti[3])
+			# # R0 <- beta*S0 / I0
+			# # Force optimisation to advance within parameter ranges
+			# if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-6 || S0 < I0) {
+			# 	sse <- Inf
+			# 	outOfBounds <- TRUE
+			# }
 		}
 	}
 	# If parameters are in bounds then eval and get sse

@@ -3,7 +3,7 @@ require('epi')
 # Simulate data 
 fluData <- simSIR(0.001,0.05,400,1)
 # fluData1 <- simExp(0.2,200)
-fluData1 <- simSIR(0.001,0.02,400,1)
+fluData1 <- simSIR(0.001,0.1,400,1)
 # Get data from dataframe
 # Ensure first is larger than second
 # nSum <- 4
@@ -13,7 +13,7 @@ positiveInfectious1 <- fluData1$data[,3]
 
 # Offset of t0 for second epidemic
 offset <- 30
-offset1 <-50
+offset1 <- 50
 
 # Padding of zeros to offset data
 set.seed(1)
@@ -40,7 +40,7 @@ minTruncation <- 4
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
-thresholds <- list(lim=0.99)
+thresholds <- list(lim=0.998)
 
 # Init Params = beta, gamma, S0
 initParams <- c();
