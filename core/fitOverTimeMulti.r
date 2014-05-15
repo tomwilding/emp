@@ -19,10 +19,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Step size for iterative fitting
 	step <- 1
 	# Initial t0 value
-	# ts <- c(1, 7, 133)
 	ts <- c(1)
+	# ts <- c(1)
 	# Set the number of epidemics
-	# k <- 3
 	k <- 1
 
 	# All evaluation vector
@@ -239,7 +238,7 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 			# If minimum residual increase is more than required, then set type
 			if (outbreakRes > outbreakLim) {
 				outbreak <- 3
-			} else if (expRes > expLim && k > 1) {
+			} else if (expRes > expLim) {
 				outbreak <- 1
 			}
 		}
