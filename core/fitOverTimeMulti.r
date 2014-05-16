@@ -19,12 +19,13 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Step size for iterative fitting
 	step <- 1
 	# Initial t0 value
+	# ts <- c(1)
 	ts <- c(1)
-	# ts <- c(1, 1, 54)
-	# ts <- c(1, 1, 60, 133)
+	# ts <- c(1,  10,  56, 133, 187, 257)
 	# Set the number of epidemics
 	k <- 1
-	# k <- 3
+	# k <- 5
+	# k <- 2
 
 	# All evaluation vector
 	evalList <- c()
@@ -34,10 +35,10 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 	# Track epidemic start time
 	startTime <- ts[1]
-	startTimeCount <- 10
+	startTimeCount <- 0
 	timeSinceOutbreak <- 0
 
-	# startTruncation <- 20
+	# testParams(times, data, initConds, params, epiTypes, ts, k, granularity)
 	
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
@@ -56,7 +57,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Determine epidemic type and fit over required range
 		startSearch <- max(1, startTime - 10)
 		endSearch <- max(1, min((startTime + 10), (i - minTruncation)))
-		if (epidemicType == 3 && (startTimeCount < 5)) {
+		if (epidemicType == 3) {
 			print(paste("k range", c(startSearch:endSearch)))
 			# SIR Epidemic
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startSearch:endSearch), plotConfig, 1)
@@ -110,12 +111,12 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Try to improve the fit if rSquare has deteriorated
 		outbreak <- detectOutbreak(eval$residuals, nRes, startTime, k)
 		print(paste("Outbreak", outbreak))
-		if ((timeSinceOutbreak > minTruncation) && (rSquare < lim) && (outbreak > 0)) {
+		if ((rSquare < lim) && (outbreak > 0) && (timeSinceOutbreak > minTruncation)) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 3 || outbreak == 0) {
 				# Try SIR
-				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(orderOf(data[startOffset]))))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(10)))
 				initCondsMore <- c(initConds, c(1,1,0))
 				epiTypesMore <- c(epiTypes, 3)
 				# Fit More epidemic searching t0 range from previous epidemic

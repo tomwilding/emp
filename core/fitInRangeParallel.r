@@ -131,9 +131,9 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	#  	dev.off()
 	# }
 
-	# Set values of eval
-	eval$multiParams <- optimParams
-	eval$initConds <- initConds
+	# # Set values of eval
+	# eval$multiParams <- optimParams
+	# eval$initConds <- initConds
 	eval$optimTime <- optimTime
 	eval$optimTimes <- c(ts[1:(k - 1)], optimTime)
 	eval$k <- k
