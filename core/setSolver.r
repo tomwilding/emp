@@ -14,13 +14,14 @@ setSolver <- function(optimMethod, k, epiTypes) {
 	# Select optimisation method
 	switch(optimMethod,
 		LMS = {
-			optimSIRMulti <- function(times, data, initConds, optimParams, epiTypes, ts, k) {
+			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k) {
+				optimisationParameters <- initParams
 				for (i in 1 : 5) {
-					params <- optim(optimParams, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes)
+					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes)
 					# myOptim(initParams, sseMulti, times, data, initConds, ts, k)
-					optimParams <- params$par
+					optimisationParameters <- params$par
 				}
-				optimParams
+				optimisationParameters
 			}
 		},
 		MLE = {

@@ -20,9 +20,11 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	step <- 1
 	# Initial t0 value
 	ts <- c(1)
-	# ts <- c(1)
+	# ts <- c(1, 1, 54)
+	# ts <- c(1, 1, 60, 133)
 	# Set the number of epidemics
 	k <- 1
+	# k <- 3
 
 	# All evaluation vector
 	evalList <- c()
@@ -54,7 +56,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Determine epidemic type and fit over required range
 		startSearch <- max(1, startTime - 10)
 		endSearch <- max(1, min((startTime + 10), (i - minTruncation)))
-		if (epidemicType == 3) {
+		if (epidemicType == 3 && (startTimeCount < 5)) {
 			print(paste("k range", c(startSearch:endSearch)))
 			# SIR Epidemic
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startSearch:endSearch), plotConfig, 1)
@@ -78,7 +80,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		print(paste("timeSinceOutbreak", timeSinceOutbreak))
 		
 		# Check for redundant epidemics
-		if ((rSquare > lim) && (k > 1)) {
+		if ((rSquare > lim) && (k > 2)) {
 			prevEpidemicType <- epiTypes[k - 1]
 			curEpidemicType <- epiTypes[k]
 			print(">>> Fit k-1 epidemics", quote=FALSE)
@@ -113,11 +115,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 3 || outbreak == 0) {
 				# Try SIR
-				if (k == 1) {
-					startParamsMore <- c(log(0.001), log(0.1), log(10))
-					startCondsMore <- c(1,1,0)
-				}
-				initParamsMore <- c(initParams, c(log(0.001), log(0.1), log(10)))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(orderOf(data[startOffset]))))
 				initCondsMore <- c(initConds, c(1,1,0))
 				epiTypesMore <- c(epiTypes, 3)
 				# Fit More epidemic searching t0 range from previous epidemic
@@ -148,11 +146,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 			} else if (outbreak == 1) {
 				# EXP Detected
-				if (k == 1) {
-					startParamsMore <- c(log(0.0001))
-					startCondsMore <- c(1)
-				}
-				initParamsMore <- c(initParams, log(0.0001))
+				initParamsMore <- c(initParams, log(0.01))
 				initCondsMore <- c(initConds, 1)
 				epiTypesMore <- c(epiTypes, 1)		
 				# Fit More epidemic with t0 set at i
@@ -255,13 +249,7 @@ detectOutbreakInRange <- function(minTruncation, residuals, nRes, startTime, k) 
 }
 
 reduceParams <- function(initVec, epidemicType) {
-	if (epidemicType == 1) {
-		# Update params for spike epidemic used I0 and gamma from initial
-		newVec <- initVec[1:(length(initVec) - 1)]
-	} else if (epidemicType == 3) {
-		# Update params for SIR epidemic
-		newVec <- initVec[1:(length(initVec) - 3)]
-	}
+	newVec <- initVec[1:(length(initVec) - epidemicType)]
 }
 
 countStartTime <- function(startTimeNew, startTime, startTimeCount) {
