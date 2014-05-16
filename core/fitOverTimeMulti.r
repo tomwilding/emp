@@ -20,12 +20,12 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	step <- 1
 	# Initial t0 value
 	# ts <- c(1)
-	ts <- c(1)
 	# ts <- c(1,  10,  56, 133, 187, 257)
+	ts <- c(1, 26)
 	# Set the number of epidemics
-	k <- 1
+	# k <- 1
 	# k <- 5
-	# k <- 2
+	k <- 2
 
 	# All evaluation vector
 	evalList <- c()
@@ -42,7 +42,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
+	for (i in seq(from=100, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -111,7 +111,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Try to improve the fit if rSquare has deteriorated
 		outbreak <- detectOutbreak(eval$residuals, nRes, startTime, k)
 		print(paste("Outbreak", outbreak))
-		if ((rSquare < lim) && (outbreak > 0) && (timeSinceOutbreak > minTruncation)) {
+		if ((rSquare < lim) && (outbreak > 0)) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 3 || outbreak == 0) {

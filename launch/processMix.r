@@ -8,6 +8,12 @@ fluData1 <- simSIR(0.001,0.1,400,1)
 # nSum <- 4
 positiveInfectious <- fluData$data[,3]
 positiveInfectious1 <- fluData1$data[,3]
+
+times <- c(1:length(positiveInfectious1))
+plot(times, positiveInfectious1)
+eval <- evalMulti(times, positiveInfectious1, c(400, 1, 0), c(log(0.001), log(0.1), log(400)), c(3), c(1), 1, 1)
+lines(times, eval$multiInf)
+readline()
 # positiveInfectious1 <- fluData1$data[,2]
 
 # Offset of t0 for second epidemic
@@ -43,15 +49,15 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minT
 thresholds <- list(lim=0.998)
 
 # Init Params = beta, gamma, S0
-initParams <- c();
-# initParams <- c(log(0.001), log(0.01), log(10));
+# initParams <- c();
+initParams <- c(log(0.001), log(0.01), log(10));
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-epiTypes <- c(0)
-# epiTypes <- c(0, 3)
+# epiTypes <- c(0)
+epiTypes <- c(0, 3)
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c();
-# initConds <- c(1,1,0)
+# initConds <- c();
+initConds <- c(1,1,0)
 
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 # Fit parameters

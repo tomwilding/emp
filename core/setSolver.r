@@ -16,7 +16,7 @@ setSolver <- function(optimMethod, k, epiTypes) {
 		LMS = {
 			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k) {
 				optimisationParameters <- initParams
-				for (i in 1 : 5) {
+				for (i in 1 : 10) {
 					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes)
 					# myOptim(initParams, sseMulti, times, data, initConds, ts, k)
 					optimisationParameters <- params$par
