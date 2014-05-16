@@ -23,10 +23,10 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 			if (subEpiNumParams == 3) {
 				# Update SIR epidemic parameters
 				# Update S0
-				# initCondsMulti[1] <- exp(paramsMulti[3])
+				initCondsMulti[1] <- exp(paramsMulti[3])
 				# print(initCondsMulti)
 				# Update I0 computed using previous sub epidemics
-				initCondsMulti[2] <- I0
+				# initCondsMulti[2] <- I0
 				# Get predictions of SIR given current parameters
 				preds <- lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti)
 				predInf <- (preds[,3])
