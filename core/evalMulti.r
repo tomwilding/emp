@@ -10,7 +10,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) 
 	eval <- c()
 	subEpiNumParamsOffset <- 0
 	paramsMulti <- c()
-	ts <- c(1, 18, 45)
+	ts <- c(1, 18, 46)
 	for (i in 1:k) {
 		# Get sub epidemic type and parameters
 		subEpiNumParams <- epiTypes[i]
