@@ -10,7 +10,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) 
 	eval <- c()
 	subEpiNumParamsOffset <- 0
 	paramsMulti <- c()
-	ts <- c(1, 18, 46)
+	ts <- c(1, 12, 46)
 	for (i in 1:k) {
 		# Get sub epidemic type and parameters
 		subEpiNumParams <- epiTypes[i]
@@ -21,7 +21,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) 
 
 			# Evaluate epidemic according to type
 			if (subEpiNumParams == 4) {
-				epiStartTime <- 18
+				epiStartTime <- logisticTransform(paramsMulti[4], 87)
 				# Update SIR epidemic parameters
 				# Update S0
 				initCondsMulti[1] <- exp(paramsMulti[3])
@@ -31,9 +31,8 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) 
 				# Get predictions of SIR given current parameters
 				preds <- lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti)
 				predInf <- (preds[,3])
-			} else if (subEpiNumParams == 2) {
-				epiStartTime <- 46
-				print(epiStartTime)
+			} else if (subEpiNumParams == 1) {
+				epiStartTime <- ts[k]
 				# Update Spike epidemic parameters
 				# Update I0 as unexplained prediction of Infectious for this epidemic
 				initCondsMulti[1] <- I0
