@@ -9,16 +9,17 @@ fluData1 <- simSIR(0.001,0.1,400,1)
 positiveInfectious <- fluData$data[,3]
 positiveInfectious1 <- fluData1$data[,3]
 
-times <- c(1:length(positiveInfectious1))
-plot(times, positiveInfectious1)
-eval <- evalMulti(times, positiveInfectious1, c(400, 1, 0), c(log(0.001), log(0.1), log(400)), c(3), c(1), 1, 1)
-lines(times, eval$multiInf)
-readline()
+# positiveInfectious2 <- simSIR(0.001,0.1,500,10)$data[,3]
+# times <- c(1:length(positiveInfectious1))
+# plot(times, positiveInfectious1)
+# eval <- evalMulti(times, positiveInfectious1, c(400, 1, 0), c(log(0.001), log(0.1), log(400)), c(3), c(1), 1, 1)
+# lines(times, eval$multiInf)
+# readline()
 # positiveInfectious1 <- fluData1$data[,2]
 
 # Offset of t0 for second epidemic
 offset <- 30
-offset1 <- 60
+offset1 <- 50
 
 # Padding of zeros to offset data
 set.seed(1)

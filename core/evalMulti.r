@@ -45,7 +45,6 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 		# Find index to start fitting k+1 epidemic
 		t0Index <- which(fineTimes == (times[ts[i]]))
 		# Offset
-		print(t0Index)
 		zeros <- numeric(t0Index - 1)
 		predInf <- c(zeros, predInf)
 		# Truncate to length of data
