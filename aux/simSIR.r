@@ -28,8 +28,8 @@ simSIR <- function(b,g,S0,I0){
 	# nf <- layout(matrix(c(1,2,3,4),ncol=2, byrow=T))
 
 	# Direct method
-	set.seed(2)
-	out <- ssa(x0,a,nu,parms,tf,method="D",simName,censusInterval=0.3)
+	set.seed(4)
+	out <- ssa(x0,a,nu,parms,tf,method="D",simName,censusInterval=1)
 	# plot(out$data[,1], out$data[,3])
 	# print(out$data[,3])
 	# readline()

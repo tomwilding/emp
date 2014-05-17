@@ -1,9 +1,9 @@
 require('epi')
 if (file.exists("optimParams.txt")){file.remove("optimParams.txt")}
 # Simulate data 
-fluData1 <- simSIR(0.002,0.1,400,10)
+fluData1 <- simSIR(0.002,0.1,400,1)
 # fluData1 <- simExp(0.2,400)
-fluData2 <- simSIR(0.002,0.1,500,10)
+fluData2 <- simSIR(0.002,0.1,500,1)
 # Get data from dataframe
 # Ensure first is larger than second
 # nSum <- 4

@@ -1,4 +1,4 @@
-fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, k, tmax) {
+fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, k, tmax, rep) {
 	# Ensure length of range is greater than 0
 	# assert_all_are_true(length(range) > 0)
 
@@ -56,6 +56,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
  	setEPS()
  	r <- plotConfig$run
  	graphName <- paste("t", i, sep='')
+ 	graphName <- paste(graphName, rep, sep='.')
  	graphName <- paste(graphName, ".eps", sep='')
  	postscript(paste(plotConfig$fileName, graphName, sep=''))	
  	par(mar=c(7.1,4.1,4.1,2.1))

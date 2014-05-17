@@ -15,7 +15,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Initial t0 value
 	# ts <- c(1, 23)
 	# Set the number of epidemics
-	k <- 3
+	k <- 1
 	
 	evalList <- c()
 
@@ -30,8 +30,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 		# Optimise k epidemics
 		optimParams <- initParams
-		for (rep in 1 : 5) {
-			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, optimParams, epiTypes, k, tmax)
+		for (rep in 1 : 20) {
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, optimParams, epiTypes, k, tmax, rep)
 			optimParams <- eval$multiParams
 		}
 		# maxt <- eval$optimTime
