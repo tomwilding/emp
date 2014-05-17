@@ -12,7 +12,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 		subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
 
 		# Check parameters are in bounds
-		if (subEpiNumParams == 1) {
+		if (subEpiNumParams == 2) {
 			# Spike Epidemic
 			# Set Spike epidemic optimised parameters
 			gamma <- exp(paramsMulti[1])
@@ -22,13 +22,13 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 				outOfBounds <- TRUE
 			}
 		}
-		else if (subEpiNumParams == 3) {
+		else if (subEpiNumParams == 4) {
 			# Set SIR Epidemic optimised parameters
 			beta <- exp(paramsMulti[1])
 			gamma <- exp(paramsMulti[2])
 			I0 <- initCondsMulti[2]
 			S0 <- exp(paramsMulti[3])
-			# R0 <- beta*S0 / I0
+			# R0 <- beta*S0 / gamma
 			# Force optimisation to advance within parameter ranges
 			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-2 || beta > gamma || S0 < I0) {
 				sse <- Inf
@@ -39,7 +39,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 	# If parameters are in bounds then eval and get sse
 	if (!outOfBounds){
 		granularity <- 1
-		eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, granularity)
+		eval <- evalMulti(times, data, initConds, params, epiTypes, k, granularity)
 		predInf <- eval$multiInf
 		sse <- sum((predInf - data)^2)
 	}

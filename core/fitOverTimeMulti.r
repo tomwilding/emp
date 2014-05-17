@@ -19,13 +19,14 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Step size for iterative fitting
 	step <- 1
 	# Initial t0 value
-	ts <- c(1)
-	# ts <- c(1,  10,  56, 133, 187, 257)
-	# ts <- c(1, 26)
+	# ts <- c(1)
+	# ts <- c(1, 31, 82)
+	ts <- c(1, 18, 45)
+	# ts <- c(1, 1, 70, 133)
 	# Set the number of epidemics
-	k <- 1
-	# k <- 5
-	# k <- 2
+	# k <- 1
+	k <- 3
+	# k <- 4
 
 	# All evaluation vector
 	evalList <- c()
@@ -39,10 +40,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	timeSinceOutbreak <- 0
 
 	# testParams(times, data, initConds, params, epiTypes, ts, k, granularity)
-	
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
+	for (i in seq(from=maxTruncation, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -57,7 +57,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Determine epidemic type and fit over required range
 		startSearch <- max(1, startTime - 10)
 		endSearch <- max(1, min((startTime + 10), (i - minTruncation)))
-		if (epidemicType == 3) {
+		if (epidemicType == 4) {
 			print(paste("k range", c(startSearch:endSearch)))
 			# SIR Epidemic
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startSearch:endSearch), plotConfig, 1)
@@ -67,7 +67,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		}
 		# Update parameters
 		maxt <- eval$optimTime
-		ts[k] <- maxt
+		# ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		optimParams <- eval$multiParams
 		optimConds <- eval$initConds
@@ -114,7 +114,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		if ((rSquare < lim) && (outbreak > 0) && (timeSinceOutbreak > minTruncation)) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
-			if (outbreak == 3 || outbreak == 0) {
+			if (outbreak == 4 || outbreak == 0) {
 				# Try SIR
 				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(10)))
 				initCondsMore <- c(initConds, c(1,1,0))

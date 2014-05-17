@@ -1,4 +1,4 @@
-evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granularity) {
+evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) {
 	require(deSolve)
 
 	fineTimes <- breakTime(times, granularity);
@@ -10,7 +10,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 	eval <- c()
 	subEpiNumParamsOffset <- 0
 	paramsMulti <- c()
-
+	ts <- c(1, 18, 45)
 	for (i in 1:k) {
 		# Get sub epidemic type and parameters
 		subEpiNumParams <- epiTypes[i]
@@ -20,7 +20,8 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 			subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
 
 			# Evaluate epidemic according to type
-			if (subEpiNumParams == 3) {
+			if (subEpiNumParams == 4) {
+				epiStartTime <- 18
 				# Update SIR epidemic parameters
 				# Update S0
 				initCondsMulti[1] <- exp(paramsMulti[3])
@@ -30,7 +31,9 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 				# Get predictions of SIR given current parameters
 				preds <- lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti)
 				predInf <- (preds[,3])
-			} else if (subEpiNumParams == 1) {
+			} else if (subEpiNumParams == 2) {
+				epiStartTime <- 46
+				print(epiStartTime)
 				# Update Spike epidemic parameters
 				# Update I0 as unexplained prediction of Infectious for this epidemic
 				initCondsMulti[1] <- I0
@@ -38,12 +41,13 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 				predInf <- preds[,2]
 			}
 		} else {
+			epiStartTime <- 1
 			# No epidemic detected
 			predInf <- array(1, length(fineTimes)) * data[1]
 		}
 
 		# Find index to start fitting k+1 epidemic
-		t0Index <- which(fineTimes == (times[ts[i]]))
+		t0Index <- which(fineTimes == round(epiStartTime))
 		# Offset
 		zeros <- numeric(t0Index - 1)
 		predInf <- c(zeros, predInf)

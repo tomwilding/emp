@@ -2,5 +2,6 @@ expDec <- function(time, initConds, params) {
 	i <- initConds[1]
 	gamma <- exp(params[1])
 	dI <- -gamma*i
-	list(c(dI))
+	dt <- 0
+	list(c(dI, dt))
 }

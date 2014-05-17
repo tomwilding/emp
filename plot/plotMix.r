@@ -1,19 +1,27 @@
 load("output/data/mix/mixData.RData")
 require('epi')
 # Simulate data 
+# require('epi')
+# Simulate data 
 fluData <- simSIR(0.001,0.05,400,1)
-# fluData1 <- simExp(0.2,200)
 fluData1 <- simSIR(0.001,0.1,400,1)
 # Get data from dataframe
 # Ensure first is larger than second
 # nSum <- 4
 positiveInfectious <- fluData$data[,3]
 positiveInfectious1 <- fluData1$data[,3]
+
+# positiveInfectious2 <- simSIR(0.001,0.1,500,10)$data[,3]
+# times <- c(1:length(positiveInfectious1))
+# plot(times, positiveInfectious1)
+# eval <- evalMulti(times, positiveInfectious1, c(400, 1, 0), c(log(0.001), log(0.1), log(400)), c(3), c(1), 1, 1)
+# lines(times, eval$multiInf)
+# readline()
 # positiveInfectious1 <- fluData1$data[,2]
 
 # Offset of t0 for second epidemic
 offset <- 30
-offset1 <- 60
+offset1 <- 50
 
 # Padding of zeros to offset data
 set.seed(1)
@@ -31,7 +39,6 @@ positiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 
 # Add together the different predicted infectious values truncated to required size
 data <- positiveInfectious + positiveInfectious1
-
 times <- c(1:length(data))
 
 # Fitting epidemics
