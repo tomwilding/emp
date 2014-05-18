@@ -19,13 +19,13 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Step size for iterative fitting
 	step <- 1
 	# Initial t0 value
-	ts <- c(1, 34, 85)
+	# ts <- c(1, 34, 90)
 	# ts <- c(1, 16, 35, 133, 198, 262)
-	# ts <- c(1)
+	ts <- c(1)
 
 	# Set the number of epidemics
-	k <- 3
-	# k <- 1
+	# k <- 6
+	k <- 1
 
 	# All evaluation vector
 	evalList <- c()
@@ -41,7 +41,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# testParams(times, data, initConds, params, epiTypes, ts, k, granularity)
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=141, to=maxTruncation, by=step)) {
+	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -108,7 +108,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 4 || outbreak == 0) {
 				# SIR Detected
-				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(100), logit((i - 10), (i - minTruncation), i)))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(1000), 0))
 				initCondsMore <- c(initConds, c(1,1,0,0))
 				epiTypesMore <- c(epiTypes, 4)
 				# Fit SIR epidemic starting minTruncation before detected time

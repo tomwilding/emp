@@ -5,7 +5,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# assert_all_are_true(length(range) > 0)
 
 	# Define eval vector
-	eval <- c()
+	fit <- c()
 
 	# Register multi core backend with n cores
 	registerDoMC(min(length(range), 30))
@@ -84,7 +84,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# Plot inline for dev
 	if (p) {
 	 	fineTimes <- breakTime(offsetTimes, timeStep)
-	 	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
+	 	cl <- c("red","cyan","forestgreen","goldenrod2","red4", "blue")
 	 	setEPS()
 	 	r <- plotConfig$run
 	 	graphName <- paste("t", i, sep='')
@@ -111,20 +111,20 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	 	}
 	 	dev.off()
 	}
-	# Set values of eval
-	eval$optimParams <- optimParams
-	eval$initConds <- initConds
-	# eval$optimTimes <- c(1, 23)
-	eval$k <- k
-	eval$optimRSquare <- rSquareError 
+	# Set values of fit
+	fit$optimParams <- optimParams
+	fit$initConds <- initConds
+	# fit$optimTimes <- c(1, 23)
+	fit$k <- k
+	fit$optimRSquare <- rSquareError 
 	# Get final residual from allEval infectious
-	eval$finalResidual <- (offsetData[i] - allEval$multiInf[i])
+	fit$finalResidual <- (offsetData[i] - allEval$multiInf[i])
 	# Get all residuals up to current time
-	eval$residuals <- (offsetData[1:i]) - (allEval$multiInf[1:i])
-	# Set different multi and sub evals
-	eval$nextPred <- allEval$multiInf[i+1]
-	# eval$pastEval <- optimPastEval
-	eval$allEval <- allEval
-	eval$allEvalFine <- allEvalFine
-	eval
+	fit$residuals <- (offsetData[1:i]) - (allEval$multiInf[1:i])
+	# Set different multi and sub fits
+	fit$nextPred <- allEval$multiInf[i+1]
+	# fit$pastEval <- optimPastEval
+	fit$allEval <- allEval
+	fit$allEvalFine <- allEvalFine
+	fit
 }
