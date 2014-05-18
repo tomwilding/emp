@@ -1,4 +1,4 @@
-fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, range, plotConfig, p) {
+fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, plotConfig, p) {
 	require(doMC)
 
 	# Ensure length of range is greater than 0
@@ -58,7 +58,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 		# Find optimal beta and gamma by optimising them to minimise the least square function
 		# OptimSIRMulti passed in from call to setSolver
 		tryCatch({
-			optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, tsExplore, k)
+			optimParams <- optimSIRMulti(truncTimes, truncData, initConds, initParams, epiTypes, ts, k)
 		}, warning = function(w) {
 			print(w)
 			print("optim warning")
@@ -69,15 +69,15 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	}
 
 
-	pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, k, 1)
+	pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, ts, k, 1)
 	predInfectiousPast <- pastEval$multiInf
 	# rSquare error to determine best time to start fitting
 	rSquareError <- rSquareError(predInfectiousPast, truncData)
 
 	# TODO: Don't want to restrict eval - eval over all points in evalMulti after optim over all but last n
-	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, k, timeStep)
+	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, timeStep)
 	# Evaluate over all time
-	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, k, 1) 
+	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, 1) 
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
 
@@ -112,7 +112,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	 	dev.off()
 	}
 	# Set values of eval
-	eval$multiParams <- optimParams
+	eval$optimParams <- optimParams
 	eval$initConds <- initConds
 	# eval$optimTimes <- c(1, 23)
 	eval$k <- k

@@ -39,7 +39,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 	# If parameters are in bounds then eval and get sse
 	if (!outOfBounds){
 		granularity <- 1
-		eval <- evalMulti(times, data, initConds, params, epiTypes, k, granularity)
+		eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, granularity)
 		predInf <- eval$multiInf
 		sse <- sum((predInf - data)^2)
 	}

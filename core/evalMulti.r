@@ -1,4 +1,4 @@
-evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) {
+evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granularity) {
 	require(deSolve)
 
 	fineTimes <- breakTime(times, granularity);
@@ -10,7 +10,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) 
 	eval <- c()
 	subEpiNumParamsOffset <- 0
 	paramsMulti <- c()
-	ts <- c(1, 12, 46)
+
 	for (i in 1:k) {
 		# Get sub epidemic type and parameters
 		subEpiNumParams <- epiTypes[i]
@@ -21,7 +21,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, k, granularity) 
 
 			# Evaluate epidemic according to type
 			if (subEpiNumParams == 4) {
-				epiStartTime <- logisticTransform(paramsMulti[4], 87)
+				epiStartTime <- paramsMulti[4]
 				# Update SIR epidemic parameters
 				# Update S0
 				initCondsMulti[1] <- exp(paramsMulti[3])
