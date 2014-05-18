@@ -46,18 +46,19 @@ minTruncation <- 4
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
-thresholds <- list(lim=0.998)
+thresholds <- list(lim=0.995)
 
 # Init Params = beta, gamma, S0
-initParams <- c(log(0.001), log(0.01), log(100), logit(31,141), log(0.001), log(0.01), log(100), logit(82,141);
-# initParams <- c(log(0.001), log(0.01), log(10));
+initParams <- c(log(0.001), log(0.01), log(100), logit(24, 34-minTruncation, 34), log(0.001), log(0.01), log(100), logit(75, 85-minTruncation, 85));
+# initParams <- c()
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
+# epiTypes <- c(0)
 epiTypes <- c(0, 4, 4)
-# epiTypes <- c(0, 3)
+
 # Init Conds = S0, I0, R0
 # I0 from first data point
+# initConds <- c()
 initConds <- c(1,1,0,0, 1,1,0,0);
-# initConds <- c(1,1,0)
 
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 # Fit parameters

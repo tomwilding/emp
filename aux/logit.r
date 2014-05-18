@@ -1,3 +1,3 @@
-logit <- function(x, maxt) {
-	l <- log(x / (maxt - x))
+logit <- function(tmin, x, tmax) {
+	l <- log((x - tmin) / (tmax - x))
 }

@@ -1,3 +1,3 @@
-logisticTransform <- function(x, tmax) {
-	tmax / (1 + exp(-x))
+logisticTransform <- function(tmin, x, tmax) {
+	((tmax - tmin) / (1 + exp(-x))) + tmin
 }
