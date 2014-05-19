@@ -28,7 +28,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 			gamma <- exp(paramsMulti[2])
 			I0 <- initCondsMulti[2]
 			S0 <- exp(paramsMulti[3])
-			# R0 <- beta*S0 / gamma
+			R0 <- beta*S0 / gamma
 			# Force optimisation to advance within parameter ranges
 			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-2 || beta > gamma || S0 < I0) {
 				sse <- Inf
@@ -37,11 +37,11 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 		}
 	}
 	# If parameters are in bounds then eval and get sse
-	if (!outOfBounds){
+	# if (!outOfBounds){
 		granularity <- 1
 		eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, granularity)
 		predInf <- eval$multiInf
 		sse <- sum((predInf - data)^2)
-	}
+	# }
 	sse
 }

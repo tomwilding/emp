@@ -20,11 +20,13 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	step <- 1
 	# Initial t0 value
 	# ts <- c(1, 34, 90)
+	# ts <- c(1, 14, 72, 133)
 	# ts <- c(1, 16, 35, 133, 198, 262)
 	ts <- c(1)
 
 	# Set the number of epidemics
 	# k <- 6
+	# k <- 4
 	k <- 1
 
 	# All evaluation vector
@@ -108,7 +110,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 4 || outbreak == 0) {
 				# SIR Detected
-				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(1000), logit(i-10, i-minTruncation, i)))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(1000), 0))
 				initCondsMore <- c(initConds, c(1,1,0,0))
 				epiTypesMore <- c(epiTypes, 4)
 				# Fit SIR epidemic starting minTruncation before detected time
