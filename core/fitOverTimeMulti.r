@@ -22,8 +22,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# ts <- c(1, 34, 90)
 	# ts <- c(1, 14, 72, 133)
 	# ts <- c(1, 14, 92, 133, 190, 253)
-	ts <- c(1)#, 14, 72, 133, 190, 258)
-	# ts <- c(1)
+	# ts <- c(1, 14, 72, 133, 203)#, 259)
+	ts <- c(1)
 
 	# Set the number of epidemics
 	k <- length(ts)
@@ -44,7 +44,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# testParams(times, data, initConds, params, epiTypes, ts, k, granularity)
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
+	for (i in seq(from=210, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -188,29 +188,23 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 		print(paste("sdRes ", sdRes))
 		print(paste("Outbreaklim", meanRes + sdRes * 2))
 		print(paste("Explim", meanRes + sdRes * 6))
-		# print(paste("MeanDiffRes", meanDiffRes))
-		# print(paste("SdDiffRes", sdDiffRes))
-		# print(paste("DiffRes", diffRes))
-		# If current residual sd is above zero check if last n residuals are above set number of sd
-		if (sdRes > 0) {
-			# Index of first residual to check
-			startResIndex <- resLength - nRes + 1
-			# Assume incRes is True and check condition for all n residuals
-			# sameSign <- max(residuals[startResIndex : resLength]) < 0 || min(residuals[startResIndex : resLength]) > 0
-			# continuouslyIncreasing <- sort(residuals[startResIndex:resLength]) == residuals[startResIndex:resLength]
-			outbreakRes <- min(residuals[startResIndex : resLength])
-			expRes <- residuals[resLength]
-			print(paste("OutbreakRes", outbreakRes))
-			print(paste("ExpRes", expRes))
-			# Set epidemic type according to residual limit
-			outbreakLim <- (meanRes + (sdRes * 2))
-			expLim <- (meanRes + (sdRes * 6))
-			# If minimum residual increase is more than required, then set type
-			if (outbreakRes > outbreakLim) {
-				outbreak <- 4
-			} else if (expRes > expLim) {
-				outbreak <- 1
-			}
+
+		# Check if last n residuals are above set number of sd
+		# Index of first residual to check
+		startResIndex <- resLength - nRes + 1
+		# Take last residuals
+		outbreakRes <- min(residuals[startResIndex : resLength])
+		expRes <- residuals[resLength]
+		print(paste("OutbreakRes", outbreakRes))
+		print(paste("ExpRes", expRes))
+		# Set epidemic type according to residual limit
+		outbreakLim <- (meanRes + (sdRes * 2))
+		expLim <- (meanRes + (sdRes * 6))
+		# If minimum residual increase is more than required, then set type
+		if (outbreakRes > outbreakLim) {
+			outbreak <- 4
+		} else if (expRes > expLim) {
+			outbreak <- 1
 		}
 	}
 	outbreak	
