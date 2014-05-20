@@ -22,7 +22,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# ts <- c(1, 34, 90)
 	# ts <- c(1, 14, 72, 133)
 	# ts <- c(1, 14, 92, 133, 190, 253)
-	# ts <- c(1, 14, 72, 133, 203)#, 259)
+	# ts <- c(1, 14, 72, 133, 203, 259)
 	ts <- c(1)
 
 	# Set the number of epidemics
@@ -106,12 +106,12 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Try to improve the fit if rSquare has deteriorated
 		outbreak <- detectOutbreak(eval$residuals, nRes, startTime, k)
 		print(paste("Outbreak", outbreak))
-		if ((rSquare < lim) && (outbreak > 0) && (timeSinceOutbreak > minTruncation)) {
+		if ((rSquare < lim) && (outbreak > 0)) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 4 || outbreak == 0) {
 				# SIR Detected
-				initParamsMore <- c(initParams, c(logit(1e-6, 0.001, 0.1), logit(1e-4, 0.01, 1), log(1000), 0))
+				initParamsMore <- c(initParams, c(0, 0, 0, 0))
 				initCondsMore <- c(initConds, c(1,1,0,0))
 				epiTypesMore <- c(epiTypes, 4)
 				# Fit SIR epidemic starting minTruncation before detected time
@@ -121,7 +121,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				RSquareMore <- evalMore$optimRSquare
 			} else if (outbreak == 1) {
 				# EXP Detected
-				initParamsMore <- c(initParams, logit(1e-4, 0.01, 1))
+				initParamsMore <- c(initParams, 0)
 				initCondsMore <- c(initConds, 1)
 				epiTypesMore <- c(epiTypes, 1)
 				tsMore <- c(ts, i)
@@ -176,13 +176,15 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 	outbreak <- 0
 	# Ensure more than one residual before the last n residuals to calculate sdRes
 	resLength <- length(residuals)
-	if (resLength > nRes + 1) {
+	# Ensure time since outbreak is greater than minTruncation
+	if (resLength > startTime + nRes + minTruncation) {
 		# Get standard deviation of residuals before the ones considered
 		inRangeResiduals <- residuals[startTime : (resLength - nRes)]
 		# minRes <- max(1, resLength - window)
 		# inRangeResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
-		meanRes <- myMean(inRangeResiduals)
-		sdRes <- mySd(inRangeResiduals, meanRes)
+		# print(inRangeResiduals)
+		meanRes <- mean(inRangeResiduals)
+		sdRes <- sd(inRangeResiduals)
 
 		print(paste("meanRes", meanRes))
 		print(paste("sdRes ", sdRes))
