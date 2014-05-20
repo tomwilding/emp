@@ -58,6 +58,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 
 		# Record sub epidemic parameters
 		eval$subInf[[i]] <- predInf
+		eval$subStartTime[[i]] <- epiStartTime
 		eval$subParams[[i]] <- paramsMulti
 		eval$multiInf <- predInfectious
 		eval$multiParams <- params

@@ -36,7 +36,7 @@ positiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 
 # Add together the different predicted infectious values truncated to required size
 data <- positiveInfectious + positiveInfectious1
-
+times <- c(1:length(data))
 # data <- allPositiveInfectious
 
 # Fitting epidemics
@@ -61,5 +61,8 @@ initConds <- c()
 # initConds <- c(1,1,0,0, 1,1,0,0);
 
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+
+gradientSearch(times, data, plotConfig)
+readline()
 # Fit parameters
-fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
+fitOverTimeMulti("LMS", times, data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
