@@ -25,7 +25,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 				# print(epiStartTime)
 				# Update SIR epidemic parameters
 				# Update S0
-				initCondsMulti[1] <- exp(paramsMulti[3])
+				initCondsMulti[1] <- logisticTransform(100,paramsMulti[3],10000)
 				# print(initCondsMulti)
 				# Update I0 computed using previous sub epidemics
 				# initCondsMulti[2] <- I0

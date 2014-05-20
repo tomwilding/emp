@@ -22,8 +22,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# ts <- c(1, 34, 90)
 	# ts <- c(1, 14, 72, 133)
 	# ts <- c(1, 14, 92, 133, 190, 253)
-	ts <- c(1, 14, 72, 133, 203, 259)
-	# ts <- c(1)
+	# ts <- c(1, 14, 72, 133, 203, 259)
+	ts <- c(1)
 
 	# Set the number of epidemics
 	k <- length(ts)
@@ -44,7 +44,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# testParams(times, data, initConds, params, epiTypes, ts, k, granularity)
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=342, to=maxTruncation, by=step)) {
+	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -111,7 +111,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 4 || outbreak == 0) {
 				# SIR Detected
-				initParamsMore <- c(initParams, c(logit(1e-6, 0.001, 1), logit(1e-4, 0.01, 1), log(1000), 0))
+				initParamsMore <- c(initParams, c(0,0,0,0))
 				initCondsMore <- c(initConds, c(1,1,0,0))
 				epiTypesMore <- c(epiTypes, 4)
 				# Fit SIR epidemic starting minTruncation before detected time
@@ -121,7 +121,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				RSquareMore <- evalMore$optimRSquare
 			} else if (outbreak == 1) {
 				# EXP Detected
-				initParamsMore <- c(initParams, logit(1e-4, 0.01, 1))
+				initParamsMore <- c(initParams, 0)
 				initCondsMore <- c(initConds, 1)
 				epiTypesMore <- c(epiTypes, 1)
 				tsMore <- c(ts, i)
@@ -172,45 +172,45 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 }
 
 
-detectOutbreak <- function(residuals, nRes, startTime, k) {
-	outbreak <- 0
-	# Ensure more than one residual before the last n residuals to calculate sdRes
-	resLength <- length(residuals)
-	# Ensure time since outbreak is greater than minTruncation
-	if (resLength > startTime + nRes + minTruncation) {
-		# Get standard deviation of residuals before the ones considered
-		inRangeResiduals <- residuals[startTime : (resLength - nRes)]
-		# minRes <- max(1, resLength - window)
-		# inRangeResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
-		# print(inRangeResiduals)
-		meanRes <- mean(inRangeResiduals)
-		sdRes <- sd(inRangeResiduals)
+# detectOutbreak <- function(residuals, nRes, startTime, k) {
+# 	outbreak <- 0
+# 	# Ensure more than one residual before the last n residuals to calculate sdRes
+# 	resLength <- length(residuals)
+# 	# Ensure time since outbreak is greater than minTruncation
+# 	if (resLength > startTime + nRes + minTruncation) {
+# 		# Get standard deviation of residuals before the ones considered
+# 		inRangeResiduals <- residuals[startTime : (resLength - nRes)]
+# 		# minRes <- max(1, resLength - window)
+# 		# inRangeResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
+# 		# print(inRangeResiduals)
+# 		meanRes <- mean(inRangeResiduals)
+# 		sdRes <- sd(inRangeResiduals)
 
-		print(paste("meanRes", meanRes))
-		print(paste("sdRes ", sdRes))
-		print(paste("Outbreaklim", meanRes + sdRes * 2))
-		print(paste("Explim", meanRes + sdRes * 6))
+# 		print(paste("meanRes", meanRes))
+# 		print(paste("sdRes ", sdRes))
+# 		print(paste("Outbreaklim", meanRes + sdRes * 2))
+# 		print(paste("Explim", meanRes + sdRes * 6))
 
-		# Check if last n residuals are above set number of sd
-		# Index of first residual to check
-		startResIndex <- resLength - nRes + 1
-		# Take last residuals
-		outbreakRes <- min(residuals[startResIndex : resLength])
-		expRes <- residuals[resLength]
-		print(paste("OutbreakRes", outbreakRes))
-		print(paste("ExpRes", expRes))
-		# Set epidemic type according to residual limit
-		outbreakLim <- (meanRes + (sdRes * 2))
-		expLim <- (meanRes + (sdRes * 6))
-		# If minimum residual increase is more than required, then set type
-		if (outbreakRes > outbreakLim) {
-			outbreak <- 4
-		} else if (expRes > expLim) {
-			outbreak <- 1
-		}
-	}
-	outbreak	
-}
+# 		# Check if last n residuals are above set number of sd
+# 		# Index of first residual to check
+# 		startResIndex <- resLength - nRes + 1
+# 		# Take last residuals
+# 		outbreakRes <- min(residuals[startResIndex : resLength])
+# 		expRes <- residuals[resLength]
+# 		print(paste("OutbreakRes", outbreakRes))
+# 		print(paste("ExpRes", expRes))
+# 		# Set epidemic type according to residual limit
+# 		outbreakLim <- (meanRes + (sdRes * 2))
+# 		expLim <- (meanRes + (sdRes * 6))
+# 		# If minimum residual increase is more than required, then set type
+# 		if (outbreakRes > outbreakLim) {
+# 			outbreak <- 4
+# 		} else if (expRes > expLim) {
+# 			outbreak <- 1
+# 		}
+# 	}
+# 	outbreak	
+# }
 
 detectOutbreakInRange <- function(minTruncation, residuals, nRes, startTime, k) {
 	outbreakInRange <- 0
