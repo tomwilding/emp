@@ -22,7 +22,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# ts <- c(1, 34, 90)
 	# ts <- c(1, 14, 72, 133)
 	# ts <- c(1, 14, 92, 133, 190, 253)
-	ts <- c(1, 14, 72, 133)#, 190, 258)
+	ts <- c(1)#, 14, 72, 133, 190, 258)
 	# ts <- c(1)
 
 	# Set the number of epidemics
@@ -44,7 +44,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# testParams(times, data, initConds, params, epiTypes, ts, k, granularity)
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=142, to=maxTruncation, by=step)) {
+	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)

@@ -20,20 +20,20 @@ thresholds <- list(lim=0.9)
 # Init Params = beta, gamma, S0
 initParams <- c()
 # initParams <-  c(log(0.001), log(0.01), log(orderOf(data[startOffset])), log(0.001), log(0.01), log(orderOf(data[startOffset])), log(0.01), log(0.001), log(0.01), log(orderOf(data[startOffset])), log(0.001), log(0.01), log(orderOf(data[startOffset])))
-initParams <- c(logit(1e-6, 0.001, 1), logit(1e-4, 0.01, 1), log(1000), 0, 
-				logit(1e-6, 0.001, 1), logit(1e-4, 0.01, 1), log(1000), 0, 
-				logit(1e-4, 0.01, 1))
+# initParams <- c(logit(1e-6, 0.001, 1), logit(1e-4, 0.01, 1), log(1000), 0, 
+				# logit(1e-6, 0.001, 1), logit(1e-4, 0.01, 1), log(1000), 0, 
+				# logit(1e-4, 0.01, 1),
 				# logit(1e-6, 0.001, 1), logit(1e-4, 0.01, 1), log(1000), 0,
 				# logit(1e-6, 0.001, 1), logit(1e-4, 0.01, 1), log(1000), 0)
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
 epiTypes <- c(0)
-epiTypes <- c(0, 4, 4, 1)#, 4, 4)
+# epiTypes <- c(0, 4, 4, 1)#, 4, 4)
 # epiTypes <- c(0, 4, 4, 1)
 # Init Conds = S0, I0, R0
 # I0 from first data point
 initConds <- c()
-initConds <- c(	1,1,0,0, 
-				1,1,0,0)#, 
+# initConds <- c(	1,1,0,0, 
+				# 1,1,0,0, 
 				# 1,
 				# 1,1,0,0,
 				# 1,1,0,0)
