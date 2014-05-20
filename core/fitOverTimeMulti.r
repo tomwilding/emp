@@ -22,8 +22,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# ts <- c(1, 34, 90)
 	# ts <- c(1, 14, 72, 133)
 	# ts <- c(1, 14, 92, 133, 190, 253)
-	# ts <- c(1, 14, 72, 133, 203, 259)
-	ts <- c(1)
+	ts <- c(1, 14, 72, 133, 203, 259)
+	# ts <- c(1)
 
 	# Set the number of epidemics
 	k <- length(ts)
@@ -44,7 +44,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# testParams(times, data, initConds, params, epiTypes, ts, k, granularity)
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
+	for (i in seq(from=342, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -111,7 +111,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 4 || outbreak == 0) {
 				# SIR Detected
-				initParamsMore <- c(initParams, c(0, 0, 0, 0))
+				initParamsMore <- c(initParams, c(logit(1e-6, 0.001, 1), logit(1e-4, 0.01, 1), log(1000), 0))
 				initCondsMore <- c(initConds, c(1,1,0,0))
 				epiTypesMore <- c(epiTypes, 4)
 				# Fit SIR epidemic starting minTruncation before detected time
@@ -121,7 +121,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				RSquareMore <- evalMore$optimRSquare
 			} else if (outbreak == 1) {
 				# EXP Detected
-				initParamsMore <- c(initParams, 0)
+				initParamsMore <- c(initParams, logit(1e-4, 0.01, 1))
 				initCondsMore <- c(initConds, 1)
 				epiTypesMore <- c(epiTypes, 1)
 				tsMore <- c(ts, i)
