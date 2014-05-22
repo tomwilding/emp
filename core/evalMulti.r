@@ -1,7 +1,7 @@
-evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granularity) {
+evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, timeStep) {
 	require(deSolve)
 
-	fineTimes <- breakTime(times, granularity)
+	fineTimes <- breakTime(times, timeStep)
 	predInfectious <- numeric(length(fineTimes))
 	# Get initial I0
 	# Update for next epidemic according to unexplained offset from previous epidemic
@@ -47,8 +47,8 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 		}
 
 		# Find index to start fitting k+1 epidemic
-		nearsetStartTime <- round(epiStartTime / granularity) * granularity
-		t0Index <- ((nearsetStartTime - 1) / granularity)
+		nearsetStartTime <- round(epiStartTime / timeStep) * timeStep
+		t0Index <- ((nearsetStartTime - 1) / timeStep)
 		# Offset
 		# print(paste("est", epiStartTime))
 		# print(t0Index)

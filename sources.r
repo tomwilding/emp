@@ -17,6 +17,7 @@ source('aux/logit.r')
 source('aux/logisticTransform.r')
 source('aux/gradientSearch.r')
 source('aux/getObservations.r')
+source('aux/getFineGrain.r')
 
 source('core/fitOverTimeSingle.r')
 source('core/fitOverTimeMulti.r')

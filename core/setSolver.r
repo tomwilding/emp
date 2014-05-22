@@ -2,14 +2,14 @@ setSolver <- function(optimMethod, k, epiTypes) {
 	# require(bbmle)
 	# print("Set Solver")
 	# Set parscale for optimisation
-	parscale <- c()
-	for (t in epiTypes) {
-		if (t == 1) {
-			parscale <- c(parscale, c(1))
-		} else if (t == 4) {
-			parscale <- c(parscale, c(-1,-1,1,1))
-		}
-	}
+	# parscale <- c()
+	# for (t in epiTypes) {
+	# 	if (t == 1) {
+	# 		parscale <- c(parscale, c(1))
+	# 	} else if (t == 4) {
+	# 		parscale <- c(parscale, c(-1,-1,1,1))
+	# 	}
+	# }
 
 	# Select optimisation method
 	switch(optimMethod,
