@@ -37,7 +37,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# print("ssePlotted")
 	# readline()
 	# Fine Times for evaluation
-	timeStep <- 0.01
+	timeStep <- 1
 
 	# Set optimParams to initParams to use if optimisation fails
 	optimParams <- initParams
