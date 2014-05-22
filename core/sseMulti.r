@@ -1,5 +1,5 @@
 # Helper function for LMS to compute sse
-sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
+sseMulti <- function(params, times, data, initConds, epiTypes, ts, k, timeStep) {
 	# Calculate the sum of squared error at the current point
 	# outOfBounds <- FALSE
 	# subEpiNumParamsOffset <- 0
@@ -38,9 +38,10 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 	# }
 	# If parameters are in bounds then eval and get sse
 	# if (!outOfBounds){
-		granularity <- 1
-		eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, granularity)
-		predInf <- eval$multiInf
+		eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, timeStep)
+		predInf <- getObservations(eval$multiInf, timeStep)
+		# eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, 1)
+		# predInf <- eval$multiInf
 		sse <- sum((predInf - data)^2)
 	# }
 	# sse

@@ -1,7 +1,7 @@
 evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granularity) {
 	require(deSolve)
 
-	fineTimes <- breakTime(times, granularity);
+	fineTimes <- breakTime(times, granularity)
 	predInfectious <- numeric(length(fineTimes))
 	# Get initial I0
 	# Update for next epidemic according to unexplained offset from previous epidemic
@@ -21,11 +21,11 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 
 			# Evaluate epidemic according to type
 			if (subEpiNumParams == 4) {
-				epiStartTime <- logisticTransform((ts[i] - 10), paramsMulti[4], ts[i])
+				epiStartTime <- logisticTransform(max(1, ts[i] - 10), paramsMulti[4], ts[i])
 				# print(epiStartTime)
 				# Update SIR epidemic parameters
 				# Update S0
-				initCondsMulti[1] <- logisticTransform(100,paramsMulti[3],10000)
+				initCondsMulti[1] <- logisticTransform(100,paramsMulti[3],1000)
 				# print(initCondsMulti)
 				# Update I0 computed using previous sub epidemics
 				# initCondsMulti[2] <- I0
@@ -47,9 +47,12 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 		}
 
 		# Find index to start fitting k+1 epidemic
-		t0Index <- which(fineTimes == round(epiStartTime))
+		nearsetStartTime <- round(epiStartTime / granularity) * granularity
+		t0Index <- ((nearsetStartTime - 1) / granularity)
 		# Offset
-		zeros <- numeric(t0Index - 1)
+		# print(paste("est", epiStartTime))
+		# print(t0Index)
+		zeros <- numeric(t0Index)
 		predInf <- c(zeros, predInf)
 		# Truncate to length of data
 		predInf <- predInf[1:length(fineTimes)]

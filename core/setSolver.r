@@ -14,10 +14,10 @@ setSolver <- function(optimMethod, k, epiTypes) {
 	# Select optimisation method
 	switch(optimMethod,
 		LMS = {
-			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k) {
+			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k, timeStep) {
 				optimisationParameters <- initParams
 				for (i in 1 : 10) {
-					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k)
+					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep)
 					optimisationParameters <- params$par
 				}
 				optimisationParameters
