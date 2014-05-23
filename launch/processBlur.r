@@ -25,7 +25,7 @@ initParams <- c(0, 0, 0, 0,
 				# 0, 0, 0, 0,
 				# 0, 0, 0, 0)
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-# epiTypes <- c(0)
+epiTypes <- c(0)
 epiTypes <- c(0, 4, 4)#, 1, 4, 4)
 
 # Init Conds = S0, I0, R0
