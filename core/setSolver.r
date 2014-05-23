@@ -16,11 +16,23 @@ setSolver <- function(optimMethod, k, epiTypes) {
 		LMS = {
 			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k, timeStep) {
 				optimisationParameters <- initParams
-				for (i in 1 : 10) {
-					print(paste("optim",i))
+				# for (i in 1 : 10) {
+					# print(paste("optim",i))
 					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep)
 					optimisationParameters <- params$par
-				}
+					print(params)
+					# if (params$convergence > 0) {
+					# 	# Optimisation did not converge, try once more
+					# 	params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep, control=list(maxit=30000))
+					# }
+					# if (params$convergence > 1) {
+					# 	# Optimisation degeneracy, try from previous params
+					# 	optimisationParameters <- prevOptimParams
+					#	params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep, control=list(maxit=30000))
+					# }
+					optimisationParameters <- params$par
+				# }
+				prevOptimParams <- optimisationParameters
 				optimisationParameters
 			}
 		},
