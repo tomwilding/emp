@@ -20,19 +20,8 @@ setSolver <- function(optimMethod, k, epiTypes) {
 					# print(paste("optim",i))
 					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep)
 					optimisationParameters <- params$par
-					print(params)
-					# if (params$convergence > 0) {
-					# 	# Optimisation did not converge, try once more
-					# 	params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep, control=list(maxit=30000))
-					# }
-					# if (params$convergence > 1) {
-					# 	# Optimisation degeneracy, try from previous params
-					# 	optimisationParameters <- prevOptimParams
-					#	params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep, control=list(maxit=30000))
-					# }
-					optimisationParameters <- params$par
+					# print(params)
 				# }
-				prevOptimParams <- optimisationParameters
 				optimisationParameters
 			}
 		},

@@ -85,7 +85,12 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k-1 epidemics", quote=FALSE)
 			initParamsLess <- reduceParams(initParams, curEpidemicType)
 			initCondsLess <- reduceParams(initConds, curEpidemicType)
-			evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypes[1:(k - 1)]), i, offsetTimes, offsetData, initCondsLess, initParamsLess, epiTypes[1:(k - 1)], ts[1:(k - 1)], k - 1, plotConfig, 0)		
+			optimParamsLess <- initParamsLess
+			for (o in 1:10) {
+				print(paste("optimLess", o))
+				evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypes[1:(k - 1)]), i, offsetTimes, offsetData, initCondsLess, optimParamsLess, epiTypes[1:(k - 1)], ts[1:(k - 1)], k - 1, plotConfig, 0)		
+				optimParamsLess <- evalLess$optimParams
+			}
 			lessRSquare <- evalLess$optimRSquare
 			print(paste("lrs", lessRSquare))
 			print(paste("lim",lim))
@@ -113,26 +118,34 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 4 || outbreak == 0) {
 				# SIR Detected
-				initParamsMore <- c(initParams, c(logit(1e-5, 1e-3, 1e-2), logit(1e-3, 1e-1, 0.5), logit(1e2, 1e4, 1e6), 0))
 				initCondsMore <- c(initConds, c(1,1,0,0))
 				epiTypesMore <- c(epiTypes, 4)
-				# Fit SIR epidemic starting minTruncation before detected time
 				tsMore <- c(ts, i)
-				evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
+				# initParamsMore <- getInitParams(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParams, epiTypesMore, tsMore, k + 1, plotConfig, data)
+				initParamsMore <- c(initParams, c(logit(1e-5, 1e-4, 1e-2), logit(1e-3, 1e-1, 0.5), logit(1e2, incOrderOf(data[i]), 1e6), 0))
+				# evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
 				# TODO: Update all times from optimisation, not just last time
-				RSquareMore <- evalMore$optimRSquare
+				# RSquareMore <- evalMore$optimRSquare
 			} else if (outbreak == 1) {
 				# EXP Detected
-				initParamsMore <- c(initParams, logit(1e-3, 1e-2, 0.5))
 				initCondsMore <- c(initConds, 1)
 				epiTypesMore <- c(epiTypes, 1)
 				tsMore <- c(ts, i)
+				initParamsMore <- c(initParams, logit(1e-3, 1e-1, 0.5))
 				# Fit more epidemics with t0 set at i
-				evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
-				RSquareMore <- evalMore$optimRSquare
+				# evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
+				# RSquareMore <- evalMore$optimRSquare
 			}
 
-			if (RSquareMore > rSquare) {	
+			# Optimise K + 1 epidemics
+			optimParamsMore <- initParamsMore
+			for (o in 1:10) {
+				print(paste("optimMore", o))
+				evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, optimParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
+				optimParamsMore <- evalMore$optimParams
+			}
+
+			if (evalMore$optimRSquare > rSquare) {	
 				# Current epidemic start time is not set
 				# startTimeCount <- 0
 				timeSinceOutbreak <- 0
@@ -212,14 +225,6 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 		}
 	}
 	outbreak	
-}
-
-detectOutbreakInRange <- function(minTruncation, residuals, nRes, startTime, k) {
-	outbreakInRange <- 0
-	for (i in (startTime + minTruncation):length(residuals)) {
-		outbreakInRange <- outbreakInRange || detectOutbreak(residuals[1:i], nRes, startTime, k)
-	}
-	outbreakInRange
 }
 
 reduceParams <- function(initVec, epidemicType) {
