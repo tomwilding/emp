@@ -39,6 +39,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k, timeStep) 
 	# If parameters are in bounds then eval and get sse
 	# if (!outOfBounds){
 		eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, timeStep)
+		# print(eval$multiParams)
 		predInf <- getObservations(eval$multiInf, timeStep)
 		# eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, 1)
 		# predInf <- eval$multiInf

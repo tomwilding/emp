@@ -26,9 +26,6 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, timeStep)
 				# Update SIR epidemic parameters
 				# Update S0
 				initCondsMulti[1] <- logisticTransform(1e2,paramsMulti[3],1e6)
-				# print(initCondsMulti)
-				# Update I0 computed using previous sub epidemics
-				# initCondsMulti[2] <- I0
 				# Get predictions of SIR given current parameters
 				preds <- ode(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti)
 				predInf <- (preds[,3])
