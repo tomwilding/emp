@@ -75,13 +75,12 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# rSquareError <- rSquareError(predInfectiousPast, truncData)
 
 	# TODO: Don't want to restrict eval - eval over all points in evalMulti after optim over all but last n
-	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, timeStep)
+	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, 0.05)
 	# Evaluate over all time
 	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, 1)
-
-	# # Plot inline for dev
+	# Plot inline for dev
 	# if (p) {
-	#  	fineTimes <- breakTime(offsetTimes, timeStep)
+	#  	fineTimes <- breakTime(offsetTimes, 0.05)
 	#  	cl <- c("red","cyan","forestgreen","goldenrod2","red4", "blue")
 	#  	setEPS()
 	#  	r <- plotConfig$run
@@ -119,13 +118,13 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	fit$k <- k
 	fit$optimRSquare <- rSquareError 
 	# Get final residual from allEval infectious
-	fit$finalResidual <- (offsetData[i] - allEval$multiInf[i])
+	# fit$finalResidual <- (offsetData[i] - allEval[i])
 	# Get all residuals up to current time
 	fit$residuals <- (offsetData[1:i]) - (allEval$multiInf[1:i])
 	# Set different multi and sub fits
 	fit$nextPred <- allEval$multiInf[i+1]
 	# fit$pastEval <- optimPastEval
-	fit$allEval <- allEval
+
 	fit$allEvalFine <- allEvalFine
 	fit
 }

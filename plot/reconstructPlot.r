@@ -26,7 +26,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		truncData <- offsetData[1:i]
 
 		# Fine Times for evaluation
-		timeStep <- 0.05
+		timeStep <- 1
 		fineTimes <- breakTime(offsetTimes, timeStep)
 
 		# Get graph object for this iteration

@@ -22,7 +22,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	ts <- c(1)
 	# ts <- c(1, 14, 72, 133, 203, 259)
 	# ts <- c(1, 34, 93)
-	# ts <- c(1, 13, 52)
+	# ts <- c(1, 13)
 
 	# Set the number of epidemics
 	k <- length(ts)
@@ -62,6 +62,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(paste("optim", o))
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, plotConfig, 1)
 			optimParams <- eval$optimParams
+			print(optimParams)
+			print(initConds)
 		}
 		# Update parameters
 		# maxt <- eval$optimTime
@@ -74,7 +76,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		print(paste("rs", rSquare))
 		# Get last residual and update residuals vector
 		residuals <- eval$residuals
-		
+		print(residuals)
 		lim <- thresholds$lim
 		print(paste("timeSinceOutbreak", timeSinceOutbreak))
 
@@ -121,7 +123,8 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				initCondsMore <- c(initConds, c(1,1,0,0))
 				epiTypesMore <- c(epiTypes, 4)
 				tsMore <- c(ts, i)
-				initParamsMore <- getInitParams(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParams, epiTypesMore, tsMore, k + 1, plotConfig, data)
+				# initParamsMore <- getInitParams(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParams, epiTypesMore, tsMore, k + 1, plotConfig, data)
+				initParamsMore <- c(initParams, c(0,0,0,0))
 				# evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
 				# TODO: Update all times from optimisation, not just last time
 				# RSquareMore <- evalMore$optimRSquare
@@ -130,7 +133,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				initCondsMore <- c(initConds, 1)
 				epiTypesMore <- c(epiTypes, 1)
 				tsMore <- c(ts, i)
-				initParamsMore <- c(initParams, logit(1e-3, 1e-1, 0.5))
+				initParamsMore <- c(initParams, 0)
 				# Fit more epidemics with t0 set at i
 				# evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
 				# RSquareMore <- evalMore$optimRSquare
@@ -194,6 +197,8 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 	if (resLength > startTime + nRes + minTruncation) {
 		# Get standard deviation of residuals before the ones considered
 		inRangeResiduals <- residuals[startTime : (resLength - nRes)]
+		print("residuals")
+		print(residuals)
 		# minRes <- max(1, resLength - window)
 		# inRangeResiduals <- abs(residuals[(resLength - window):(resLength - nRes)])
 		# print(inRangeResiduals)
@@ -203,7 +208,7 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 		print(paste("meanRes", meanRes))
 		print(paste("sdRes ", sdRes))
 		print(paste("Outbreaklim", meanRes + sdRes * 2))
-		print(paste("Explim", meanRes + sdRes * 6))
+		print(paste("Explim", meanRes + sdRes * 10))
 
 		# Check if last n residuals are above set number of sd
 		# Index of first residual to check
@@ -215,7 +220,7 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 		print(paste("ExpRes", expRes))
 		# Set epidemic type according to residual limit
 		outbreakLim <- (meanRes + (sdRes * 2))
-		expLim <- (meanRes + (sdRes * 6))
+		expLim <- (meanRes + (sdRes * 10))
 		# If minimum residual increase is more than required, then set type
 		if (outbreakRes > outbreakLim) {
 			outbreak <- 4

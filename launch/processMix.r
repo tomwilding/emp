@@ -1,7 +1,7 @@
 # require('epi')
 # Simulate data 
-fluData <- simSIR(0.001,0.05,400,1)
-fluData1 <- simSIR(0.001,0.1,400,1)
+fluData <- simSIR(0.0001,0.05,5000,1)
+fluData1 <- simSIR(0.0001,0.1,8000,1)
 # Get data from dataframe
 # Ensure first is larger than second
 # nSum <- 4
@@ -17,8 +17,8 @@ positiveInfectious1 <- fluData1$data[,3]
 # positiveInfectious1 <- fluData1$data[,2]
 
 # Offset of t0 for second epidemic
-offset <- 30
-offset1 <- 50
+offset <- 10
+offset1 <- 40
 
 # Padding of zeros to offset data
 set.seed(1)
@@ -46,20 +46,19 @@ minTruncation <- 4
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
-thresholds <- list(lim=0.995)
+thresholds <- list(lim=0.9)
 
 # Init Params = beta, gamma, S0
 initParams <- c()
-# initParams <- c(0, 0, 0, 0, 
-# 				0, 0, 0, 0)
+# initParams <- c(0, 0, 0, 0)
+				# 0, 0, 0, 0)
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
 epiTypes <- c(0)
-# epiTypes <- c(0, 4, 4)
-
+# epiTypes <- c(0, 4)
 # Init Conds = S0, I0, R0
 # I0 from first data point
 initConds <- c()
-# initConds <- c(1,1,0,0, 1,1,0,0);
+# initConds <- c(1,1,0,0)
 
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixOT/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
