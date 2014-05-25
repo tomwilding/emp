@@ -122,7 +122,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				epiTypesMore <- c(epiTypes, 4)
 				tsMore <- c(ts, i)
 				# initParamsMore <- getInitParams(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParams, epiTypesMore, tsMore, k + 1, plotConfig, data)
-				initParamsMore <- c(initParams, c(logit(1e-5, 1e-4, 1e-2), logit(1e-3, 1e-1, 0.5), logit(1e2, incOrderOf(data[i]), 1e6), 0))
+				initParamsMore <- c(initParams, c(logit(1e-5, 5e-4, 1e-2), logit(1e-3, 1e-1, 0.5), logit(1e2, incOrderOf(data[i]), 1e6), 0))
 				# evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
 				# TODO: Update all times from optimisation, not just last time
 				# RSquareMore <- evalMore$optimRSquare
