@@ -1,3 +1,10 @@
 logit <- function(tmin, x, tmax) {
-	l <- log((x - tmin) / (tmax - x))
+	if (x <= tmin) { 
+		l <- tmin 
+	} else if (x >= tmax) {
+		l <- tmax
+	} else {
+		l <- log((x - tmin) / (tmax - x))
+	}
+	l
 }
