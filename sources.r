@@ -34,6 +34,8 @@ source('plot/plotRSq.r')
 source('plot/plotResiduals.r')
 source('plot/plotPred.r')
 
+source('tests/run_tests.r')
+
 # Packages
 # install.packages("deSolve")
 # install.packages("doMC")
