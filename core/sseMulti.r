@@ -39,9 +39,9 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k, timeStep) 
 	# if (!outOfBounds){
 		eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, timeStep)
 		# print(eval$multiParams)
-		predInf <- getObservations(eval$multiInf, timeStep)
+		# predInf <- getObservations(eval$multiInf, timeStep)
 		# eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, 1)
-		# predInf <- eval$multiInf
+		predInf <- eval$multiInf
 		sse <- sum((predInf - data)^2)
 	# }
 	# sse
