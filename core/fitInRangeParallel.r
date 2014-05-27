@@ -36,7 +36,8 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# print("ssePlotted")
 	# readline()
 	# Fine Times for evaluation
-	timeStep <- 0.05
+	timeStep <- 1
+	fineTimeStep <- 0.05
 
 	# Set optimParams to initParams to use if optimisation fails
 	optimParams <- initParams
@@ -75,9 +76,9 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# rSquareError <- rSquareError(predInfectiousPast, truncData)
 
 	# TODO: Don't want to restrict eval - eval over all points in evalMulti after optim over all but last n
-	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, timeStep)
+	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, fineTimeStep)
 	# Evaluate over all time
-	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, 1)
+	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, timeStep)
 
 	# # Plot inline for dev
 	# if (p) {
