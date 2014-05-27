@@ -61,7 +61,7 @@ epiTypes <- c(0)
 initConds <- c()
 # initConds <- c(1,1,0,0, 1,1,0,0)
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixOT/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixOT/", dataFile="output/data/mix/mixDataFT.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
 # gradientSearch(times, data, plotConfig)
 # readline()

@@ -12,7 +12,7 @@ positiveInfectious1 <- fluData1$data[,2]
 
 # Offset of t0 for second epidemic
 offset <- 10
-offset1 <- 35
+offset1 <- 40
 
 # Padding of zeros to offset data
 set.seed(1)
@@ -45,17 +45,14 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minT
 thresholds <- list(lim=0.99)
 
 # Init Params = beta, gamma, S0
-# initParams <- c(log(0.001), log(0.01), log(100), 10, log(0.01));
-initParams <- c()
+initParams <- c();
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-# epiTypes <- c(0, 4, 1)
 epiTypes <- c(0)
 # Init Conds = S0, I0, R0
 # I0 from first data point
-# initConds <- c(1,1,0,0, 1);
 initConds <- c()
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/expOT/", dataFile="output/data/exp/expData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/expOT/", dataFile="output/data/exp/expDataFT.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
 # Fit parameters
 fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
