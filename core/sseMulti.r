@@ -1,48 +1,48 @@
 # Helper function for LMS to compute sse
 sseMulti <- function(params, times, data, initConds, epiTypes, ts, k, timeStep) {
 	# Calculate the sum of squared error at the current point
-	# outOfBounds <- FALSE
-	# subEpiNumParamsOffset <- 0
-	# for (i in 1:k) {
-	# 	# Get sub epidemic type and parameters
-	# 	subEpiNumParams <- epiTypes[i]
-	# 	paramsMulti <- params[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
-	# 	initCondsMulti <- initConds[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
-	# 	subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
+	outOfBounds <- FALSE
+	subEpiNumParamsOffset <- 0
+	for (i in 1:k) {
+		# Get sub epidemic type and parameters
+		subEpiNumParams <- epiTypes[i]
+		paramsMulti <- params[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
+		initCondsMulti <- initConds[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
+		subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
 
-	# 	# Check parameters are in bounds
-	# 	if (subEpiNumParams == 2) {
-	# 		# Spike Epidemic
-	# 		# Set Spike epidemic optimised parameters
-	# 		gamma <- exp(paramsMulti[1])
-	# 		I0 <- initCondsMulti[1]
-	# 		if (gamma > 1 || gamma <= 1e-3) {
-	# 			sse <- Inf
-	# 			outOfBounds <- TRUE
-	# 		}
-	# 	}
-	# 	else if (subEpiNumParams == 4) {
-	# 		# Set SIR Epidemic optimised parameters
-	# 		beta <- exp(paramsMulti[1])
-	# 		gamma <- exp(paramsMulti[2])
-	# 		I0 <- initCondsMulti[2]
-	# 		S0 <- exp(paramsMulti[3])
-	# 		R0 <- beta*S0 / gamma
-	# 		# Force optimisation to advance within parameter ranges
-	# 		if (beta > gamma || S0 < I0) {
-	# 			sse <- Inf
-	# 			outOfBounds <- TRUE
-	# 		}
-	# 	}
-	# }
+		# Check parameters are in bounds
+		if (subEpiNumParams == 2) {
+			# Spike Epidemic
+			# Set Spike epidemic optimised parameters
+			gamma <- exp(paramsMulti[1])
+			I0 <- initCondsMulti[1]
+			if (gamma > 1 || gamma <= 1e-3) {
+				sse <- Inf
+				outOfBounds <- TRUE
+			}
+		}
+		else if (subEpiNumParams == 4) {
+			# Set SIR Epidemic optimised parameters
+			beta <- exp(paramsMulti[1])
+			gamma <- exp(paramsMulti[2])
+			I0 <- initCondsMulti[2]
+			S0 <- exp(paramsMulti[3])
+			# R0 <- beta*S0 / gamma
+			# Force optimisation to advance within parameter ranges
+			if (beta > 1 || gamma > 1 || beta < 1e-6 || gamma < 1e-5 || beta > gamma || S0 < I0) {
+				sse <- Inf
+				outOfBounds <- TRUE
+			}
+		}
+	}
 	# If parameters are in bounds then eval and get sse
-	# if (!outOfBounds){
+	if (!outOfBounds){
 		eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, timeStep)
 		# print(eval$multiParams)
 		predInf <- getObservations(eval$multiInf, timeStep)
 		# eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, 1)
 		# predInf <- eval$multiInf
 		sse <- sum((predInf - data)^2)
-	# }
-	# sse
+	}
+	sse
 }

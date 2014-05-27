@@ -2,8 +2,8 @@ sir <- function(time, initConds, params) {
 	s <- initConds[1]
 	i <- initConds[2]
 	r <- initConds[3]
-	beta <- logisticTransform(1e-5, params[1], 1e-2)
-	gamma <- logisticTransform(1e-3, params[2], 0.5)
+	beta <- exp(params[1])
+	gamma <- exp(params[2])
 	dS <- -beta*s*i
 	dI <- beta*s*i - gamma*i
 	dR <- gamma*i

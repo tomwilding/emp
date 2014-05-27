@@ -20,9 +20,6 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	step <- 1
 	# Initial t0 value
 	ts <- c(1)
-	# ts <- c(1, 14, 72, 133, 203, 259)
-	# ts <- c(1, 34, 93)
-	# ts <- c(1, 13, 52)
 
 	# Set the number of epidemics
 	k <- length(ts)
@@ -58,7 +55,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# endSearch <- max(1, min((startTime + 10), (i - minTruncation)))
 		# Spike Epidemic or No epidemic
 		optimParams <- initParams
-		for (o in 1:10) {
+		for (o in 1:5) {
 			print(paste("optim", o))
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, plotConfig, 1)
 			optimParams <- eval$optimParams
@@ -86,7 +83,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			initParamsLess <- reduceParams(initParams, curEpidemicType)
 			initCondsLess <- reduceParams(initConds, curEpidemicType)
 			optimParamsLess <- initParamsLess
-			for (o in 1:10) {
+			for (o in 1:5) {
 				print(paste("optimLess", o))
 				evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypes[1:(k - 1)]), i, offsetTimes, offsetData, initCondsLess, optimParamsLess, epiTypes[1:(k - 1)], ts[1:(k - 1)], k - 1, plotConfig, 0)		
 				optimParamsLess <- evalLess$optimParams
@@ -122,7 +119,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				epiTypesMore <- c(epiTypes, 4)
 				tsMore <- c(ts, i)
 				# initParamsMore <- getInitParams(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParams, epiTypesMore, tsMore, k + 1, plotConfig, data)
-				initParamsMore <- c(initParams, c(logit(1e-5, 5e-4, 1e-2), logit(1e-3, 1e-1, 0.5), logit(1e2, incOrderOf(data[i]), 1e6), 0))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.01)), log(1000), logit((i - 10), (i - minTruncation), i))
 				# evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
 				# TODO: Update all times from optimisation, not just last time
 				# RSquareMore <- evalMore$optimRSquare
@@ -131,7 +128,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				initCondsMore <- c(initConds, 1)
 				epiTypesMore <- c(epiTypes, 1)
 				tsMore <- c(ts, i)
-				initParamsMore <- c(initParams, logit(1e-3, 1e-1, 0.5))
+				initParamsMore <- c(initParams, 0.01)
 				# Fit more epidemics with t0 set at i
 				# evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
 				# RSquareMore <- evalMore$optimRSquare
@@ -139,7 +136,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 			# Optimise K + 1 epidemics
 			optimParamsMore <- initParamsMore
-			for (o in 1:10) {
+			for (o in 1:5) {
 				print(paste("optimMore", o))
 				evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, optimParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
 				optimParamsMore <- evalMore$optimParams
