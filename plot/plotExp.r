@@ -1,8 +1,4 @@
-load("output/data/exp/expData.RData")
-require('epi')
-# Simulate data 
-# require('epi')
-# Simulate data 
+load("output/data/exp/expDataFT.RData")
 fluData <- simSIR(0.001,0.05,400,1)
 fluData1 <- simExp(0.2,300)
 # fluData1 <- simSIR(0.001,0.02,400,1)
@@ -15,7 +11,7 @@ positiveInfectious1 <- fluData1$data[,2]
 
 # Offset of t0 for second epidemic
 offset <- 10
-offset1 <- 35
+offset1 <- 40
 
 # Padding of zeros to offset data
 set.seed(1)
@@ -32,10 +28,8 @@ if (totalLength - length(positiveInfectious) > 0) {
 positiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 
 # Add together the different predicted infectious values truncated to required size
-print(length(positiveInfectious))
-print(length(positiveInfectious1))
 data <- positiveInfectious + positiveInfectious1
-times <- c(1:length(data))
+
 # data <- allPositiveInfectious
 
 # Fitting epidemics
@@ -48,16 +42,14 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minT
 thresholds <- list(lim=0.99)
 
 # Init Params = beta, gamma, S0
-# initParams <- c();
-initParams <- c(log(0.001), log(0.01), log(100), logit(50,150), log(0.01), logit(130, 150))
+initParams <- c();
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-# epiTypes <- c(0)
-epiTypes <- c(0, 4, 2)
+epiTypes <- c(0)
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c(1,1,0,0, 1,0);
+initConds <- c()
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/exp/", dataFile="output/data/exp/expData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/expOT/", dataFile="output/data/exp/expDataFT.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)

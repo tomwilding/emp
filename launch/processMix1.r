@@ -1,28 +1,31 @@
 # ################################## Simulate data ########################################
-fluData <- simSIR(0.001,0.1,500,1)
-fluData1 <- simSIR(0.002,0.2,600,1)
+fluData <- simSIR(0.0001,0.05,4000,1)
+fluData1 <- simSIR(0.0001,0.1,4000,1)
 # Get data from dataframe
 positiveInfectious <- fluData$data[,3]
 positiveInfectious1 <- fluData1$data[,3]
 
 # Offset of t0 for second epidemic
-offset <- 10
-offset1 <- 35
+offset <- 30
+offset1 <- 50
 
 # Build times array
 # Padding of zeros to offset data
+# positiveInfectiousPad <- numeric(offset)
 positiveInfectiousPad1 <- numeric(offset1)
 
 # Combine data with padding offset zeros
-allPositiveInfectious1 <- c(positiveInfectiousPad1,positiveInfectious1)
+allPositiveInfectious1 <- c(positiveInfectiousPad1, positiveInfectious1)
 
-offsetEnd <- length(allPositiveInfectious1) - length(positiveInfectious)
-positiveInfectiousPadEnd <- numeric(offsetEnd)
-allPositiveInfectious <- c(positiveInfectious,positiveInfectiousPadEnd)
+
+positiveInfectiousPadEnd <- numeric(length(allPositiveInfectious1))
+allPositiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 # Add together the different predicted infectious values truncated to required size
+totalLength <- length(allPositiveInfectious1)
 set.seed(1)
-data <- (allPositiveInfectious) + (allPositiveInfectious1)
-data <- c(runif(offset)*2,  data)
+data <- allPositiveInfectious + allPositiveInfectious1
+# Offset start
+data <- c(runif(offset)*2,  data[1:totalLength])
 times <- c(1:length(data))
 
 # Fitting epidemics
@@ -36,16 +39,16 @@ thresholds <- list(lim=0.995)
 
 # Init Params = beta, gamma, S0
 initParams <- c()
-# initParams <- c(0, 0, 0, 0,
-# 				0, 0, 0, 0)
+initParams <- c(log(0.001), log(0.01), log(10000), logit((34 - 10), (34 - minTruncation), 34),
+				log(0.001), log(0.01), log(10000), logit((98 - 10), (98 - minTruncation), 98))
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
 epiTypes <- c(0)
-# epiTypes <- c(0, 4, 4)
+epiTypes <- c(0, 4, 4)
 
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c()
-# initConds <- c(1,1,0,0, 1,1,0,0);
+# initConds <- c()
+initConds <- c(1,1,0,0, 1,1,0,0);
 
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixOT1/", dataFile="output/data/mix/mixData1.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
