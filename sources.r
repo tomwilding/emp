@@ -34,7 +34,7 @@ source('plot/plotRSq.r')
 source('plot/plotResiduals.r')
 source('plot/plotPred.r')
 
-source('tests/run_tests.r')
+source('tests/run_tests.R')
 
 # Packages
 install.packages("deSolve")
