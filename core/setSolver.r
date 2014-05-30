@@ -18,7 +18,7 @@ setSolver <- function(optimMethod, k, epiTypes) {
 				optimisationParameters <- initParams
 				for (o in 1 : 5) {
 					print(paste("optim",o))
-					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep, control=list(maxit=3000))
+					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep)
 					optimisationParameters <- params$par
 					print(params)
 				}

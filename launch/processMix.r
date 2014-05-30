@@ -53,8 +53,8 @@ initParams <- c()
 # initParams <- c(log(0.001), log(0.01), log(1000), logit((34 - 10), (34 - minTruncation), 34),
 				# log(0.001), log(0.01), log(1000), logit((94 - 10), (94 - minTruncation), 94))
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-# epiTypes <- c(0, 4, 4)
 epiTypes <- c(0)
+# epiTypes <- c(0, 4, 4)
 
 # Init Conds = S0, I0, R0
 # I0 from first data point

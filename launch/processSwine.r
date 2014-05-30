@@ -6,10 +6,10 @@ epiData <- read.csv("data/h1n1.csv", header = TRUE)
 data <- epiData[,2]
 
 times <- c(1:length(data))
-plot(times, data)
+# plot(times, data)
 
 # Fitting epidemics
-minTruncation <- 4
+minTruncation <- 3
 # startOffset <- findStartOffset(data, minTruncation)
 startOffset <- 1
 endOffset <- 1
@@ -19,13 +19,13 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minT
 thresholds <- list(lim=0.9)
 
 # Init Params = beta, gamma, S0
-initParams <- c()
+initParams <- c(log(0.001), log(0.01), log(1e6), 0)
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-epiTypes <- c(0)
+epiTypes <- c(4)
 
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c()
+initConds <- c(1,1,0,0)
 
 plotConfig <- list(title="Synthedemic Decomposition of H1N1", fileName="output/graphs/swine/", dataFile="output/data/swine.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=60)
 

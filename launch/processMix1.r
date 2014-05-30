@@ -39,8 +39,8 @@ thresholds <- list(lim=0.995)
 
 # Init Params = beta, gamma, S0
 initParams <- c()
-initParams <- c(log(0.001), log(0.01), log(10000), logit((34 - 10), (34 - minTruncation), 34),
-				log(0.001), log(0.01), log(10000), logit((98 - 10), (98 - minTruncation), 98))
+initParams <- c(log(0.001), log(0.01), log(10000), logit((34 - 30), (34 - minTruncation), 34),
+				log(0.001), log(0.01), log(10000), logit((103 - 30), (103 - minTruncation), 103))
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
 epiTypes <- c(0)
 epiTypes <- c(0, 4, 4)
