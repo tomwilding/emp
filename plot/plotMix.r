@@ -1,7 +1,5 @@
-load("output/data/mix/mixData.RData")
-require('epi')
-# Simulate data 
-# require('epi')
+load("output/data/mix/mixDataFT.RData")
+
 # Simulate data 
 fluData <- simSIR(0.001,0.05,400,1)
 fluData1 <- simSIR(0.001,0.1,400,1)
@@ -40,6 +38,7 @@ positiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 # Add together the different predicted infectious values truncated to required size
 data <- positiveInfectious + positiveInfectious1
 times <- c(1:length(data))
+# data <- allPositiveInfectious
 
 # Fitting epidemics
 startOffset <- 1
@@ -48,26 +47,28 @@ minTruncation <- 4
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 
 # Thresholds
-thresholds <- list(lim=0.998)
+thresholds <- list(lim=0.995)
 
 # Init Params = beta, gamma, S0
-initParams <- c();
-# initParams <- c(log(0.001), log(0.01), log(10));
+initParams <- c()
+# initParams <- c(log(0.001), log(0.01), log(1000), logit((34 - 10), (34 - minTruncation), 34),
+				# log(0.001), log(0.01), log(1000), logit((94 - 10), (94 - minTruncation), 94))
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
+# epiTypes <- c(0, 4, 4)
 epiTypes <- c(0)
-# epiTypes <- c(0, 3)
+
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c();
-# initConds <- c(1,1,0)
+initConds <- c()
+# initConds <- c(1,1,0,0, 1,1,0,0)
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixOT/", dataFile="output/data/mix/mixDataFT.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
-# Plot Residuals
-plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# # Plot Residuals
+# plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
-# t+1 prediction
-plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# # t+1 prediction
+# plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)

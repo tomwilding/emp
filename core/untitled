@@ -1,5 +1,5 @@
 # Helper function for LMS to compute sse
-sseMulti <- function(params, times, data, initConds, epiTypes, ts, startTimes, k, timeStep) {
+sseTimes <- function(params, times, data, initConds, epiTypes, ts, startTimes, k, timeStep) {
 	# Calculate the sum of squared error at the current point
 	outOfBounds <- FALSE
 	subEpiNumParamsOffset <- 0
@@ -27,9 +27,6 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, startTimes, k
 			gamma <- exp(paramsMulti[2])
 			I0 <- initCondsMulti[2]
 			S0 <- exp(paramsMulti[3])
-			print(beta)
-			print(gamma)
-			print(S0)
 			# R0 <- beta*S0 / gamma
 			# Force optimisation to advance within parameter ranges
 			if (beta > 1 || gamma > 1 || beta < 1e-6 || gamma < 1e-5 || beta > gamma || S0 < I0) {

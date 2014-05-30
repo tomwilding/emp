@@ -1,4 +1,4 @@
-evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, timeStep) {
+evalMulti <- function(times, data, initConds, params, epiTypes, ts, startTimes, k, timeStep) {
 	require(deSolve)
 
 	fineTimes <- breakTime(times, timeStep)
@@ -20,21 +20,21 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, timeStep)
 			subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
 
 			# Evaluate epidemic according to type
-			if (subEpiNumParams == 4) {
-				epiStartTime <- logisticTransform(max(1, ts[i] - 10), paramsMulti[4], ts[i])
+			if (subEpiNumParams == 3) {
+				epiStartTime <- logisticTransform(max(1, startTimes[i] - 10), startTimes[i], startTimes[i])
 				# print(epiStartTime)
 				# Update SIR epidemic parameters
 				# Update S0
 				initCondsMulti[1] <- exp(paramsMulti[3])
 				# Get predictions of SIR given current parameters
-				preds <- ode(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti)
+				preds <- lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti)
 				predInf <- (preds[,3])
 			} else if (subEpiNumParams == 1) {
 				epiStartTime <- ts[i]
 				# Update Spike epidemic parameters
 				# Update I0 as unexplained prediction of Infectious for this epidemic
 				initCondsMulti[1] <- I0
-				preds <- ode(y=initCondsMulti, times=fineTimes, func=expDec, parms=paramsMulti)
+				preds <- lsoda(y=initCondsMulti, times=fineTimes, func=expDec, parms=paramsMulti)
 				predInf <- preds[,2]
 			}
 		} else {
