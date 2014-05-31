@@ -23,9 +23,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# ts <- c(1,  10,  56, 133, 187, 257)
 	# ts <- c(1, 26)
 	# Set the number of epidemics
-	k <- 1
-	# k <- 5
-	# k <- 2
+	k <- length(ts)
 
 	# All evaluation vector
 	evalList <- c()
@@ -67,7 +65,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		}
 		# Update parameters
 		maxt <- eval$optimTime
-		ts[k] <- maxt
+		# ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		optimParams <- eval$multiParams
 		optimConds <- eval$initConds
@@ -116,7 +114,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 3 || outbreak == 0) {
 				# Try SIR
-				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(10)))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(1000)))
 				initCondsMore <- c(initConds, c(1,1,0))
 				epiTypesMore <- c(epiTypes, 3)
 				# Fit More epidemic searching t0 range from previous epidemic
