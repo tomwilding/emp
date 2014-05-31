@@ -19,7 +19,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Step size for iterative fitting
 	step <- 1
 	# Initial t0 value
-	ts <- c(1, 34, 85)
+	ts <- c(1, 34, 103)
 
 	# Set the number of epidemics
 	k <- length(ts)
@@ -38,7 +38,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# testParams(times, data, initConds, params, epiTypes, ts, k, 0.1)
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=120, to=maxTruncation, by=step)) {
+	for (i in seq(from=174, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -116,7 +116,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				epiTypesMore <- c(epiTypes, 4)
 				tsMore <- c(ts, i)
 				# initParamsMore <- getInitParams(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParams, epiTypesMore, tsMore, k + 1, plotConfig, data)
-				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(10000), logit((i - 10), (i - minTruncation), i)))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(1000), logit((i - 10), (i - minTruncation), i)))
 				# evalMore <- fitInRangeParallel(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParamsMore, epiTypesMore, tsMore, k + 1, plotConfig, 1)
 				# TODO: Update all times from optimisation, not just last time
 				# RSquareMore <- evalMore$optimRSquare

@@ -1,5 +1,5 @@
 setSolver <- function(optimMethod, k, epiTypes) {
-	# require(bbmle)
+	# require(neldermead)
 	# print("Set Solver")
 	# Set parscale for optimisation
 	# parscale <- c()
@@ -16,9 +16,9 @@ setSolver <- function(optimMethod, k, epiTypes) {
 		LMS = {
 			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k, timeStep) {
 				optimisationParameters <- initParams
-				for (o in 1 : 5) {
+				for (o in 1 : 10) {
 					print(paste("optim",o))
-					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep)
+					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep, control=list(maxit=1000))
 					optimisationParameters <- params$par
 					print(params)
 				}
