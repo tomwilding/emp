@@ -37,11 +37,11 @@ source('plot/plotPred.r')
 source('tests/run_tests.R')
 
 # Packages
-install.packages("deSolve")
-install.packages("doMC")
-install.packages("foreach")
-install.packages("GillespieSSA")
-install.packages("RUnit")
+# install.packages("deSolve")
+# install.packages("doMC")
+# install.packages("foreach")
+# install.packages("GillespieSSA")
+# install.packages("RUnit")
 
 ## Create package (functions and descriptions)
 # source('sources.r') # To get dependencies
