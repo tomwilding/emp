@@ -28,6 +28,12 @@ setSolver <- function(optimMethod, k, epiTypes) {
 				optimisationParameters
 			}
 		},
+		SP = {
+			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k, timeStep) {
+				params <- optim(initParams, sseMulti, time=times, data=data, initConds=initConds, epiTypes=epiTypes, ts=ts, k=k, timeStep=timeStep, control=list(maxit=1000))
+				optimisationParameters <- params$par
+			}
+		},
 		MLE = {
 			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k) { 
 				namedParams <- nameParams(initParams)

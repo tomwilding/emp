@@ -115,7 +115,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# # Set values of fit
 	# fit$optimParams <- optimParams
 	# fit$initConds <- initConds
-	# fit$optimTimes <- c(1, 23)
+	fit$optimTime <- optimParams[length(optimParams)]
 	fit$k <- k
 	fit$optimRSquare <- rSquareError 
 	# Get final residual from allEval infectious
