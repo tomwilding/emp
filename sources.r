@@ -33,6 +33,7 @@ source('plot/plotPred.r')
 # install.packages("doMC")
 # install.packages("foreach")
 # install.packages("GillespieSSA")
+# install.packages("bbmle")
 
 ## Create package (functions and descriptions)
 # source('sources.r') # To get dependencies

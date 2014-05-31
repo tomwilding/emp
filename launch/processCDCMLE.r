@@ -15,7 +15,7 @@ minTruncation <- 3
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
 # Thresholds
 thresholds <- list(diff=0.05, lim=0.9)
-plotConfig <- list(title="LMS Fitting of CDC Data", fileName="output/graphs/CDC/", dataFile="output/data/CDC/CDCData.RData", envFile="output/data/CDC/CDCEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="MLE Fitting of CDC Data", fileName="output/graphs/CDCMLE/", dataFile="output/data/CDC/CDCData.RData", envFile="output/data/CDC/CDCEnv.RData", pat=5, rat=30)
 
 # Init Params = beta, gamma, S0
 # Maybe update in iteration to start at the previous optim params in the next iteration?
@@ -29,4 +29,4 @@ epiTypes <- c(3)
 initConds <- c(1,data[startOffset],0);
 
 # Fit parameters at different times
-fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
+fitOverTimeMulti("MLE", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)

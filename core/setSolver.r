@@ -1,5 +1,5 @@
 setSolver <- function(optimMethod, k, epiTypes) {
-	# require(bbmle)
+	require(bbmle)
 	# print("Set Solver")
 	# Set parscale for optimisation
 	parscale <- c()
@@ -27,7 +27,7 @@ setSolver <- function(optimMethod, k, epiTypes) {
 		MLE = {
 			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k) { 
 				namedParams <- nameParams(initParams)
-				mle <- mle2(sirNegLL, start=namedParams, data=list(timeIn=times,  dataIn=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes), method="Nelder-Mead")
+				mle <- mle2(sirNegLL, start=namedParams, data=list(times=times,  data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes), method="Nelder-Mead", control=list(maxit=5000))
 				params <- as.list(coef(mle))
 				optimParams <- unnameParams(params)
 				# params <- optim(initParams, sirNegLL, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes, method="Nelder-Mead", control=list(parscale=parscale))
@@ -52,19 +52,8 @@ unnameParams <- function(params) {
 	c(params$b, params$g, params$s0)
 }
 
-sirNegLL <- function(b , g, s0, timeIn, dataIn, initConds, ts, k, epiTypes) {
-	granularity <- 1
-	params <- c(b,g,s0)
-	gamma <- exp(g)
-	if (gamma > 1 || gamma <= 1e-4) {
-		nll <- -Inf
-	} else {
-		eval <- evalMulti(timeIn, dataIn, initConds, params, epiTypes, ts, k, granularity)
-		nll <- -sum(dnorm(x=dataIn, mean=eval$multiInf, sd=1, log=TRUE))
-	}
-	nll
-}
-sirNegLL <- function(params, times, data, initConds, epiTypes, ts, k) {
+sirNegLL <- function(b, g, s0, times, data, initConds, epiTypes, ts, k) {
+	params <- c(b, g, s0)
 	granularity <- 1
 	eval <- evalMulti(times, data, initConds, params, epiTypes, ts, k, granularity)
 	nll <- -sum(dpois(x=data, lambda=eval$multiInf, log=TRUE))	
