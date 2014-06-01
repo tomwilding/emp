@@ -34,7 +34,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	timeSinceOutbreak <- 0
 
 	################################################# Decompose Epidemics ################################################
-	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
+	foreach (i in seq(from=minTruncation, to=maxTruncation, by=step)) %dopar%{
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -101,13 +101,13 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				epiTypesMore <- c(epiTypes, 4)
 				tsMore <- c(ts, i)
 				# initParamsMore <- getInitParams(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParams, epiTypesMore, tsMore, k + 1, plotConfig, data)
-				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(1000), logit((i - 10), (i - minTruncation), i)))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(1000), logit((i - 40), (i - 10), i)))
 			} else if (outbreak == 1) {
 				# EXP Detected
 				initCondsMore <- c(initConds, 1)
 				epiTypesMore <- c(epiTypes, 1)
 				tsMore <- c(ts, i)
-				initParamsMore <- c(initParams, 0.01)
+				initParamsMore <- c(initParams, log(0.01))
 			}
 
 			# Optimise K + 1 epidemics

@@ -20,7 +20,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, timeStep)
 
 			# Evaluate epidemic according to type
 			if (subEpiNumParams == 4) {
-				epiStartTime <- logisticTransform(max(1,ts[i] - 20), paramsMulti[4], ts[i])
+				epiStartTime <- logisticTransform(max(1,ts[i] - 40), paramsMulti[4], ts[i])
 				# Update S0
 				initCondsMulti[1] <- exp(paramsMulti[3])
 				# Get predictions of SIR given current parameters
