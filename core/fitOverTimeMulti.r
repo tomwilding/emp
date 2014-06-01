@@ -37,11 +37,11 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	timeSinceOutbreak <- 0
 
 	################################################# Decompose Epidemics ################################################
-	for (i in seq(from=103, to=140, by=step)) {
+	for (i in seq(from=34, to=102, by=step)) {
 		# Fit k epidemics
-		# print("------------------------------------------------", quote=FALSE)
-		# print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
-		# print(ts)
+		print("------------------------------------------------", quote=FALSE)
+		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
+		print(ts)
 		epidemicType <- epiTypes[k]
 		startTime <- ts[k]
 		optimParams <- initParams
@@ -54,32 +54,32 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		rSquare <- eval$optimRSquare
 		optimParams <- eval$optimParams
 		optimConds <- eval$initConds
-		# print("optimParams")
-		# print(optimParams)
-		# print(paste("rs", rSquare))
+		print("optimParams")
+		print(optimParams)
+		print(paste("rs", rSquare))
 		# Get last residual and update residuals vector
 		residuals <- eval$residuals
 		
 		lim <- thresholds$lim
-		# print(paste("timeSinceOutbreak", timeSinceOutbreak))
+		print(paste("timeSinceOutbreak", timeSinceOutbreak))
 
 		# Check for redundant epidemics
 		if ((rSquare > lim) && (k > 2)) {
 			prevEpidemicType <- epiTypes[k - 1]
 			curEpidemicType <- epiTypes[k]
-			# print(">>> Fit k-1 epidemics", quote=FALSE)
+			print(">>> Fit k-1 epidemics", quote=FALSE)
 			initParamsLess <- reduceParams(initParams, curEpidemicType)
 			initCondsLess <- reduceParams(initConds, curEpidemicType)
 			optimParamsLess <- initParamsLess
 			evalLess <- fitInRangeParallel(setSolver(optimMethod, k - 1, epiTypes[1:(k - 1)]), i, offsetTimes, offsetData, initCondsLess, optimParamsLess, epiTypes[1:(k - 1)], ts[1:(k - 1)], k - 1, plotConfig, 0)		
 			optimParamsLess <- evalLess$optimParams
 			lessRSquare <- evalLess$optimRSquare
-			# print(paste("lrs", lessRSquare))
-			# print(paste("lim",lim))
+			print(paste("lrs", lessRSquare))
+			print(paste("lim",lim))
 			# outbreakInRange <- detectOutbreakInRange(minTruncation, evalLess$residuals, nRes, startTimePrev, k)
 			# print(paste("OutbreakDetectedReduce", outbreakInRange))
 			if (lessRSquare > lim) {
-				# print("reduce epidemics")
+				print("reduce epidemics")
 				# Set k - 1 epidemics from now on
 				k <- k - 1
 				# Update parameters to continue fitting with k - 1 epidemics
@@ -138,13 +138,12 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		totalRSquare <- totalRSquare + rSquare
 		# Update the initial parameters for the next fitting
 		timeSinceOutbreak <- timeSinceOutbreak + 1
-		print(paste(i, " finished"), quote=FALSE)
 	}
-
+	
 	# Save all params
 	save(evalList, file=plotConfig$dataFile)
 	avRS <- totalRSquare / length(seq(from=minTruncation, to=maxTruncation, by=step))
-	# print(avRS)
+	print(avRS)
 	avRS
 }
 
@@ -160,18 +159,18 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 		meanRes <- mean(inRangeResiduals)
 		sdRes <- sd(inRangeResiduals)
 
-		# print(paste("meanRes", meanRes))
-		# print(paste("sdRes ", sdRes))
-		# print(paste("Outbreaklim", meanRes + sdRes * 2))
-		# print(paste("Explim", meanRes + sdRes * 6))
+		print(paste("meanRes", meanRes))
+		print(paste("sdRes ", sdRes))
+		print(paste("Outbreaklim", meanRes + sdRes * 2))
+		print(paste("Explim", meanRes + sdRes * 6))
 
 		# Check if last n residuals are above set number of standard deviation
 		startResIndex <- resLength - nRes + 1
 		# Take last residuals
 		outbreakRes <- min(residuals[startResIndex : resLength])
 		expRes <- residuals[resLength]
-		# print(paste("OutbreakRes", outbreakRes))
-		# print(paste("ExpRes", expRes))
+		print(paste("OutbreakRes", outbreakRes))
+		print(paste("ExpRes", expRes))
 		# Set epidemic type according to residual limit
 		outbreakLim <- (meanRes + (sdRes * 2))
 		expLim <- (meanRes + (sdRes * 6))

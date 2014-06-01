@@ -89,12 +89,12 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	 	# lines(fineTimes, allEvalFine$multiInf, lty=1)
 	 	# multiInfCoarse <- allEval$multiInf
 	 	multiInf <- allEvalFine$multiInf
-	 	# print("optimStartTimes")
+	 	print("optimStartTimes")
 	 	for(k in 1:(length(allEvalFine$subInf))) {
 	 		sub <- allEvalFine$subInf[[k]]
 	 		subParams <- allEvalFine$subParams[[k]]
 	 		subStartTime <- allEvalFine$subStartTime[[k]]
-	 		# print(subStartTime)
+	 		print(subStartTime)
 	 		# Print sub epidemic graph
 	 		lines(fineTimes, sub, col=cl[k], lty=2)
 	 		lines(fineTimes, multiInf, col='black')
