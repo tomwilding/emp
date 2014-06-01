@@ -1,3 +1,5 @@
+load("output/data/mix/mixDataFT.RData")
+require('epi')
 # require('epi')
 # Simulate data 
 fluData <- simSIR(0.001,0.05,400,1)
@@ -61,13 +63,13 @@ epiTypes <- c(0)
 initConds <- c()
 # initConds <- c(1,1,0,0, 1,1,0,0)
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixOT/", dataFile="output/data/mix/mixDataFT10.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixOTt10/", dataFile="output/data/mix/mixDataFT10.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot Residuals
-plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # t+1 prediction
-plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)

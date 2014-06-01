@@ -1,7 +1,7 @@
 fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig) {
-	require(doMC)
-	# Register parallel
-	registerDoMC(30)
+	# require(doMC)
+	# # Register parallel
+	# registerDoMC(30)
 	
 	# Unpack starting parameters, conditions and offsets
 	startOffset <- offsets$startOffset
@@ -22,7 +22,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Step size for iterative fitting
 	step <- 1
 	# Initial t0 value
-	ts <- c(1, 34, 103)
+	ts <- c(1)
 
 	# Set the number of epidemics
 	k <- length(ts)
@@ -37,7 +37,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	timeSinceOutbreak <- 0
 
 	################################################# Decompose Epidemics ################################################
-	for (i in seq(from=34, to=102, by=step)) {
+	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
