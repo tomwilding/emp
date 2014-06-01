@@ -11,7 +11,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k, timeStep) 
 		subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
 
 		# Check parameters are in bounds
-		if (subEpiNumParams == 2) {
+		if (subEpiNumParams == 1) {
 			# Spike Epidemic
 			# Set Spike epidemic optimised parameters
 			gamma <- exp(paramsMulti[1])

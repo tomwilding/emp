@@ -58,7 +58,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# for (o in 1:5) {
 			# print(paste("optim", o))
 		eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, optimParams, epiTypes, ts, k, plotConfig, 1)
-		optimParams <- eval$optimParams
+		# optimParams <- eval$optimParams
 		# }
 		# Update parameters
 		# maxt <- eval$optimTime
