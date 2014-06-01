@@ -11,9 +11,6 @@ setSolver <- function(optimMethod, k, epiTypes) {
 					optimisationParameters <- params$par
 					print(params)
 				}
-				# if (params$convergance > 0) {
-
-				# }
 				optimisationParameters
 			}
 		},
