@@ -33,7 +33,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k, timeStep) 
 			if (i < k) {
 				endTime <- ts[i + 1]
 			} else {
-				endTime <- i
+				endTime <- times[length(times)]
 			}
 			minS0 <- max(data[startTime : endTime])
 
