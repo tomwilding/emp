@@ -4,7 +4,6 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, timeStep)
 	fineTimes <- breakTime(times, timeStep)
 	predInfectious <- numeric(length(fineTimes))
 	# Get initial I0
-	# Update for next epidemic according to unexplained offset from previous epidemic
 	I0 <- initConds[2]
 	predI <- 0
 	eval <- c()
@@ -21,10 +20,7 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, timeStep)
 
 			# Evaluate epidemic according to type
 			if (subEpiNumParams == 4) {
-				# minTime <- ts[max(1, i - 1)]
-				epiStartTime <- logisticTransform(max(1,ts[i] - 40), paramsMulti[4], ts[i])
-				# print(epiStartTime)
-				# Update SIR epidemic parameters
+				epiStartTime <- logisticTransform(max(1,ts[i] - 20), paramsMulti[4], ts[i])
 				# Update S0
 				initCondsMulti[1] <- exp(paramsMulti[3])
 				# Get predictions of SIR given current parameters
@@ -39,17 +35,14 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, timeStep)
 				predInf <- preds[,2]
 			}
 		} else {
-			epiStartTime <- 1
 			# No epidemic detected
+			epiStartTime <- 1
 			predInf <- array(1, length(fineTimes)) * data[1]
 		}
 
 		# Find index to start fitting k+1 epidemic
 		nearsetStartTime <- round(epiStartTime / timeStep) * timeStep
 		t0Index <- ((nearsetStartTime - 1) / timeStep)
-		# Offset
-		# print(paste("est", epiStartTime))
-		# print(t0Index)
 		zeros <- numeric(t0Index)
 		predInf <- c(zeros, predInf)
 		# Truncate to length of data
@@ -63,11 +56,9 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, timeStep)
 		eval$subParams[[i]] <- paramsMulti
 		eval$multiInf <- predInfectious
 		eval$multiParams <- params
+
 		# Set I0 for next epidemic using combined predicted I0 at next t0
-		# TODO: Update I0 after or before setting it in eval??
 		if (i < k) {
-			# Check if S0 < I0 - why would I0 be less than S0
-			# S0 optimised from optim so at the start S0 < I0 in.
 			# Only predict I0 for kth epidemic
 			t1Index <- which(fineTimes == times[ts[i + 1]])
 			predI <- predInfectious[t1Index]

@@ -19,6 +19,7 @@ source('aux/gradientSearch.r')
 source('aux/getObservations.r')
 source('aux/getFineGrain.r')
 source('aux/getInitParams.r')
+source('aux/reduceParams.r')
 
 source('core/fitOverTimeSingle.r')
 source('core/fitOverTimeMulti.r')
