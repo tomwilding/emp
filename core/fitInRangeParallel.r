@@ -8,7 +8,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	eval <- c()
 
 	# Register multi core backend with n cores
-	registerDoMC(min(length(range), 30))
+	# registerDoMC(min(length(range), 30))
 
 	# Truncate offsetData set
 	truncTimes <- offsetTimes[1:i]
