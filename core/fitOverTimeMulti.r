@@ -40,7 +40,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
+	for (i in seq(from=20, to=maxTruncation, by=step)) {
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
