@@ -54,7 +54,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		print(paste("Count", startTimeCount))
 		# Determine epidemic type and fit over required range
 		startSearch <- max(1, startTime - 20)
-		endSearch <- max(1, (startTime - minTruncation))
+		endSearch <- max(1, min((startTime + 20), (i - minTruncation)))
 		if (epidemicType == 3) {
 			print(paste("k range", c(startSearch:endSearch)))
 			# SIR Epidemic
