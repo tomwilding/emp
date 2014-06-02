@@ -1,5 +1,5 @@
 fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, range, plotConfig, p) {
-	require(doMC)
+	# require(doMC)
 
 	# Ensure length of range is greater than 0
 	# assert_all_are_true(length(range) > 0)
