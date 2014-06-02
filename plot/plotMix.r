@@ -1,19 +1,27 @@
-load("output/data/mix/mixData.RData")
+load("output/data/mix/mix/mixDataItrIR.RData")
 require('epi')
 # Simulate data 
+# require('epi')
+# Simulate data 
 fluData <- simSIR(0.001,0.05,400,1)
-# fluData1 <- simExp(0.2,200)
 fluData1 <- simSIR(0.001,0.1,400,1)
 # Get data from dataframe
 # Ensure first is larger than second
 # nSum <- 4
 positiveInfectious <- fluData$data[,3]
 positiveInfectious1 <- fluData1$data[,3]
+
+# positiveInfectious2 <- simSIR(0.001,0.1,500,10)$data[,3]
+# times <- c(1:length(positiveInfectious1))
+# plot(times, positiveInfectious1)
+# eval <- evalMulti(times, positiveInfectious1, c(400, 1, 0), c(log(0.001), log(0.1), log(400)), c(3), c(1), 1, 1)
+# lines(times, eval$multiInf)
+# readline()
 # positiveInfectious1 <- fluData1$data[,2]
 
 # Offset of t0 for second epidemic
 offset <- 30
-offset1 <- 60
+offset1 <- 50
 
 # Padding of zeros to offset data
 set.seed(1)
@@ -31,8 +39,8 @@ positiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 
 # Add together the different predicted infectious values truncated to required size
 data <- positiveInfectious + positiveInfectious1
-
-times <- c(1:length(data))
+times <- (1:length(data))
+# data <- allPositiveInfectious
 
 # Fitting epidemics
 startOffset <- 1
@@ -53,14 +61,13 @@ epiTypes <- c(0)
 # I0 from first data point
 initConds <- c();
 # initConds <- c(1,1,0)
-
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixItr/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot Residuals
-plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # t+1 prediction
-plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
