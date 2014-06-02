@@ -6,8 +6,8 @@ epiData <- read.csv("data/h1n1.csv", header = TRUE)
 data <- epiData[,2]
 
 times <- c(1:length(data))
-# plot(times, data)
-
+plot(times, data)
+readline()
 # Fitting epidemics
 minTruncation <- 3
 # startOffset <- findStartOffset(data, minTruncation)

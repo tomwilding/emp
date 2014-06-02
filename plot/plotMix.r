@@ -1,4 +1,4 @@
-load("output/data/mix/mixDataFT.RData")
+load("output/data/mix/mixDataFT40.RData")
 require('epi')
 # require('epi')
 # Simulate data 
