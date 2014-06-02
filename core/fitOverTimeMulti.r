@@ -104,7 +104,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 				epiTypesMore <- c(epiTypes, 4)
 				tsMore <- c(ts, i)
 				# initParamsMore <- getInitParams(setSolver(optimMethod, k + 1, epiTypesMore), i, offsetTimes, offsetData, initCondsMore, initParams, epiTypesMore, tsMore, k + 1, plotConfig, data)
-				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(1000), logit((i - 40), (i - 10), i)))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(10000), logit((i - 40), (i - 10), i)))
 			} else if (outbreak == 1) {
 				# EXP Detected
 				initCondsMore <- c(initConds, 1)
