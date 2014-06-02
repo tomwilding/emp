@@ -65,7 +65,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		}
 		# Update parameters
 		maxt <- eval$optimTime
-		# ts[k] <- maxt
+		ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		optimParams <- eval$multiParams
 		optimConds <- eval$initConds
