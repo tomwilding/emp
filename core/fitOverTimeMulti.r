@@ -20,8 +20,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	step <- 1
 	# Initial t0 value
 	ts <- c(1)
-	# ts <- c(1, 34, 103)
-	# ts <- c(1,  10,  56, 133, 187, 257)
+
 	# ts <- c(1, 26)
 	# Set the number of epidemics
 	k <- length(ts)
@@ -66,7 +65,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		}
 		# Update parameters
 		maxt <- eval$optimTime
-		# ts[k] <- maxt
+		ts[k] <- maxt
 		rSquare <- eval$optimRSquare
 		optimParams <- eval$multiParams
 		optimConds <- eval$initConds

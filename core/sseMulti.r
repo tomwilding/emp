@@ -28,9 +28,18 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 			gamma <- exp(paramsMulti[2])
 			I0 <- initCondsMulti[2]
 			S0 <- exp(paramsMulti[3])
-			# R0 <- beta*S0 / I0
+			R0 <- beta*S0 / gamma
+
+			# startTime <- ts[i]
+			# if (i < k) {
+			# 	endTime <- ts[i + 1]
+			# } else {
+			# 	endTime <- times[length(times)]
+			# }
+			# minS0 <- max(data[startTime : endTime])
+			
 			# Force optimisation to advance within parameter ranges
-			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-2 || beta > gamma || S0 < I0) {
+			if (beta > 1 || gamma > 1 || beta <= 1e-6 || gamma <= 1e-2 || beta > gamma || R0 < 1) {
 				sse <- Inf
 				outOfBounds <- TRUE
 			}
