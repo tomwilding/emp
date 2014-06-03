@@ -15,12 +15,12 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=5)
 thresholds <- list(lim=0.9)
 
 # Init Params = beta, gamma, S0
-initParams <- c(log(0.001), log(0.01), log(data[startOffset]*10))
+initParams <- c()
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-epiTypes <- c(3)
+epiTypes <- c()
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c(1,data[startOffset],0)
+initConds <- c()
 
 plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/call1/", dataFile="output/data/call1/callData.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=60)
 
