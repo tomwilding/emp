@@ -6,7 +6,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 	lim <- thresholds$lim
 	
 	# Colours for plotting
-	cl <- c("red","cyan","forestgreen","goldenrod2","red4", "blue")
+	cl <- c("red","deepskyblue3","forestgreen","goldenrod2","red4", "blue")
 
 	# Loop through all objects
 
@@ -33,26 +33,24 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		eval <- evalList[[i]]
 		allEval <- eval$allEval
 		allEvalFine <- eval$allEvalFine
-		# Print main graph
+		epiTypes <- eval$epiTypes
 
 		# Main plot
 		par(mar=c(6.1,4.1,4.1,2.1))
-		plot(offsetTimes, offsetData, xlab='Epochs', ylab='Infected Individuals', col='steelblue')
+		plot(offsetTimes, offsetData, xlab='Days After Outbreak', ylab='Infected Individuals', xaxs='i', col='steelblue')
 		title(main=plotConfig$title, cex.main=0.9, cex.axis=0.8)
-		daysText <- paste("Epochs after outbreak = ", i)
+		daysText <- paste("Days after outbreak = ", i)
 		mtext(daysText, 3, cex=0.8)
 
-		# RSquare and labels
 		# Future RSqaure window to evaluate over
-		NF <- 7
-		# Calculate RSqaure
-		rSquarePast <- eval$optimRSquare
+		NF <- 1
 		
+		rSquarePast <- eval$optimRSquare
 		# rSquareNF <- rSquareError(allEval$multiInf[i:(i+NF)], offsetData[i:(i+NF)])
-		# RSqPastText <- paste("RSquare Past = ", signif(rSquarePast, digits=3))
-		# RSqT1Text <- paste("RSquare Near Future = ", signif(rSquareNF, digits=3))
-		# mtext(RSqPastText, 1, at=plotConfig$rat, padj=6, cex=0.7)
-		# mtext(RSqT1Text, 1, at=plotConfig$rat, padj=8, cex=0.7)
+		RSqPastText <- paste("RSquare Past = ", signif(rSquarePast, digits=3))
+		# RSqNFText <- paste("RSquare t+1 = ", signif(rSquareNF, digits=3))
+		mtext(RSqPastText, 1, at=plotConfig$rat, padj=6, cex=0.7)
+		# mtext(RSqNFText, 1, at=plotConfig$rat, padj=8, cex=0.7)
 
 		# Plot rectangle of past time first to plot on top
 		rect(-1000000, -1000000, i + startOffset-1, 1000000, col=rgb(0.95,0.95,0.95), border=NA)
@@ -73,17 +71,26 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 			lines(fineTimes, sub, col=cl[k], lty=2)
 			lines(fineTimes, multiInf, col="black")
 			# Params - Add IO to S0
-			# S0 <- exp(subParams[3]) + subParams[4]
-			# ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0)), collapse='')
-			# mtext(ParamText, 1, at=plotConfig$pat, padj=6+(2*(k-1)), cex=0.7, col=cl[k])		
+			if (k > 1) {
+				epiType <- epiTypes[k]
+				if (epiType == 3) {
+					S0 <- exp(subParams[3])
+					ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0)), collapse='')
+					mtext(ParamText, 1, at=plotConfig$pat, padj=6+(2*(k-2)), cex=0.7, col=cl[k])
+				} else if (epiType == 1) {
+					gamma <- exp(subParams[1])
+					ParamText <- paste(c("Gamma = "), c(signif(exp(subParams[1]), digits=3)), collapse='')
+					mtext(ParamText, 1, at=plotConfig$pat, padj=6+(2*(k-2)), cex=0.7, col=cl[k])
+				}
+			}
 
 			# Legend
-			legendText <- paste("Epidemic",1:k)
-			legendText <- c("Combined", legendText)
+			legendText <- paste("Epidemic", 1:(k - 1))
+			legendText <- c("Combined", "Baseline", legendText)
 			lineType <- c(1,rep(2,k))
 			col <- c(1,cl[1:k])
 		}
-		legend("topright",legendText, col=c(1,cl[1:(length(allEvalFine$sub))]), lty=lineType, cex=0.8)
+		legend("topright",legendText, col=c("black", cl[1:(length(allEvalFine$subInf))]), lty=lineType, cex=0.8)
 		dev.off()
 	}
 }

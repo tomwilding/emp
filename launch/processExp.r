@@ -29,8 +29,6 @@ if (totalLength - length(positiveInfectious) > 0) {
 positiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 
 # Add together the different predicted infectious values truncated to required size
-print(length(positiveInfectious))
-print(length(positiveInfectious1))
 data <- positiveInfectious + positiveInfectious1
 
 # data <- allPositiveInfectious
