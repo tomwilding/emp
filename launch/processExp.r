@@ -12,7 +12,7 @@ positiveInfectious1 <- fluData1$data[,2]
 
 # Offset of t0 for second epidemic
 offset <- 10
-offset1 <- 40
+offset1 <- 35
 
 # Padding of zeros to offset data
 set.seed(1)
