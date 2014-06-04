@@ -17,7 +17,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	totalRSquare <- 0
 	
 	# Step size for iterative fitting
-	step <- 1
+	step <- 2
 	# Initial t0 value
 	ts <- c(1)
 
