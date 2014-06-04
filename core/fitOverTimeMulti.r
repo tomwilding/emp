@@ -145,7 +145,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 
 			} else if (outbreak == 1) {
 				# EXP Detected
-				initParamsMore <- c(initParams, log(0.1))
+				initParamsMore <- c(initParams, log(0.01))
 				initCondsMore <- c(initConds, 1)
 				epiTypesMore <- c(epiTypes, 1)		
 				# Fit More epidemic with t0 set at i
