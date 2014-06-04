@@ -47,10 +47,12 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		
 		rSquarePast <- eval$optimRSquare
 		# rSquareNF <- rSquareError(allEval$multiInf[i:(i+NF)], offsetData[i:(i+NF)])
-		RSqPastText <- paste("RSquare Past = ", signif(rSquarePast, digits=3))
-		# RSqNFText <- paste("RSquare t+1 = ", signif(rSquareNF, digits=3))
-		mtext(RSqPastText, 1, at=plotConfig$rat, padj=6, cex=0.7)
-		# mtext(RSqNFText, 1, at=plotConfig$rat, padj=8, cex=0.7)
+		if (!is.null(rSquarePast)) {
+			RSqPastText <- paste("RSquare Past = ", signif(rSquarePast, digits=3))
+			# RSqNFText <- paste("RSquare t+1 = ", signif(rSquareNF, digits=3))
+			mtext(RSqPastText, 1, at=plotConfig$rat, padj=6, cex=0.7)
+			# mtext(RSqNFText, 1, at=plotConfig$rat, padj=8, cex=0.7)
+		}
 
 		# Plot rectangle of past time first to plot on top
 		rect(-1000000, -1000000, i + startOffset-1, 1000000, col=rgb(0.95,0.95,0.95), border=NA)
@@ -76,11 +78,11 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 				if (epiType == 3) {
 					S0 <- exp(subParams[3])
 					ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0)), collapse='')
-					mtext(ParamText, 1, at=plotConfig$pat, padj=6+(2*(k-2)), cex=0.7, col=cl[k])
+					mtext(ParamText, 1, at=plotConfig$pat, padj=4+(2*(k-2)), cex=0.7, col=cl[k])
 				} else if (epiType == 1) {
 					gamma <- exp(subParams[1])
 					ParamText <- paste(c("Gamma = "), c(signif(exp(subParams[1]), digits=3)), collapse='')
-					mtext(ParamText, 1, at=plotConfig$pat, padj=6+(2*(k-2)), cex=0.7, col=cl[k])
+					mtext(ParamText, 1, at=plotConfig$pat, padj=4+(2*(k-2)), cex=0.7, col=cl[k])
 				}
 			}
 
