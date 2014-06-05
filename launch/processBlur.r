@@ -25,7 +25,7 @@ epiTypes <- c(0)
 # Init Conds = S0, I0, R0
 initConds <- c()
 
-plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blurt1/s0/", dataFile="output/data/blurt1/blurDataFinalG.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=60)
+plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blurt1/nolimit/", dataFile="output/data/blurt1/blurDataFinalMT.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=60)
 
 # Fit parameters
 fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)

@@ -37,9 +37,9 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 
 		# Main plot
 		par(mar=c(6.1,4.1,4.1,2.1))
-		plot(offsetTimes, offsetData, xlab='Days After Outbreak', ylab='Infected Individuals', xaxs='i', col='steelblue')
+		plot(offsetTimes, offsetData, xlab='Time (Days)', ylab='Infected Individuals', xaxs='i', col='steelblue')
 		title(main=plotConfig$title, cex.main=0.9, cex.axis=0.8)
-		daysText <- paste("Days after outbreak = ", i)
+		daysText <- paste("Day", i)
 		mtext(daysText, 3, cex=0.8)
 
 		# Future RSqaure window to evaluate over

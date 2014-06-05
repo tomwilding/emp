@@ -1,5 +1,5 @@
 fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig) {
-	
+
 	# Unpack starting parameters, conditions and offsets
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
@@ -19,10 +19,17 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Step size for iterative fitting
 	step <- 1
 	# Initial t0 value
-	ts <- c(1)
+	tsList <- list(c(1,1), c(1,1,76), c(1,1,76,133), c(1,1,76,133,192), c(1,1,76,133,192,256))
+	epiTypesList <- list(c(0,3), c(0,3,3), c(0,3,3,1), c(0,3,3,1,3), c(0,3,3,1,3,3))
+	initCondsList <- list(c(1,1,0), c(1,1,0,1,1,0), c(1,1,0,1,1,0,1), c(1,1,0,1,1,0,1,1,1,0), c(1,1,0,1,1,0,1,1,1,0,1,1,0))
+	initParamsList <- list(	c(log(0.001), log(0.01), log(1000)), 
+						c(log(0.001), log(0.01), log(1000), log(0.001), log(0.01), log(1000)),
+						c(log(0.001), log(0.01), log(1000), log(0.001), log(0.01), log(1000), log(0.01)),
+						c(log(0.001), log(0.01), log(1000), log(0.001), log(0.01), log(1000), log(0.01), log(0.001), log(0.01), log(1000)),
+						c(log(0.001), log(0.01), log(1000), log(0.001), log(0.01), log(1000), log(0.01), log(0.001), log(0.01), log(1000), log(0.001), log(0.01), log(1000)))
 
 	# Set the number of epidemics
-	k <- length(ts)
+	# k <- length(ts)
 
 	# All evaluation vector
 	evalList <- c()
@@ -31,15 +38,23 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	nRes <- 2
 
 	# Track epidemic start time
-	startTime <- ts[1]
+	# startTime <- ts[1]
 	startTimeCount <- 0
 	timeSinceOutbreak <- 0
-
 	# testParams(times, data, initConds, params, epiTypes, ts, k, granularity)
 	
 	################################################# Decompose Epidemics ################################################
 	# Truncate the data to i data points from 20 within offset data
-	for (i in seq(from=minTruncation, to=maxTruncation, by=step)) {
+	rep <- 1
+	for (i in c(61, 123, 177, 230, 342)) {
+		# print(ts)
+		ts <- tsList[[rep]]
+		epiTypes <- epiTypesList[[rep]]
+		initParams <- initParamsList[[rep]]
+		initConds <- initCondsList[[rep]]
+		k <- length(ts)
+		# startTime <- ts[1]
+
 		# Fit k epidemics
 		print("------------------------------------------------", quote=FALSE)
 		print(paste(c("fitting "," of "), c(i, maxTruncation)), quote=FALSE); print(paste("k", k), quote=FALSE)
@@ -47,8 +62,9 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# print(paste("Beta", exp(initParams[2])))
 		epidemicType <- epiTypes[k]
 		# Determine if current epidemic start time is set
-		startTimeCount <- countStartTime(ts[k], startTime, startTimeCount)
 		startTime <- ts[k]
+		startTimeCount <- countStartTime(ts[k], startTime, startTimeCount)
+		# startTime <- ts[k]
 		startTimePrev <- ts[max(1, (k - 1))]
 		print(paste("Count", startTimeCount))
 		# Determine epidemic type and fit over required range
@@ -183,6 +199,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# initParams <- multiParams
 		# Increment time since outbreak
 		timeSinceOutbreak <- timeSinceOutbreak + 1
+		rep <- rep + 1
 	}
 	
 	# Save all params

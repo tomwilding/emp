@@ -1,6 +1,6 @@
 plotPred <- function(times, data, offsets, thresholds, initParams, initConds, plotConfig) {
 	# Unpack settings
-	minTruncation <- offsets$minTruncation
+	minTruncation <- 20
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
 	lim <- thresholds$lim
@@ -29,7 +29,6 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		# Plot predicted data point for this time at previous fitting
 		evalPrev <- evalList[[i - predOffset]]
 		allEval <- evalPrev$allEval$multiInf
-		
 		# Update previous prediction using AR model
 		# Get past residuals
 		prevResiduals <- evalPrev$residuals
