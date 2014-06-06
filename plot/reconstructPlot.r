@@ -11,7 +11,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 	# Loop through all objects
 
 	end <- length(evalList)
-	for(i in minTruncation:end) {
+	for(i in seq(from=minTruncation, to=end, by=2)) {
 		# Set graph settings
 		setEPS()
 		graphName <- paste("t", i, sep='')
@@ -33,7 +33,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		eval <- evalList[[i]]
 		allEval <- eval$allEval
 		allEvalFine <- eval$allEvalFine
-		epiTypes <- c(0, 3, 1)
+		epiTypes <- eval$epiTypes
 
 		# Main plot
 		par(mar=c(6.1,4.1,4.1,2.1))

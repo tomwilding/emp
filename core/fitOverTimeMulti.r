@@ -17,7 +17,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	totalRSquare <- 0
 	
 	# Step size for iterative fitting
-	step <- 1
+	step <- 2
 	# Initial t0 value
 	ts <- c(1)
 
@@ -49,7 +49,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		epidemicType <- epiTypes[k]
 		# Determine if current epidemic start time is set
 		startTimeCount <- countStartTime(ts[k], startTime, startTimeCount)
-		startTime <- ts[k]
+		# startTime <- ts[k]
 		startTimePrev <- ts[max(1, (k - 1))]
 		print(paste("Count", startTimeCount))
 		# Determine epidemic type and fit over required range
