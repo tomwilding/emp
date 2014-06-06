@@ -33,7 +33,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		eval <- evalList[[i]]
 		allEval <- eval$allEval
 		allEvalFine <- eval$allEvalFine
-		epiTypes <- eval$epiTypes
+		epiTypes <- c(0, 3, 1)
 
 		# Main plot
 		par(mar=c(6.1,4.1,4.1,2.1))
