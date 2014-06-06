@@ -33,12 +33,12 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 		eval <- evalList[[i]]
 		res <- eval$residuals
 		if (i==length(evalList)) {
-			postscript(paste(plotConfig$fileName, "acf"))
-			acf(res)
+			postscript(paste(plotConfig$fileName, "acf.eps"))
+			acf(res, main="Auto Correlation Function for Synthetic dataset")
 			dev.off()
 
-			postscript(paste(plotConfig$fileName, "pacf"))
-			pacf(res)
+			postscript(paste(plotConfig$fileName, "pacf.eps"))
+			pacf(res, main="Partial Auto Correlation Function for Synthetic dataset")
 			dev.off()
 
 			# postscript(paste(plotConfig$fileName, "ar"))
@@ -54,7 +54,7 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 			write.table(file="finalRes.csv", res, quote=FALSE, sep=",")
 
 			# Plot res
-			postscript(paste(plotConfig$fileName, "res"))
+			postscript(paste(plotConfig$fileName, "res.eps"))
 			plot(1:length(res), res, type="l")
 			dev.off()
 		}

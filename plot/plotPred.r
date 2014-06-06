@@ -37,7 +37,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 		# window <- 4
 		# prevResidualsWindow <- prevResiduals[(length(prevResiduals)-window):length(prevResiduals)]
 		# Fit AR model to all past residuals
-		arModel <- ar(prevResiduals, FALSE)
+		arModel <- ar(prevResiduals, 1)
 		# arimaModel <- arima(prevResiduals, order=c(4,0,0))
 		nextIncRes <- predict(arModel, n.ahead=predOffset)$pred
 
@@ -131,19 +131,23 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 
 	# Set graph settings
 	setEPS()
-	postscript(paste(plotConfig$fileName, "allBlurPredictionAR", sep=''))	
+	postscript(paste(plotConfig$fileName, "allBlurPredictionAR.eps", sep=''))	
 
 	# Main plot
 	par(mar=c(6.1,4.1,4.1,2.1))
-	plot(inRangeTimes, inRangeData, xlab='Epochs', ylab='Infected Individuals', col='steelblue', type="l")
-	title(main=plotConfig$title, cex.main=0.9, cex.axis=0.8)
-	daysText <- paste("Epochs after outbreak = ", i)
-	mtext(daysText, 3, cex=0.8)
+	plot(inRangeTimes, inRangeData, xlab='Time (Days)', ylab='Predicted Infected Individuals', col='steelblue', type="l")
+	title(main="Next Day Predictions of Synthedemic model with AR Residual Refinement", cex.main=0.9, cex.axis=0.8)
+	# daysText <- paste("Day", i)
+	# mtext(daysText, 3, cex=0.8)
 
 	# Plot actual data point at this time
 	lines(inRangeTimes, inRangeEvalPredsAR, col='red')
 	lines(inRangeTimes, inRangeEvalPreds, col='black')
 	# lines(inRangeTimes, inRangeMeanPredsAR, col='blue')
-	# abline(v=106)
+	# Legend
+	legendText <- c("Data", "Synthedemic", "Synthedemic with AR Refinement")
+	lineType <- c(1, 1, 1)
+	col <- c("steelblue", "black", "red")
+	legend("topright",legendText, col=col, lty=lineType, cex=0.8)
 	dev.off()
 }

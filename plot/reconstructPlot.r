@@ -11,7 +11,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 	# Loop through all objects
 
 	end <- length(evalList)
-	for(i in seq(from=minTruncation, to=end, by=2)) {
+	for(i in seq(from=minTruncation, to=end, by=1)) {
 		# Set graph settings
 		setEPS()
 		graphName <- paste("t", i, sep='')
@@ -37,6 +37,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 
 		# Main plot
 		par(mar=c(6.1,4.1,4.1,2.1))
+		# plot(offsetTimes, offsetData, xlab='Time (Days)', ylab='Infected Individuals', xaxs='i', col='steelblue', ylim=c(0, 120000))
 		plot(offsetTimes, offsetData, xlab='Time (Days)', ylab='Infected Individuals', xaxs='i', col='steelblue')
 		title(main=plotConfig$title, cex.main=0.9, cex.axis=0.8)
 		daysText <- paste("Day", i)
@@ -70,29 +71,33 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 			sub <- allEvalFine$subInf[[k]]
 			subParams <- allEvalFine$subParams[[k]]
 			# Print sub epidemic graph
-			lines(fineTimes, sub, col=cl[k], lty=2)
+			# lines(fineTimes, sub, col=cl[k], lty=2)
 			lines(fineTimes, multiInf, col="black")
 			# Params - Add IO to S0
 			if (k > 1) {
 				epiType <- epiTypes[k]
 				if (epiType == 3) {
 					S0 <- exp(subParams[3])
-					ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0)), collapse='')
-					mtext(ParamText, 1, at=plotConfig$pat, padj=4+(2*(k-2)), cex=0.7, col=cl[k])
+					paramsText <- paste(c("Beta = ",", Gamma = ",", S0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0)), collapse='')
+					epiText <- paste("subEpi", (k - 1), ":", collase='')
+					paramsText <- paste(epiText, paramsText)
+					mtext(paramsText, 1, at=plotConfig$pat, padj=4.5+(2*(k-2)), cex=0.7)
 				} else if (epiType == 1) {
 					gamma <- exp(subParams[1])
-					ParamText <- paste(c("Gamma = "), c(signif(exp(subParams[1]), digits=3)), collapse='')
-					mtext(ParamText, 1, at=plotConfig$pat, padj=4+(2*(k-2)), cex=0.7, col=cl[k])
+					paramsText <- paste(c("Gamma = "), c(signif(exp(subParams[1]), digits=3)), collapse='')
+					epiText <- paste("subEpi", (k-1), ":", collapse='')
+					paramsText <- paste(epiText, paramsText)
+					mtext(paramsText, 1, at=plotConfig$pat, padj=4.5+(2*(k-2)), cex=0.7)
 				}
 			}
 
 			# Legend
-			legendText <- paste("Epidemic", 1:(k - 1))
-			legendText <- c("Combined", "Baseline", legendText)
-			lineType <- c(1,rep(2,k))
-			col <- c(1,cl[1:k])
+			# legendText <- paste("Epidemic", 1:(k - 1))
+			# legendText <- c("Combined", "Baseline", legendText)
+			# lineType <- c(1,rep(2,k))
+			# col <- c(1,cl[1:k])
 		}
-		legend("topright",legendText, col=c("black", cl[1:(length(allEvalFine$subInf))]), lty=lineType, cex=0.8)
+		# legend("topright",legendText, col=c("black"), cex=0.8)
 		dev.off()
 	}
 }

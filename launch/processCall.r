@@ -21,7 +21,8 @@ epiTypes <- c(0)
 # Init Conds = S0, I0, R0
 # I0 from first data point
 initConds <- c()
-
+plot(c(1:length(data)), data, type="l")
+readline()
 plotConfig <- list(title="Synthedemic Decomposition of Carly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/callt2/", dataFile="output/data/call/callData90S2Fixed.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=60)
 
 # Fit parameters
