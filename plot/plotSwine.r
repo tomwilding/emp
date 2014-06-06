@@ -23,16 +23,16 @@ initParams <- c();
 # I0 from first data point
 initConds <- c();
 
-plotConfig <- list(title="Synthedemic Decomposition of the 2009 H1N1 Outbreak in England", fileName="output/graphs/swineItr/", dataFile="output/data/blur2/blurData90I.RData", envFile="output/data/blur2/blurEnv.RData", pat=5, rat=25)
+plotConfig <- list(title="Synthedemic Decomposition of the 2009 H1N1 Outbreak in England", fileName="output/graphs/report/swine/", dataFile="output/data/blur2/blurData90I.RData", envFile="output/data/blur2/blurEnv.RData", pat=5, rat=25)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot RSq graph
-# plotRSq(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+plotRSq(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot Residuals
-# plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # t+1 prediction
-# plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
