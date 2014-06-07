@@ -34,11 +34,11 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 		res <- eval$residuals
 		if (i==length(evalList)) {
 			postscript(paste(plotConfig$fileName, "acf.eps"))
-			acf(res, main="Auto Correlation Function for Blurred Lines Data")
+			acf(res, main="Auto Correlation Function for Synthetic Data")
 			dev.off()
 
 			postscript(paste(plotConfig$fileName, "pacf.eps"))
-			pacf(res, main="Partial Auto Correlation Function for Blurred Lines Data")
+			pacf(res, main="Partial Auto Correlation Function for Synthetic Data")
 			dev.off()
 
 			# postscript(paste(plotConfig$fileName, "ar"))
@@ -55,8 +55,8 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 
 			# Plot res
 			postscript(paste(plotConfig$fileName, "res.eps"))
-			plot(1:length(res), res, type="l")
-			title(main="Residuals Plot for Blurred Lines Data", cex.main=0.9, cex.axis=0.8)
+			plot(1:length(res), res, type="l", xlab="Time (Days)", ylab="Residual")
+			title(main="Residuals Plot for Synthetic Data", cex.main=0.9, cex.axis=0.8)
 			dev.off()
 		}
 

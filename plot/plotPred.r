@@ -1,6 +1,6 @@
 plotPred <- function(times, data, offsets, thresholds, initParams, initConds, plotConfig) {
 	# Unpack settings
-	minTruncation <- 20
+	minTruncation <- offsets$minTruncation
 	startOffset <- offsets$startOffset
 	endOffset <- offsets$endOffset
 	lim <- thresholds$lim

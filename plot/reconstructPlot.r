@@ -11,7 +11,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 	# Loop through all objects
 
 	end <- length(evalList)
-	for(i in seq(from=minTruncation, to=end, by=2)) {
+	for(i in seq(from=minTruncation, to=end, by=1)) {
 		# Set graph settings
 		setEPS()
 		graphName <- paste("t", i, sep='')
