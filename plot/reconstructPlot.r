@@ -13,7 +13,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 	# Loop through all objects
 
 	end <- length(evalList)
-	for(i in seq(from=minTruncation, to=end, by=1)) {
+	for(i in seq(from=minTruncation, to=end, by=2)) {
 		# Set graph settings
 		setEPS()
 		graphName <- paste("t", i, sep='')
@@ -65,14 +65,14 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		# Plot data points and actual data lines
 		lines(offsetTimes, offsetData, col='steelblue', lty=1)
 		
-		# Fan 
-		net <- ts(offsetData)
-		m <- auto.arima(net)
-		mm <- matrix(NA, nrow=1000, ncol=5)
-			for(mt in 1:1000)
-  				mm[mt,] <- simulate(m, nsim=5)
-		fan(pn(mm), start=10, anchor=offsetData[10], type="interval", probs=seq(5, 95, 5), ln=c(50, 80))
-		abline(v=10)
+		# # Fan 
+		# net <- ts(offsetData)
+		# m <- auto.arima(net)
+		# mm <- matrix(NA, nrow=1000, ncol=5)
+		# 	for(mt in 1:1000)
+  # 				mm[mt,] <- simulate(m, nsim=5)
+		# fan(pn(mm), start=10, anchor=offsetData[10], type="interval", probs=seq(5, 95, 5), ln=c(50, 80))
+		# abline(v=10)
 		points(truncTimes, truncData, col='black', pch=16)
 		# Plot lines using fine time for sub epidemics
 		multiInf <- allEvalFine$multiInf

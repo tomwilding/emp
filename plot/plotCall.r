@@ -2,10 +2,11 @@ load("output/data/call/callData90S2.RData")
 require("epi")
 
 fluData <- read.csv("data/call.csv", header = TRUE)
-# nSum <- 2
 data <- fluData[,2]
-times <- c(1:length(data))
+
+# nSum <- 2
 # data <- sumData(data, nSum)
+times <- c(1:length(data))
 
 # Fitting epidemics
 startOffset <- 1
@@ -23,7 +24,7 @@ epiTypes <- c(0)
 # I0 from first data point
 initConds <- c()
 
-plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/call4/", dataFile="output/data/call/callData.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=250)
+plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/callFinal290/", dataFile="output/data/call/callData.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=250)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
