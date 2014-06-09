@@ -28,5 +28,4 @@ initConds <- c()
 plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blurt1/nolimit/", dataFile="output/data/blurt1/blurDataNoOBLim.RData", envFile="output/data/blur2/blurEnv.RData", pat=12, rat=60)
 
 # Fit parameters
-fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
-fitARModel(c(1:length(data)), data, plotConfig)
+fitARModel(c(1:length(data)), data, offsets, plotConfig)

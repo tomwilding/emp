@@ -18,15 +18,15 @@ thresholds <- list(lim=0.95)
 
 # Init Params = beta, gamma, S0
 # initParams <- c();
-initParams <- c(log(0.001), log(0.5), log(10))
+initParams <- c(log(0.001), log(0.01), log(1000))
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
 epiTypes <- c(3)
 # Init Conds = S0, I0, R0
 # I0 from first data point
 # initConds <- c();
-initConds <- c(10,1,0)
+initConds <- c(1,1,0)
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/flu/", dataFile="output/data/flu/fluData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Initial Influenza Fitting", fileName="output/graphs/flu1/", dataFile="output/data/flu/fluData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
 # Fit parameters
 fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)

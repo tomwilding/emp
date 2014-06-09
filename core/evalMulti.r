@@ -30,16 +30,21 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 				# Get predictions of SIR given current parameters
 				preds <- lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti)
 				predInf <- (preds[,3])
+				optimConds <- initConds
 			} else if (subEpiNumParams == 1) {
 				# Update Spike epidemic parameters
 				# Update I0 as unexplained prediction of Infectious for this epidemic
 				initCondsMulti[1] <- I0
 				preds <- lsoda(y=initCondsMulti, times=fineTimes, func=expDec, parms=paramsMulti)
 				predInf <- preds[,2]
+				# Update I0 in conds
+				initConds[subEpiNumParamsOffset + 1] <- I0
+				optimConds <- initConds
 			}
 		} else {
 			# No epidemic detected
 			predInf <- array(1, length(fineTimes)) * data[1]
+			optimConds <- initConds
 		}
 
 		# Find index to start fitting k+1 epidemic
@@ -57,11 +62,11 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 		eval$subParams[[i]] <- paramsMulti
 		eval$multiInf <- predInfectious
 		eval$multiParams <- params
+		eval$multiConds <- optimConds
 		# Set I0 for next epidemic using combined predicted I0 at next t0
 		# TODO: Update I0 after or before setting it in eval??
 		if (i < k) {
-			# Check if S0 < I0 - why would I0 be less than S0
-			# S0 optimised from optim so at the start S0 < I0 in.
+			# TODO: I0 only calculated from previous epidemic
 			# Only predict I0 for kth epidemic
 			t1Index <- which(fineTimes == times[ts[i + 1]])
 			predI <- predInfectious[t1Index]

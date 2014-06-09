@@ -16,26 +16,29 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 
 	# # SSE plot
 	# points <- 100
-	# betaVals <- log(1*10^-seq(4,2,length=points))
-	# gammaVals <- log(1*10^-seq(2,0,length=points))
-	# s0Vals <- rep(log(762),points)
+	# betaVals <- seq(-6.5,-5,length=points)
+	# gammaVals <- seq(-1.5,0,length=points)
+	# s0Vals <- rep(log(661),points)
 	# # s0Vals <- log(seq(600,800,length=points))
-	# sseB <- c(); sseS0 <- c();
+	# sseB <- c(); sseS0 <- c();sseG <- c()
 	# sse <- matrix(1, points, points)
 	# for (i in 1:length(betaVals)) {
-	# 	# sseB[i] <- sseMulti(c(betaVals[i], log(1), log(500)), offsetTimes, offsetData, initConds, epiTypes, ts, k)
-	# 	sseS0[i] <- sseMulti(c(log(0.00257), log(0.473), s0Vals[i]), offsetTimes, offsetData, initConds, epiTypes, ts, k)
+	# 	# sseB[i] <- sseMulti(c(betaVals[i], log(0.4), log(661)), offsetTimes, offsetData, initConds, epiTypes, ts, k)
+	# # 	sseS0[i] <- sseMulti(c(log(0.00257), log(0.473), s0Vals[i]), offsetTimes, offsetData, initConds, epiTypes, ts, k)
 	# 	for (j in 1:length(gammaVals)) {
+	# 		# sseG[j] <- sseMulti(c(log(0.003), gammaVals[j], log(661)), offsetTimes, offsetData, initConds, epiTypes, ts, k)
 	# 		sse[i, j] <- sseMulti(c(betaVals[i], gammaVals[j], s0Vals[i]), offsetTimes, offsetData, initConds, epiTypes, ts, k)
 	# 	}
 	# }
-	# # plot(betaVals, sseB)
 	# # plot(s0Vals, sseS0)
 	# setEPS()
-	# postscript(paste(plotConfig$fileName, "fluSurface.eps"), sep='')
-	# persp(betaVals, gammaVals, sse, theta = -30, phi = 40, expand = 0.5, col = "lightblue", shade = 0.75, ticktype = "detailed",
- #     	xlab = "log(beta)", ylab = "log(gamma)", zlab = "SSE")
-	# title(main="Optimisation surface over beta and gamma", cex.main=1, cex.axis=0.8)
+	# postscript(paste(plotConfig$fileName, "fluSurf.eps", sep=''))
+	# # plot(betaVals, sseB, xlab="log(Beta)", ylab="SSE", type="l")
+	# # print(length(gammaVals))
+	# # print(length(sseG))
+	# # plot(gammaVals, sseG, xlab="log(Gamma)", ylab="SSE", type="l")
+	# persp(betaVals, gammaVals, sse, theta=-30, phi=40, expand=0.5, col="lightblue", shade=0.75, ticktype="detailed", xlab="log(beta)", ylab="log(gamma)", zlab="SSE", zlim=c(0,round(max(sse))))
+	# title(main="Optimisation Surface over beta and gamma for Influenza data", cex.main=1, cex.axis=0.8)
 	# dev.off()
 	# print("ssePlotted")
 	# readline()
@@ -95,6 +98,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	optimPastEval <- evalOverTime[[maxRSIndex]][[3]]
 	# Evaluate over all fine granularity time
 	optimParams <- optimPastEval$multiParams
+	optimConds <- optimPastEval$multiConds
 	# TODO: Don't want to restrict eval - eval over all points in evalMulti after optim over all but last n
 	allEvalFine <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, timeStep)
 	# Evaluate over all time
@@ -133,7 +137,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 
 	# # Set values of eval
 	eval$multiParams <- optimParams
-	# eval$initConds <- initConds
+	eval$multiConds <- optimConds
 	eval$optimTime <- optimTime
 	eval$optimTimes <- c(ts[1:(k - 1)], optimTime)
 	eval$k <- k

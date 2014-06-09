@@ -22,7 +22,7 @@ offset1 <- 50
 
 # Padding of zeros to offset data
 set.seed(1)
-positiveInfectiousPadStart <- runif(offset)*2
+positiveInfectiousPadStart <- numeric(offset)
 positiveInfectiousPad1Start <- numeric(offset + offset1)
 positiveInfectious1 <- c(positiveInfectiousPad1Start,positiveInfectious1)
 totalLength <- length(positiveInfectious1)
@@ -37,7 +37,9 @@ positiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 # Add together the different predicted infectious values truncated to required size
 data <- positiveInfectious + positiveInfectious1
 
-# data <- allPositiveInfectious
+# Add noise
+noise <- runif(length(data))*2
+data <- data + noise
 
 # Fitting epidemics
 startOffset <- 1

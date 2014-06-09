@@ -1,4 +1,4 @@
-load("output/data/blurSingle/blurData.RData")
+load("output/data/blurSingle/blurSingleData.RData")
 require("epi")
 
 # Read data from file
@@ -26,13 +26,13 @@ initConds <- c(1,data[startOffset],0);
 plotConfig <- list(title="Synthedemic Decomposition of Robin Thicke BitTorrent Downloads", fileName="output/graphs/blurSingle/", dataFile="output/data/blurSingle/blurData.RData", envFile="output/data/blurSingle/blurEnv.RData", pat=12, rat=250)
 
 # Fit parameters
-# reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot RSq graph
-# plotRSq(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+plotRSq(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot Residuals
-# plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # t+1 prediction
 plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)

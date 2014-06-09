@@ -1,4 +1,6 @@
 reconstructPlot <- function(times, data, offsets, thresholds, initParams, initConds, plotConfig) {
+	require("fanplot")
+	require("forecast")
 	# Unpack settings
 	minTruncation <- offsets$minTruncation
 	startOffset <- offsets$startOffset
@@ -62,8 +64,16 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 
 		# Plot data points and actual data lines
 		lines(offsetTimes, offsetData, col='steelblue', lty=1)
+		
+		# Fan 
+		net <- ts(offsetData)
+		m <- auto.arima(net)
+		mm <- matrix(NA, nrow=1000, ncol=5)
+			for(mt in 1:1000)
+  				mm[mt,] <- simulate(m, nsim=5)
+		fan(pn(mm), start=10, anchor=offsetData[10], type="interval", probs=seq(5, 95, 5), ln=c(50, 80))
+		abline(v=10)
 		points(truncTimes, truncData, col='black', pch=16)
-
 		# Plot lines using fine time for sub epidemics
 		multiInf <- allEvalFine$multiInf
 		for(k in 1:(length(allEvalFine$subInf))) {
