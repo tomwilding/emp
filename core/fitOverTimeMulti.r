@@ -34,7 +34,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Track epidemic start time
 	startTime <- ts[1]
 	startTimeCount <- 0
-	timeSinceOutbreak <- 5
+	timeSinceOutbreak <- 0
 
 	# testParams(times, data, initConds, params, epiTypes, ts, k, granularity)
 	

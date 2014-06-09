@@ -3,8 +3,8 @@ require('epi')
 
 fluData <- read.csv("data/call.csv", header = TRUE)
 data <- fluData[,2]
-nSum <- 2
-data <- sumData(data, nSum)
+# nSum <- 2
+# data <- sumData(data, nSum)
 
 # Fitting epidemics
 startOffset <- 1
