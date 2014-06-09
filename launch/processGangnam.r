@@ -1,7 +1,7 @@
 # Read data from file
 require('epi')
 
-fluData <- read.csv("data/bauer.csv", header = TRUE)
+fluData <- read.csv("data/gangnam.csv", header = TRUE)
 # nSum <- 2
 data <- fluData[,2]
 # data <- sumData(data, nSum)
@@ -22,7 +22,7 @@ epiTypes <- c(0)
 # I0 from first data point
 initConds <- c()
 
-plotConfig <- list(title="Synthedemic Decomposition of Harlem Shake YouTube Views", fileName="output/graphs/harlem2/", dataFile="output/data/harlem/harlemData.RData", envFile="output/data/harlem/callEnv.RData", pat=12, rat=60)
+plotConfig <- list(title="Synthedemic Decomposition of Psy Downloads", fileName="output/graphs/psy/", dataFile="output/data/psy/gangnamData.RData", envFile="output/data/harlem/callEnv.RData", pat=12, rat=60)
 
 # Fit parameters
 fitOverTimeMulti("LMS", 1:length(data), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)

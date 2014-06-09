@@ -104,7 +104,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# Evaluate over all time
 	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, 1) 
 
-	# Plot inline for dev
+	# # Plot inline for dev
 	# if (p) {
 	#  	fineTimes <- breakTime(offsetTimes, timeStep)
 	#  	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
