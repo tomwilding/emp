@@ -21,7 +21,7 @@ epiTypes <- c(0)
 # Init Conds = S0, I0, R0
 # I0 from first data point
 initConds <- c()
-plotConfig <- list(title="Synthedemic Decomposition of Carly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/callFinal2/", dataFile="output/data/call/callFinal3.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=60)
+plotConfig <- list(title="Synthedemic Decomposition of Carly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/callFinal2/", dataFile="output/data/call/callFinal295.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=60)
 
 # Fit parameters
 fitOverTimeMulti("LMS", 1:length(data), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
