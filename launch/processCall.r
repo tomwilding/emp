@@ -12,7 +12,7 @@ endOffset <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=4)
 
 # Threshold
-thresholds <- list(lim=0.9)
+thresholds <- list(lim=0.95)
 
 # Init Params = beta, gamma, S0
 initParams <- c()
@@ -21,7 +21,7 @@ epiTypes <- c(0)
 # Init Conds = S0, I0, R0
 # I0 from first data point
 initConds <- c()
-plotConfig <- list(title="Synthedemic Decomposition of Carly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/callFinal2/", dataFile="output/data/call/callFinal295.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=60)
+plotConfig <- list(title="Synthedemic Decomposition of Carly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/callFinal2/", dataFile="output/data/call/callFinal295H.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=60)
 
 # Fit parameters
 fitOverTimeMulti("LMS", 1:length(data), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
