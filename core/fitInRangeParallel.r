@@ -59,7 +59,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	evalOverTime <- foreach (t=range) %dopar% {
 		tsExplore <- c(ts[1:(k - 1)],t)
 		# time value t0 referenced from offset offsetData
-		# if (k > 1) {
+		if (k > 1) {
 			# Find optimal beta and gamma by optimising them to minimise the least square function
 			# OptimSIRMulti passed in from call to setSolver
 			tryCatch({
@@ -71,7 +71,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 				print(e)
 				print("optim failed")
 			})
-		# }
+		}
 		pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k, 1)
 		predInfectiousPast <- pastEval$multiInf
 		# rSquare error to determine best time to start fitting
@@ -105,7 +105,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# Evaluate over all time
 	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, 1) 
 
-	# # Plot inline for dev
+	# Plot inline for dev
 	# if (p) {
 	#  	fineTimes <- breakTime(offsetTimes, timeStep)
 	#  	cl <- c("red","cyan","forestgreen","goldenrod2","red4")

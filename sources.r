@@ -20,7 +20,6 @@ source('aux/logistic.r')
 source('aux/logit.r')
 source('aux/fitARModel.r')
 
-source('core/fitOverTimeSingle.r')
 source('core/fitOverTimeMulti.r')
 source('core/detectOutbreak.r')
 source('core/sseMulti.r')
