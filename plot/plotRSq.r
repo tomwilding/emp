@@ -45,14 +45,11 @@ plotRSq <- function(times, data, offset, thresholds, initParams, initConds, plot
 	# Plot past rSqaure over time
 	# Set graph settings
 	setEPS()
-	graphName <- "rSqaurePast.eps"
+	graphName <- "rSquarePast.eps"
 	postscript(paste(plotConfig$fileName, graphName, sep=''), height=3)
 
-	plot(c(1:(length(offsetData)+1 - minTruncation)), allRSqaurePast, xlab='Epochs', ylab='Past RSqaure Error', col='steelblue')
-	title("Past RSquare Error at each Epoch")
-	# Past RSq
-	points(c(1:(length(offsetData)+1 - minTruncation)), allRSqaurePast, col='steelblue')
-	lines(c(1:(length(offsetData)+1 - minTruncation)), allRSqaurePast, col="steelblue")
+	plot(c(minTruncation:length(offsetData)), allRSqaurePast, xlab='Time (Days)', ylab='Past RSquare Error', col='steelblue', type="l")
+	title("Past RSquare Error at each Day for Blurred Lines")
 
 	dev.off()
 

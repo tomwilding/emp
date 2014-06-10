@@ -11,12 +11,13 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 
 	# Loop through all objects
 	predOffset <- 1
+	step <- 2
 	end <- length(evalList)
 
 	# Take data set within specified offset
 	offsetTimes <- times[startOffset:(length(times)-endOffset)]
 	offsetData <- data[startOffset:(length(data)-endOffset)]
-	inRangeTimes <- offsetTimes[(minTruncation + predOffset):length(offsetTimes)]
+	inRangeTimes <- offsetTimes[(minTruncation + predOffset):end]
 	inRangeData <- offsetData[(minTruncation + predOffset):end]
 
 	# Mean of data
@@ -25,30 +26,27 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	# AR model order
 	# AROrder <- 4
 
-	for(i in (minTruncation + predOffset):end) {
+	for(i in seq(from=(minTruncation + step), to=end, by=step)) {
 		# Plot predicted data point for this time at previous fitting
-		evalPrev <- evalList[[i - predOffset]]
+		evalPrev <- evalList[[i - step]]
 		allEval <- evalPrev$allEval$multiInf
 		# Update previous prediction using AR model
 		# Get past residuals
 		prevResiduals <- evalPrev$residuals
-		# lastEpiTime <- min(4,evalPrev$optimTimes[length(evalPrev$optimTimes)])
-		# prevResiduals <- evalPrev$residuals[lastEpiTime:length(evalPrev$residuals)]
-		# window <- 4
-		# prevResidualsWindow <- prevResiduals[(length(prevResiduals)-window):length(prevResiduals)]
 		# Fit AR model to all past residuals
-		arModel <- ar(prevResiduals, 1)
+		arModel <- ar(prevResiduals)
 		# arimaModel <- arima(prevResiduals, order=c(4,0,0))
 		nextIncRes <- predict(arModel, n.ahead=predOffset)$pred
-
-		# Plot prediction with AR
-		# for (j in 0:(length(nextIncRes) - 1)) {
-		#	evalPredsAR[i - j] <- allEval[i - j] + nextIncRes[length(nextIncRes) - j]
-		# }
+		nextIncRes1 <- predict(arModel, n.ahead=predOffset + 1)$pred	
 		# Plot prediction without AR
+		evalPreds[i - 1] <- allEval[(i - 1)]
+		evalPredsAR[i - 1] <- allEval[(i - 1)] + nextIncRes[length(nextIncRes)]
+		meanPredsAR[i - 1] <- meanPred + nextIncRes[length(nextIncRes)]
+
 		evalPreds[i] <- allEval[i]
-		evalPredsAR[i] <- allEval[i] + nextIncRes[length(nextIncRes)]
-		meanPredsAR[i] <- meanPred + nextIncRes[length(nextIncRes)]
+		evalPredsAR[i] <- allEval[i] + nextIncRes1[length(nextIncRes1)]
+		meanPredsAR[i] <- meanPred + nextIncRes1[length(nextIncRes1)] 
+
 	}
 	# print(arModel)
 	# print(arimaModel)
@@ -131,7 +129,7 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 
 	# Set graph settings
 	setEPS()
-	postscript(paste(plotConfig$fileName, "allBlurPredictionAR.eps", sep=''))	
+	postscript(paste(plotConfig$fileName, "allCallPredictionAR.eps", sep=''))	
 
 	# Main plot
 	par(mar=c(6.1,4.1,4.1,2.1))
@@ -141,6 +139,9 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	# mtext(daysText, 3, cex=0.8)
 
 	# Plot actual data point at this time
+	print(length(inRangeTimes))
+	print(length(inRangeEvalPredsAR))
+	print(length(inRangeEvalPreds))
 	lines(inRangeTimes, inRangeEvalPredsAR, col='red')
 	lines(inRangeTimes, inRangeEvalPreds, col='black')
 	# lines(inRangeTimes, inRangeMeanPredsAR, col='blue')

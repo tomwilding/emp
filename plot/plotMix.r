@@ -61,7 +61,7 @@ epiTypes <- c(0)
 # I0 from first data point
 initConds <- c();
 # initConds <- c(1,1,0)
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=20, rat=120)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/report/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=20, rat=120)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
@@ -71,3 +71,4 @@ reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotCon
 
 # t+1 prediction
 # plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+analysis(times, data, offsets, thresholds, initParams, initConds, plotConfig)

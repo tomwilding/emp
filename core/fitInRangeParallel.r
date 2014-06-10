@@ -15,9 +15,9 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	truncData <- offsetData[1:i]
 
 	# # SSE plot
-	# points <- 100
+	# points <- 50
 	# betaVals <- seq(-6.5,-5,length=points)
-	# gammaVals <- seq(-1.5,0,length=points)
+	# gammaVals <- seq(-2,0.5,length=points)
 	# s0Vals <- rep(log(661),points)
 	# # s0Vals <- log(seq(600,800,length=points))
 	# sseB <- c(); sseS0 <- c();sseG <- c()
@@ -32,12 +32,13 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# }
 	# # plot(s0Vals, sseS0)
 	# setEPS()
-	# postscript(paste(plotConfig$fileName, "fluSurf.eps", sep=''))
+	# postscript(paste(plotConfig$fileName, "flu.eps", sep=''))
 	# # plot(betaVals, sseB, xlab="log(Beta)", ylab="SSE", type="l")
 	# # print(length(gammaVals))
 	# # print(length(sseG))
 	# # plot(gammaVals, sseG, xlab="log(Gamma)", ylab="SSE", type="l")
-	# persp(betaVals, gammaVals, sse, theta=-30, phi=40, expand=0.5, col="lightblue", shade=0.75, ticktype="detailed", xlab="log(beta)", ylab="log(gamma)", zlab="SSE", zlim=c(0,round(max(sse))))
+	# persp(betaVals, gammaVals, sse, theta=-30, phi=30, expand=0.5, col="lightblue", shade=0.75, ticktype="detailed", xlab="log(beta)", ylab="log(gamma)", zlab="", zlim=c(0,5e5))
+	# mtext("SSE", 1, at=10, padj=4, cex=0.7)
 	# title(main="Optimisation Surface over beta and gamma for Influenza data", cex.main=1, cex.axis=0.8)
 	# dev.off()
 	# print("ssePlotted")
@@ -58,7 +59,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	evalOverTime <- foreach (t=range) %dopar% {
 		tsExplore <- c(ts[1:(k - 1)],t)
 		# time value t0 referenced from offset offsetData
-		if (k > 1) {
+		# if (k > 1) {
 			# Find optimal beta and gamma by optimising them to minimise the least square function
 			# OptimSIRMulti passed in from call to setSolver
 			tryCatch({
@@ -70,7 +71,7 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 				print(e)
 				print("optim failed")
 			})
-		}
+		# }
 		pastEval <- evalMulti(truncTimes, truncData, initConds, optimParams, epiTypes, tsExplore, k, 1)
 		predInfectiousPast <- pastEval$multiInf
 		# rSquare error to determine best time to start fitting
@@ -104,36 +105,36 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	# Evaluate over all time
 	allEval <- evalMulti(offsetTimes, offsetData, initConds, optimParams, epiTypes, c(ts[1:(k-1)], optimTime), k, 1) 
 
-	# # Plot inline for dev
-	# if (p) {
-	#  	fineTimes <- breakTime(offsetTimes, timeStep)
-	#  	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
-	#  	setEPS()
-	#  	r <- plotConfig$run
-	#  	graphName <- paste("t", i, sep='')
-	#  	graphName <- paste(graphName, ".eps", sep='')
-	#  	postscript(paste(plotConfig$fileName, graphName, sep=''))	
-	#  	par(mar=c(7.1,4.1,4.1,2.1))
-	#  	plot(offsetTimes, offsetData, xlab='Epochs', ylab='Infected Individuals', col='steelblue')
-	#  	title(main=plotConfig$title, cex.main=1, cex.axis=0.8)
-	#  	daysText <- paste("Epochs after outbreak = ", i)
-	#  	mtext(daysText, 3, cex=0.8)
-	#  	# Plot offsetData points and actual offsetData lines
-	#  	lines(offsetTimes, offsetData, col='steelblue', lty=1)
-	#  	points(truncTimes, truncData, col='black', pch=16)
-	#  	# lines(fineTimes, allEvalFine$multiInf, lty=1)
-	#  	# multiInfCoarse <- allEval$multiInf
-	#  	multiInf <- allEvalFine$multiInf
-	#  	for(k in 1:(length(allEvalFine$subInf))) {
-	#  		sub <- allEvalFine$subInf[[k]]
-	#  		subParams <- allEvalFine$subParams[[k]]
-	#  		# Print sub epidemic graph
-	#  		lines(fineTimes, sub, col=cl[k], lty=2)
-	#  		lines(fineTimes, multiInf, col='black')
-	#  		# lines(offsetTimes, multiInfCoarse, col='green')
-	#  	}
-	#  	dev.off()
-	# }
+	# Plot inline for dev
+	if (p) {
+	 	fineTimes <- breakTime(offsetTimes, timeStep)
+	 	cl <- c("red","cyan","forestgreen","goldenrod2","red4")
+	 	setEPS()
+	 	r <- plotConfig$run
+	 	graphName <- paste("t", i, sep='')
+	 	graphName <- paste(graphName, ".eps", sep='')
+	 	postscript(paste(plotConfig$fileName, graphName, sep=''))	
+	 	par(mar=c(7.1,4.1,4.1,2.1))
+	 	plot(offsetTimes, offsetData, xlab='Time (Days)', ylab='Infected Individuals', col='steelblue')
+	 	title(main=plotConfig$title, cex.main=1, cex.axis=0.8)
+	 	daysText <- paste("Day", i)
+	 	mtext(daysText, 3, cex=0.8)
+	 	# Plot offsetData points and actual offsetData lines
+	 	lines(offsetTimes, offsetData, col='steelblue', lty=1)
+	 	points(truncTimes, truncData, col='black', pch=16)
+	 	# lines(fineTimes, allEvalFine$multiInf, lty=1)
+	 	# multiInfCoarse <- allEval$multiInf
+	 	multiInf <- allEvalFine$multiInf
+	 	for(k in 1:(length(allEvalFine$subInf))) {
+	 		sub <- allEvalFine$subInf[[k]]
+	 		subParams <- allEvalFine$subParams[[k]]
+	 		# Print sub epidemic graph
+	 		lines(fineTimes, sub, col=cl[k], lty=2)
+	 		lines(fineTimes, multiInf, col='black')
+	 		# lines(offsetTimes, multiInfCoarse, col='green')
+	 	}
+	 	dev.off()
+	}
 
 	# # Set values of eval
 	eval$multiParams <- optimParams

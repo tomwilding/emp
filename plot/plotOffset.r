@@ -2,7 +2,6 @@ load("output/data/offset/offsetData.RData")
 require('epi')
 # Simulate data 
 # require('epi')
-
 fluData1 <- simSIR(0.002,0.1,400,1)
 # fluData1 <- simExp(0.2,400)
 # fluData2 <- simSIR(0.002,0.1,500,10)
@@ -49,7 +48,7 @@ initParams <- c()
 initConds <- c()
 # initConds <- c(1,log(data[startOffset + 1]),0,0)
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/offset/", dataFile="output/data/offset/offsetData.RData", envFile="output/data/offset/offsetEnv.RData", pat=10, rat=80)
+plotConfig <- list(title="Synthedemic Decomposition of Offset Simulated Data", fileName="output/graphs/offset/", dataFile="output/data/offset/offsetData.RData", envFile="output/data/offset/offsetEnv.RData", pat=15, rat=80)
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 

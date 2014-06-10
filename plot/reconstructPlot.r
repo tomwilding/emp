@@ -13,7 +13,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 	# Loop through all objects
 
 	end <- length(evalList)
-	for(i in seq(from=minTruncation, to=end, by=2)) {
+	for(i in seq(from=minTruncation, to=end, by=1)) {
 		# Set graph settings
 		setEPS()
 		graphName <- paste("t", i, sep='')
@@ -36,12 +36,13 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		allEval <- eval$allEval
 		allEvalFine <- eval$allEvalFine
 		epiTypes <- eval$epiTypes
+		ts <- eval$optimTimes
 
 		# Main plot
 		par(mar=c(6.1,4.1,4.1,2.1))
-		plot(offsetTimes, offsetData, xlab='Time (Days)', ylab='Infected Individuals', xaxs='i', col='steelblue')
+		plot(offsetTimes, offsetData, xlab='Time (epochs)', ylab='Infected Individuals', xaxs='i', col='steelblue')
 		title(main=plotConfig$title, cex.main=0.9, cex.axis=0.8)
-		daysText <- paste("Day", i)
+		daysText <- paste("Epoch", i)
 		mtext(daysText, 3, cex=0.8)
 
 		# Future RSqaure window to evaluate over
@@ -87,12 +88,12 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 				epiType <- epiTypes[k]
 				if (epiType == 3) {
 					S0 <- exp(subParams[3])
-					ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0)), collapse='')
-					mtext(ParamText, 1, at=plotConfig$pat, padj=4+(2*(k-2)), cex=0.7, col=cl[k])
+					ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = ", ", t0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0), ts[k]), collapse='')
+					mtext(ParamText, 1, at=plotConfig$pat, padj=6+(2*(k-2)), cex=0.7, col=cl[k])
 				} else if (epiType == 1) {
 					gamma <- exp(subParams[1])
-					ParamText <- paste(c("Gamma = "), c(signif(exp(subParams[1]), digits=3)), collapse='')
-					mtext(ParamText, 1, at=plotConfig$pat, padj=4+(2*(k-2)), cex=0.7, col=cl[k])
+					ParamText <- paste(c("Gamma = ", ", t0 = "), c(signif(exp(subParams[1]), digits=3), ts[k]), collapse='')
+					mtext(ParamText, 1, at=plotConfig$pat, padj=6+(2*(k-2)), cex=0.7, col=cl[k])
 				}
 			}
 

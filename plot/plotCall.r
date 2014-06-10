@@ -24,10 +24,10 @@ epiTypes <- c(0)
 # I0 from first data point
 initConds <- c()
 
-plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/callFinal290/", dataFile="output/data/call/callData.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=250)
+plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/callFinal290/", dataFile="output/data/call/callData.RData", envFile="output/data/call/callEnv.RData", pat=80, rat=500)
 
 # Fit parameters
-reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot RSq graph
 # plotRSq(times, data, offsets, thresholds, initParams, initConds, plotConfig)
@@ -37,3 +37,4 @@ reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotCon
 
 # t+1 prediction
 # plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+analysis(times, data, offsets, thresholds, initParams, initConds, plotConfig)

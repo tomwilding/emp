@@ -1,4 +1,4 @@
-load("output/data/exp/expDataFT1.RData")
+load("output/data/exp/expData1.RData")
 require('epi')
 # Simulate data 
 # require('epi')
@@ -53,7 +53,7 @@ epiTypes <- c(0)
 # I0 from first data point
 initConds <- c();
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/expOT/", dataFile="output/data/exp/expData.RData", envFile="output/data/mix/mixEnv.RData", pat=10, rat=80)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/exp/", dataFile="output/data/exp/expData.RData", envFile="output/data/mix/mixEnv.RData", pat=10, rat=80)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
@@ -63,3 +63,4 @@ reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotCon
 
 # t+1 prediction
 # plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+analysis(times, data, offsets, thresholds, initParams, initConds, plotConfig)
