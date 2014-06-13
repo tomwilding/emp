@@ -32,6 +32,7 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 		# Get graph object for this iteration
 		eval <- evalList[[i]]
 		res <- eval$residuals
+		
 		if (i==length(evalList)) {
 			postscript(paste(plotConfig$fileName, "acf.eps"))
 			acf(res, main="Auto Correlation Function for Synthetic Data")
@@ -41,6 +42,9 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 			pacf(res, main="Partial Auto Correlation Function for Synthetic Data")
 			dev.off()
 
+			plot(density(res))
+			plotForecastErrors(res)
+			qqnorm(res)
 			# postscript(paste(plotConfig$fileName, "ar"))
 			# ars <- ar(res)
 			# print(ars)
@@ -51,13 +55,13 @@ plotResiduals <- function(times, data, offset, thresholds, initParams, initConds
 			# dev.off()
 
 			# Save res to csv
-			write.table(file="finalRes.csv", res, quote=FALSE, sep=",")
+			# write.table(file="finalRes.csv", res, quote=FALSE, sep=",")
 
 			# Plot res
-			postscript(paste(plotConfig$fileName, "res.eps"))
-			plot(1:length(res), res, type="l", xlab="Time (Days)", ylab="Residual")
-			title(main="Residuals Plot for Synthetic Data", cex.main=0.9, cex.axis=0.8)
-			dev.off()
+			# postscript(paste(plotConfig$fileName, "res.eps"))
+			# plot(1:length(res), res, type="l", xlab="Time (Days)", ylab="Residual")
+			# title(main="Residuals Plot for Synthetic Data", cex.main=0.9, cex.axis=0.8)
+			# dev.off()
 		}
 
 		# graphName <- paste("res", i, sep='')

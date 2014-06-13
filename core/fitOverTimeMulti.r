@@ -17,7 +17,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	totalRSquare <- 0
 	
 	# Step size for iterative fitting
-	step <- 2
+	step <- 1
 	# Initial t0 value
 	ts <- c(1)
 
@@ -57,7 +57,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		if (epidemicType == 3) {
 			print(paste("k range", c(startSearch:endSearch)))
 			# SIR Epidemic
-			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startTime:startTime), plotConfig, 1)
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startSearch:endSearch), plotConfig, 1)
 		} else {
 			# Spike Epidemic or No epidemic
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startTime:startTime), plotConfig, 1)
@@ -112,7 +112,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 3 || outbreak == 0) {
 				# Try SIR
-				initParamsMore <- c(initParams, c(log(0.001), log(0.01), log(1000)))
+				initParamsMore <- c(initParams, c(log(0.001), log(0.1), log(10)))
 				initCondsMore <- c(initConds, c(1,1,0))
 				epiTypesMore <- c(epiTypes, 3)
 				# Fit More epidemic searching t0 range from previous epidemic

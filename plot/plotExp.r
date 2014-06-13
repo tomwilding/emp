@@ -56,11 +56,11 @@ initConds <- c();
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/exp/", dataFile="output/data/exp/expData.RData", envFile="output/data/mix/mixEnv.RData", pat=10, rat=80)
 
 # Fit parameters
-reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot Residuals
 # plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # t+1 prediction
-# plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
-analysis(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# analysis(times, data, offsets, thresholds, initParams, initConds, plotConfig)

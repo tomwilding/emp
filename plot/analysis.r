@@ -26,19 +26,24 @@ analysis <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	for(i in seq(from=end, to=end, by=step)) {
 		# Plot predicted data point for this time at previous fitting
 		eval <- evalList[[i]]
+		print(eval$optimRSquare)
 		allEval <- eval$allEval$multiInf[1:end]
-		rs <- rSquareError(allEval, inRangeData)
+		print("allEval")
 		ss <- ssError(allEval, inRangeData)
-		rsse <- relSSError(allEval, inRangeData)
+		rs <- rSquareError(allEval, inRangeData)
+		rae <- rae(allEval, inRangeData)
+		mad <- mad(allEval, inRangeData)
+		mape <- mape(allEval, inRangeData)
 		rmse <- rmse(allEval, inRangeData)
-		avgError <- avgError(allEval, inRangeData)
 	}
 
-	print(paste("RS", rs))
 	print(paste("SSE", ss))
-	print(paste("RSSE", rsse))
-	print(paste("rmse", rmse))
-	print(paste("avgError", avgError))
+	print(paste("RS", rs))	
+	print(paste("RAE", rae))
+	print(paste("MAD", mad))
+	print(paste("MAPE", mape))
+	print(paste("RMSE", rmse))
+
 	# print(paste("EpiARSS", sseAR), quote=FALSE)
 	# print(paste("ShiftSS", sseDiff), quote=FALSE)
 	# print(paste("MeanARSS", sseMeanAR), quote=FALSE)

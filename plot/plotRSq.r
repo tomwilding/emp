@@ -11,7 +11,6 @@ plotRSq <- function(times, data, offset, thresholds, initParams, initConds, plot
 	# Array to hold all rSqaure evaluations
 	allRSqaurePast <- c()
 	allRSqaureNF <- c()
-
 	# Loop through all objects
 	for(i in minTruncation:length(evalList)) {	
 		
@@ -36,10 +35,10 @@ plotRSq <- function(times, data, offset, thresholds, initParams, initConds, plot
 		NF <- 7
 		# Calculate RSqaure
 		rSquarePast <- eval$optimRSquare
-		rSquareNF <- rSquareError(allEval$multiInf[1:i+NF], offsetData[1:i+NF])
-
+		# rSquareNF <- rSquareError(allEval$multiInf[1:i+NF], offsetData[1:i+NF])
+		if (is.null(rSquarePast)) {rSquarePast <- 0}
 		allRSqaurePast <- c(allRSqaurePast, rSquarePast)
-		allRSqaureNF <- c(allRSqaureNF, rSquareNF)
+		# allRSqaureNF <- c(allRSqaureNF, rSquareNF)
 	}
 
 	# Plot past rSqaure over time
@@ -47,9 +46,10 @@ plotRSq <- function(times, data, offset, thresholds, initParams, initConds, plot
 	setEPS()
 	graphName <- "rSquarePast.eps"
 	postscript(paste(plotConfig$fileName, graphName, sep=''), height=3)
-
-	plot(c(minTruncation:length(offsetData)), allRSqaurePast, xlab='Time (Days)', ylab='Past RSquare Error', col='steelblue', type="l")
-	title("Past RSquare Error at each Day for Blurred Lines")
+	print(length(allRSqaurePast))
+	write.csv(allRSqaurePast, "rsBlurSingle.csv")
+	# plot(c(minTruncation:length(offsetData)), allRSqaurePast, xlab='Time (Days)', ylab='Past RSquare Error', col='steelblue', type="l")
+	# title("Past RSquare Error at each Day for Blurred Lines")
 
 	dev.off()
 

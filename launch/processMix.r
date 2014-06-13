@@ -22,7 +22,7 @@ offset1 <- 50
 
 # Padding of zeros to offset data
 set.seed(1)
-positiveInfectiousPadStart <- numeric(offset)
+positiveInfectiousPadStart <- runif(offset)*2
 positiveInfectiousPad1Start <- numeric(offset + offset1)
 positiveInfectious1 <- c(positiveInfectiousPad1Start,positiveInfectious1)
 totalLength <- length(positiveInfectious1)
@@ -36,10 +36,7 @@ positiveInfectious <- c(positiveInfectious, positiveInfectiousPadEnd)
 
 # Add together the different predicted infectious values truncated to required size
 data <- positiveInfectious + positiveInfectious1
-
-# Add noise
-noise <- runif(length(data))*2
-data <- data + noise
+times <- (1:length(data))
 
 # Fitting epidemics
 startOffset <- 1
@@ -61,6 +58,6 @@ epiTypes <- c(0)
 initConds <- c();
 # initConds <- c(1,1,0)
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixSingle/", dataFile="output/data/mix/mixDataItrIR.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixSingle/", dataFile="output/data/mix/mixDataSingle.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 # Fit parameters
 fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
