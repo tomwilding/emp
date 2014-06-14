@@ -31,7 +31,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 			R0 <- beta*S0 / gamma
 			
 			# Force optimisation to advance within parameter ranges
-			if (beta > 1 || gamma > 1 || beta <= 1e-4 || gamma <= 1e-3 || beta > gamma || R0 < 1) {
+			if (beta > 1 || gamma > 1 || beta <= 1e-4 || gamma <= 1e-2 || beta > gamma || R0 < 1) {
 				sse <- Inf
 				outOfBounds <- TRUE
 			}
