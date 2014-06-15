@@ -1,5 +1,4 @@
 plotPred <- function(times, data, offsets, thresholds, initParams, initConds, plotConfig) {
-	require("forecast")
 	# Unpack settings
 	minTruncation <- offsets$minTruncation
 	startOffset <- offsets$startOffset
@@ -10,114 +9,97 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	meanPredsAR <- c()
 	futurePredsRS <- c()
 
-	# Loop through all objects
-	predOffset <- 1
-	step <- 1
-	end <- length(evalList)
-
-	# Take data set within specified offset
-	offsetTimes <- times[startOffset:(length(times)-endOffset)]
-	offsetData <- data[startOffset:(length(data)-endOffset)]
-
-	# Mean of data
-	# meanPred <- myMean(inRangeData)
-
-	# AR model order
-	# AROrder <- 4
-
-	# hw <- HoltWinters(ts(inRangeData, frequency=24))
-	# print(hw$fitted[,1])
-	# plot(hw)
-	# plot(fit(hw))
-	# print(length(hw$fitted[,1]))
-	# print(length(inRangeData))
-	# print(rSquareError(c(numeric(24),hw$fitted[,1]), inRangeData))
-	# readline()
-	allRS <- c()
-	allSSE <- c()
-	allRSDiff <- c()
+	allSSEAR <- c()
 	allSSEDiff <- c()
-	for (predOffset in c(1:4)) {
-		inRangeTimes <- offsetTimes[(minTruncation + predOffset):end]
-		inRangeData <- offsetData[(minTruncation + predOffset):end]
+	for (range in 1:20) {
+		# Loop through all objects
+		predOffset <- 1
+		step <- 1
+		end <- length(evalList)
+
+		# Take data set within specified offset
+		offsetTimes <- times[startOffset:(length(times)-endOffset)]
+		offsetData <- data[startOffset:(length(data)-endOffset)]
+
+		# Mean of data
+		# meanPred <- myMean(inRangeData)
+
+		# AR model order
+		# AROrder <- 4
+		quarter <- round(end/4)*2
+		# quartiles <- c(quarter, round(quarter*2), round(quarter*3))
+
+		inRangeTimes <- offsetTimes[quarter:(quarter+range)]
+		inRangeData <- offsetData[quarter:(quarter+range)]
+		# print(quartiles)
 		evalPreds <- c()
 		evalPredsAR <- c()
-		evalPredsARIMA <- c()
-		inRangeStepData <- c()
-		for(i in seq(from=(minTruncation + (predOffset*step)), to=end, by=step)) {
+		p <- 1
+		for(i in seq(from=quarter, to=quarter + range, by=step)) {
 			# Plot predicted data point for this time at previous fitting
-			evalPrev <- evalList[[i - predOffset]]
+			evalPrev <- evalList[[quarter - 1]]
 			allEval <- evalPrev$allEval$multiInf
 			# Update previous prediction using AR model
 			# Get past residuals
 			prevResiduals <- evalPrev$residuals
-			# Fit AR model to all past residuals
 			nextIncRes <- 0
-			nextARIMAPred <- 0
-			# order <- 4
-			# if (length(prevResiduals) > order + predOffset) {
+			# Fit AR model to all past residuals
 			arModel <- ar(prevResiduals)
-			nextIncRes <- predict(arModel, n.ahead=predOffset)$pred	
-
-				# ARIMA model
-				# prevData <- diff(offsetData[1:(i - predOffset)], differences=2)
-				# prevData <- offsetData[1:(i - predOffset)]
-				# arimaModel <- arima(prevData, c(order,2,1))
-				# nextARIMAPred <- predict(arimaModel, n.ahead=step)$pred
-			# }
-			# evalPreds <- c(evalPreds, allEval[i-1])
+			# arimaModel <- arima(prevResiduals, order=c(4,0,0))
+			nextIncRes <- predict(arModel, n.ahead=range + 1)$pred
+			# nextIncRes1 <- predict(arModel, n.ahead=predOffset + 1)$pred	
+			# Plot prediction without AR
+			# evalPreds[i - 1] <- allEval[(i - 1)]
+			# evalPredsAR[i - 1] <- allEval[(i - 1)] + nextIncRes[length(nextIncRes)]
+			# meanPredsAR[i - 1] <- meanPred + nextIncRes[length(nextIncRes)]
 			evalPreds <- c(evalPreds, allEval[i])
-			# evalPredsAR <- c(evalPredsAR, allEval[i-1] + nextIncRes[length(nextIncRes)-1])
-			evalPredsAR <- c(evalPredsAR, allEval[i] + nextIncRes[length(nextIncRes)])
-			evalPredsARIMA <- c(evalPredsARIMA, nextARIMAPred)
+			evalPredsAR <- c(evalPredsAR, allEval[i] + nextIncRes[p])
+			# meanPredsAR[i] <- meanPred + nextIncRes1[length(nextIncRes1)] 
+			p <- p + 1
 		}
-		allRS <- c(allRS, rSquareError(evalPredsAR, inRangeData))
-		allSSE <- c(allSSE, ssError(evalPredsAR, inRangeData))
 
+		# Calculate SSE
+		# SSE of epi
+		inRangeEvalPreds <- evalPreds[(minTruncation + predOffset):length(evalPreds)]
+		sseEpi <- ssError(inRangeEvalPreds, inRangeData)
+		rSqEpi <- rSquareError(inRangeEvalPreds, inRangeData)
+
+		# SSE of AR
+		# inRangeEvalPredsAR <- evalPredsAR[(minTruncation + predOffset):length(evalPredsAR)]
+		# inRangeEvalPredsAR[101] <- inRangeData[100]
+		# inRangeEvalPredsAR[222] <- inRangeData[221]
+		# inRangeEvalPredsAR[227] <- inRangeData[226]
+		sseAR <- ssError(evalPredsAR, inRangeData)
+		rSqAR <- rSquareError(evalPredsAR, inRangeData)
+		print(evalPredsAR)
+		# SSE of offset data
 		# Shift data
-		offsetPadding <- numeric(predOffset)
-		shiftOffsetData <- c(offsetPadding,inRangeData)
-		inRangeShiftOffset <- shiftOffsetData[1:length(inRangeData)]
-		allRSDiff <- c(allRSDiff, rSquareError(inRangeShiftOffset, inRangeData))
-		allSSEDiff <- c(allSSEDiff, ssError(inRangeShiftOffset, inRangeData))
-		
-		plot(inRangeTimes, inRangeData, xlab='Time (Days)', ylab='Predicted Infected Individuals', col='steelblue', type="l")
-		lines(inRangeTimes, evalPredsAR, col="red")
+		inRangeShiftOffset <- rep(offsetData[(quarter - 1)], range)
+		sseDiff <- ssError(inRangeShiftOffset, inRangeData)
+		rSqDiff <- rSquareError(inRangeShiftOffset, inRangeData)
+
+		allSSEAR <- c(allSSEAR, sseAR)
+		allSSEDiff <- c(allSSEDiff, sseDiff)
 	}
+	print(allSSEAR)
 
-	print(allRS)
-	print(allRSDiff)
-	# plot(c(1:4), allRS, type="l")
-	# lines(allRSDiff, col="steelblue")
-	readline()
-	# print(arModel)
-	# print(arimaModel)
+	plot(c(1:20), allSSEAR, type="l", ylim=c(0, 1e9))
+	lines(allSSEDiff, col="steelblue")
+	# SSE of mean AR
+	# inRangeMeanPredsAR <- meanPredsAR[(minTruncation + predOffset):length(meanPredsAR)]
+	# sseMeanAR <- ssError(inRangeMeanPredsAR, inRangeData)
+	# rSqMeanAR <- rSquareError(inRangeMeanPredsAR, inRangeData)
 
-	# Calculate SSE
-	# SSE of epi
-	# evalPreds <- evalPreds[(minTruncation + predOffset):length(evalPreds)]
-	# sseEpi <- ssError(evalPreds, inRangeData)
-	# rSqEpi <- rSquareError(evalPreds, inRangeData)
-	# madEpi <- mad(evalPreds, inRangeData)
-	# mapeEpi <- mape(evalPreds, inRangeData)
-	# rmseEpi <- rmse(evalPreds, inRangeData)
-	# raeEpi <- rae(evalPreds, inRangeData)
-
-	# sseAR <- ssError(evalPredsAR, inRangeData)
-	# rSqAR <- rSquareError(evalPredsAR, inRangeData)
-	# madAR <- mad(evalPredsAR, inRangeData)
-	# mapeAR <- mape(evalPredsAR, inRangeData)
-	# rmseAR <- rmse(evalPredsAR, inRangeData)
-	# raeAR <- rae(evalPredsAR, inRangeData)
-	
-
-	# SSE of AR
-	# evalPredsAR <- evalPredsAR[(minTruncation + predOffset):length(evalPredsAR)]
-	# evalPredsAR[101] <- inRangeData[100]
-	# evalPredsAR[222] <- inRangeData[221]
-	# evalPredsAR[227] <- inRangeData[226]
-	# sseAR <- ssError(evalPredsAR, inRangeData)
-	# rSqAR <- rSquareError(evalPredsAR, inRangeData)
+	# Without repeat data points
+	# inRangeShiftOffsetWR <- c(shiftOffsetData[1:115], shiftOffsetData[122:length(inRangeData)])
+	# inRangeDataWR <- c(inRangeData[1:(115-predOffset)], inRangeData[(122-predOffset):length(inRangeData)])
+	# inRangeEvalPredsWR <- c(inRangeEvalPreds[1:(115-predOffset)], inRangeEvalPreds[(122-predOffset):length(inRangeEvalPreds)])
+	# inRangeEvalPredsARWR <- c(inRangeEvalPredsAR[1:(115-predOffset)], inRangeEvalPredsAR[(122-predOffset):length(inRangeEvalPredsAR)])
+	# sseEpiWR <- ssError(inRangeEvalPredsWR, inRangeDataWR)
+	# sseARWR <- ssError(inRangeEvalPredsARWR, inRangeDataWR)
+	# sseDiffWR <- ssError(inRangeShiftOffsetWR, inRangeDataWR)
+	# rSqARWR <- rSquareError(inRangeEvalPredsARWR, inRangeDataWR)
+	# rSqDiffWR <- rSquareError(inRangeShiftOffsetWR, inRangeDataWR)
 
 	# Calculate Akaike
 	# n <- length(inRangeData)
@@ -132,67 +114,41 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	# aicARWR <- log(sigSqARWR) + (n + 2*AROrder) / n
 	# aicDiffWR <- log(sigSqDiffWR) + (n + 2*n) / n
 
-	# MEDIAN Absolute Difference
-	# m <- median(inRangeData)
-	# medADAR <- median(abs((evalPredsAR - m)))
-	# medADDiff <- median(abs(inRangeShiftOffset - m))
+	# Median Absolute Difference
+	# medEpiDev <- median(abs(inRangeData - inRangeEvalPredsAR))
+	# medShiftDev <- median(abs(inRangeData - inRangeShiftOffset))
+	# medADAR <- median(abs((inRangeEvalPredsAR - medEpiDev)))
+	# medADDiff <- median(abs(inRangeShiftOffset - medShiftDev))
 
+	# madAR <- mad(inRangeEvalPredsAR, inRangeData)
+	# madDiff <- mad(inRangeShiftOffset, inRangeData)
 
-	# rSqARIMA <- rSquareError(evalPredsARIMA, inRangeData)
-	# sseARIMA <- ssError(evalPredsARIMA, inRangeData)
-	# # Without repeat data points
-	# # inRangeShiftOffsetWR <- c(shiftOffsetData[1:141], shiftOffsetData[149:length(inRangeData)])
-	# # inRangeDataWR <- c(inRangeData[1:141], inRangeData[149:length(inRangeData)])
-	# # evalPredsWR <- c(evalPreds[1:141], evalPreds[149:length(evalPreds)])
-	# # evalPredsARWR <- c(evalPredsAR[1:141], evalPredsAR[149:length(evalPredsAR)])
-	# # sseEpiWR <- ssError(evalPredsWR, inRangeDataWR)
-	# # sseARWR <- ssError(evalPredsARWR, inRangeDataWR)
-	# # sseDiffWR <- ssError(inRangeShiftOffsetWR, inRangeDataWR)
-	# # rSqARWR <- rSquareError(evalPredsARWR, inRangeDataWR)
-	# # rSqDiffWR <- rSquareError(inRangeShiftOffsetWR, inRangeDataWR)
+	# print(paste("EpiSS", sseEpi))
+	# print(paste("EpiARSS", sseAR), quote=FALSE)
+	# print(paste("ShiftSS", sseDiff), quote=FALSE)
+	# # print(paste("MeanARSS", sseMeanAR), quote=FALSE)
 
 	# print(paste("EpiRS", rSqEpi), quote=FALSE)
 	# print(paste("EpiARRS", rSqAR), quote=FALSE)
 	# print(paste("ShiftRS", rSqDiff), quote=FALSE)
-	# print(paste("ARIMARS", rSqARIMA), quote=FALSE)
-	# # print(paste("EpiARRSWR", rSqARWR), quote=FALSE)
-	# # print(paste("ShiftRSWR", rSqDiffWR), quote=FALSE)
 	# # print(paste("MeanARRS", rSqMeanAR), quote=FALSE)
 
-	# print(paste("EpiSS", sseEpi), quote=FALSE)
-	# print(paste("EpiARSS", sseAR), quote=FALSE)
-	# print(paste("ShiftSS", sseDiff), quote=FALSE)
-	# print(paste("ARIMASS", sseARIMA), quote=FALSE)
-	# # print(paste("EpiARSSWR", sseARWR), quote=FALSE)
-	# # print(paste("ShiftSSWR", sseDiffWR), quote=FALSE)
-	# # print(paste("MeanARSS", sseMeanAR), quote=FALSE)
-	
 	# # print(paste("EpiARAIC", aicAR), quote=FALSE)
 	# # print(paste("ShiftAIC", aicDiff), quote=FALSE)
 
-	# # print(paste("EpiARMedAD", madAR), quote=FALSE)
-	# # print(paste("ShiftMedAD", madDiff), quote=FALSE)
+	# print(paste("EpiARMedAD", medADAR), quote=FALSE)
+	# print(paste("ShiftMedAD", medADDiff), quote=FALSE)
 
-	# print(paste("EpiMAD", madEpi), quote=FALSE)
 	# print(paste("EpiARMAD", madAR), quote=FALSE)
-	# print(paste("ShiftMAD", madDiff), quote=FALSE)
+	# print(paste("ShiftMAD", madDiff), quote=FALSE)	
 
-	# print(paste("EpiARMAPE", mapeAR), quote=FALSE)
-
-
-	# print(paste("EpiARRMSE", rmseAR), quote=FALSE)	
-	# # print(paste("EpiARRMSE", rmseAR), quote=FALSE)
-	# # print(paste("ShiftRMSE", rmseDiff), quote=FALSE)
-
-	# print(paste("EpiARRAE", raeAR), quote=FALSE)	
-
-	# print(paste("EpiMean", myMean(abs(evalPreds - inRangeData))))
-	# print(paste("EpiARMean", myMean(abs(evalPredsAR - inRangeData))))	
-	# print(paste("ShiftMean", myMean(abs(inRangeShiftOffset - inRangeData))))
+	# # print(paste("EpiMean", myMean(abs(inRangeEvalPreds - inRangeData))))
+	# # print(paste("EpiARMean", myMean(abs(inRangeEvalPredsAR - inRangeData))))	
+	# # print(paste("ShiftMean", myMean(abs(inRangeShiftOffset - inRangeData))))
 
 	# # Set graph settings
 	# setEPS()
-	# postscript(paste(plotConfig$fileName, "allMixPredictionAR.eps", sep=''))	
+	# postscript(paste(plotConfig$fileName, "allCallPredictionAR.eps", sep=''))	
 
 	# # Main plot
 	# par(mar=c(6.1,4.1,4.1,2.1))
@@ -202,9 +158,12 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	# # mtext(daysText, 3, cex=0.8)
 
 	# # Plot actual data point at this time
-	# lines(inRangeTimes, evalPredsAR, col='red')
-	# lines(inRangeTimes, evalPredsARIMA, col='red')
-	# lines(inRangeTimes, inRangeMeanPredsAR, col='blue')
+	# print(length(inRangeTimes))
+	# print(length(inRangeEvalPredsAR))
+	# print(length(inRangeEvalPreds))
+	# lines(inRangeTimes, inRangeEvalPredsAR, col='red')
+	# lines(inRangeTimes, inRangeEvalPreds, col='black')
+	# # lines(inRangeTimes, inRangeMeanPredsAR, col='blue')
 	# # Legend
 	# legendText <- c("Data", "Synthedemic", "Synthedemic with AR Refinement")
 	# lineType <- c(1, 1, 1)
