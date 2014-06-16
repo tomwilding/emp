@@ -57,7 +57,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		if (epidemicType == 3) {
 			print(paste("k range", c(startSearch:endSearch)))
 			# SIR Epidemic
-			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startSearch:endSearch), plotConfig, 1)
+			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startTime:startTime), plotConfig, 1)
 		} else {
 			# Spike Epidemic or No epidemic
 			eval <- fitInRangeParallel(setSolver(optimMethod, k, epiTypes), i, offsetTimes, offsetData, initConds, initParams, epiTypes, ts, k, c(startTime:startTime), plotConfig, 1)

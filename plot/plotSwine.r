@@ -1,4 +1,4 @@
-load("output/data/swine/swine.RData")
+load("output/data/swineSingle.RData")
 require("epi")
 
 # Read data from file

@@ -1,4 +1,4 @@
-load("output/data/mix/mix/mixDataItrIR.RData")
+load("output/data/mix/mixDataSingle.RData")
 require('epi')
 # Simulate data 
 # require('epi')
@@ -64,11 +64,11 @@ initConds <- c();
 plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/report/mix/", dataFile="output/data/mix/mixData.RData", envFile="output/data/mix/mixEnv.RData", pat=20, rat=120)
 
 # Fit parameters
-# reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot Residuals
 # plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # t+1 prediction
-plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
-# analysis(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+analysis(times, data, offsets, thresholds, initParams, initConds, plotConfig)

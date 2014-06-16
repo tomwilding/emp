@@ -1,4 +1,4 @@
-load("output/data/call/callData90S2.RData")
+load("output/data/call/callSingle.RData")
 require("epi")
 
 fluData <- read.csv("data/call.csv", header = TRUE)

@@ -9,86 +9,75 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	meanPredsAR <- c()
 	futurePredsRS <- c()
 
-	allSSEAR <- c()
-	allSSEDiff <- c()
-	for (range in 1:20) {
-		# Loop through all objects
-		predOffset <- 1
-		step <- 1
-		end <- length(evalList)
+	# Loop through all objects
+	predOffset <- 1
+	step <- 1
+	end <- length(evalList)
 
-		# Take data set within specified offset
-		offsetTimes <- times[startOffset:(length(times)-endOffset)]
-		offsetData <- data[startOffset:(length(data)-endOffset)]
+	# Take data set within specified offset
+	offsetTimes <- times[startOffset:(length(times)-endOffset)]
+	offsetData <- data[startOffset:(length(data)-endOffset)]
+	inRangeTimes <- offsetTimes[(minTruncation + predOffset):end]
+	inRangeData <- offsetData[(minTruncation + predOffset):end]
+	# Mean of data
+	# meanPred <- myMean(inRangeData)
 
-		# Mean of data
-		# meanPred <- myMean(inRangeData)
+	# AR model order
+	# AROrder <- 4
 
-		# AR model order
-		# AROrder <- 4
-		quarter <- round(end/4)*2
-		# quartiles <- c(quarter, round(quarter*2), round(quarter*3))
+	for(i in seq(from=(minTruncation + predOffset), to=end, by=step)) {
+		# Plot predicted data point for this time at previous fitting
+		# print(evalList[end - 1])
+		evalPrev <- evalList[[i - predOffset]]
+		allEval <- evalPrev$allEval$multiInf
+		# Update previous prediction using AR model
+		# Get past residuals
+		prevResiduals <- evalPrev$residuals
+		# Fit AR model to all past residuals
+		nextIncRes <- 0
+		arModel <- ar(prevResiduals)
+		# arimaModel <- arima(prevResiduals, order=c(4,0,0))
+		nextIncRes <- predict(arModel, n.ahead=predOffset)$pred
+		# nextIncRes1 <- predict(arModel, n.ahead=predOffset + 1)$pred	
+		# Plot prediction without AR
+		# evalPreds[i - 1] <- allEval[(i - 1)]
+		# evalPredsAR[i - 1] <- allEval[(i - 1)] + nextIncRes[length(nextIncRes)]
+		# meanPredsAR[i - 1] <- meanPred + nextIncRes[length(nextIncRes)]
+		# print(allEval[i])
+		evalPreds[i] <- allEval[i]
+		evalPredsAR[i] <- allEval[i] + nextIncRes[length(nextIncRes)]
+		# meanPredsAR[i] <- meanPred + nextIncRes1[length(nextIncRes1)] 
 
-		inRangeTimes <- offsetTimes[quarter:(quarter+range)]
-		inRangeData <- offsetData[quarter:(quarter+range)]
-		# print(quartiles)
-		evalPreds <- c()
-		evalPredsAR <- c()
-		p <- 1
-		for(i in seq(from=quarter, to=quarter + range, by=step)) {
-			# Plot predicted data point for this time at previous fitting
-			evalPrev <- evalList[[quarter - 1]]
-			allEval <- evalPrev$allEval$multiInf
-			# Update previous prediction using AR model
-			# Get past residuals
-			prevResiduals <- evalPrev$residuals
-			nextIncRes <- 0
-			# Fit AR model to all past residuals
-			arModel <- ar(prevResiduals)
-			# arimaModel <- arima(prevResiduals, order=c(4,0,0))
-			nextIncRes <- predict(arModel, n.ahead=range + 1)$pred
-			# nextIncRes1 <- predict(arModel, n.ahead=predOffset + 1)$pred	
-			# Plot prediction without AR
-			# evalPreds[i - 1] <- allEval[(i - 1)]
-			# evalPredsAR[i - 1] <- allEval[(i - 1)] + nextIncRes[length(nextIncRes)]
-			# meanPredsAR[i - 1] <- meanPred + nextIncRes[length(nextIncRes)]
-			evalPreds <- c(evalPreds, allEval[i])
-			evalPredsAR <- c(evalPredsAR, allEval[i] + nextIncRes[p])
-			# meanPredsAR[i] <- meanPred + nextIncRes1[length(nextIncRes1)] 
-			p <- p + 1
-		}
-
-		# Calculate SSE
-		# SSE of epi
-		inRangeEvalPreds <- evalPreds[(minTruncation + predOffset):length(evalPreds)]
-		sseEpi <- ssError(inRangeEvalPreds, inRangeData)
-		rSqEpi <- rSquareError(inRangeEvalPreds, inRangeData)
-
-		# SSE of AR
-		# inRangeEvalPredsAR <- evalPredsAR[(minTruncation + predOffset):length(evalPredsAR)]
-		# inRangeEvalPredsAR[101] <- inRangeData[100]
-		# inRangeEvalPredsAR[222] <- inRangeData[221]
-		# inRangeEvalPredsAR[227] <- inRangeData[226]
-		sseAR <- ssError(evalPredsAR, inRangeData)
-		rSqAR <- rSquareError(evalPredsAR, inRangeData)
-		print(evalPredsAR)
-		# SSE of offset data
-		# Shift data
-		inRangeShiftOffset <- rep(offsetData[(quarter - 1)], range)
-		sseDiff <- ssError(inRangeShiftOffset, inRangeData)
-		rSqDiff <- rSquareError(inRangeShiftOffset, inRangeData)
-
-		allSSEAR <- c(allSSEAR, sseAR)
-		allSSEDiff <- c(allSSEDiff, sseDiff)
 	}
-	print(allSSEAR)
+	# print(arModel)
+	# print(arimaModel)
 
-	plot(c(1:20), allSSEAR, type="l", ylim=c(0, 1e9))
-	lines(allSSEDiff, col="steelblue")
+	# Calculate SSE
+	# SSE of epi
+	inRangeEvalPreds <- evalPreds[(minTruncation + predOffset):length(evalPreds)]
+	sseEpi <- ssError(inRangeEvalPreds, inRangeData)
+	rSqEpi <- rSquareError(inRangeEvalPreds, inRangeData)
+
+	# SSE of AR
+	inRangeEvalPredsAR <- evalPredsAR[(minTruncation + predOffset):length(evalPredsAR)]
+	# inRangeEvalPredsAR[101] <- inRangeData[100]
+	# inRangeEvalPredsAR[222] <- inRangeData[221]
+	# inRangeEvalPredsAR[227] <- inRangeData[226]
+	sseAR <- ssError(inRangeEvalPredsAR, inRangeData)
+	rSqAR <- rSquareError(inRangeEvalPredsAR, inRangeData)
+
+	# SSE of offset data
+	# Shift data
+	offsetPadding <- numeric(predOffset)
+	shiftOffsetData <- c(offsetPadding,inRangeData)
+	inRangeShiftOffset <- shiftOffsetData[1:length(inRangeData)]
+	sseDiff <- ssError(inRangeShiftOffset, inRangeData)
+	rSqDiff <- rSquareError(inRangeShiftOffset, inRangeData)
+
 	# SSE of mean AR
-	# inRangeMeanPredsAR <- meanPredsAR[(minTruncation + predOffset):length(meanPredsAR)]
-	# sseMeanAR <- ssError(inRangeMeanPredsAR, inRangeData)
-	# rSqMeanAR <- rSquareError(inRangeMeanPredsAR, inRangeData)
+	inRangeMeanPredsAR <- meanPredsAR[(minTruncation + predOffset):length(meanPredsAR)]
+	sseMeanAR <- ssError(inRangeMeanPredsAR, inRangeData)
+	rSqMeanAR <- rSquareError(inRangeMeanPredsAR, inRangeData)
 
 	# Without repeat data points
 	# inRangeShiftOffsetWR <- c(shiftOffsetData[1:115], shiftOffsetData[122:length(inRangeData)])
@@ -115,38 +104,50 @@ plotPred <- function(times, data, offsets, thresholds, initParams, initConds, pl
 	# aicDiffWR <- log(sigSqDiffWR) + (n + 2*n) / n
 
 	# Median Absolute Difference
-	# medEpiDev <- median(abs(inRangeData - inRangeEvalPredsAR))
-	# medShiftDev <- median(abs(inRangeData - inRangeShiftOffset))
-	# medADAR <- median(abs((inRangeEvalPredsAR - medEpiDev)))
-	# medADDiff <- median(abs(inRangeShiftOffset - medShiftDev))
+	medEpiDev <- median(abs(inRangeData - inRangeEvalPredsAR))
+	medShiftDev <- median(abs(inRangeData - inRangeShiftOffset))
+	medADAR <- median(abs((inRangeEvalPredsAR - medEpiDev)))
+	medADDiff <- median(abs(inRangeShiftOffset - medShiftDev))
 
-	# madAR <- mad(inRangeEvalPredsAR, inRangeData)
-	# madDiff <- mad(inRangeShiftOffset, inRangeData)
+	madAR <- mad(inRangeEvalPredsAR, inRangeData)
+	madDiff <- mad(inRangeShiftOffset, inRangeData)
 
-	# print(paste("EpiSS", sseEpi))
-	# print(paste("EpiARSS", sseAR), quote=FALSE)
-	# print(paste("ShiftSS", sseDiff), quote=FALSE)
-	# # print(paste("MeanARSS", sseMeanAR), quote=FALSE)
+	raeAR <- rae(inRangeEvalPredsAR, inRangeData)
+	raeDiff <- rae(inRangeShiftOffset, inRangeData)
 
-	# print(paste("EpiRS", rSqEpi), quote=FALSE)
-	# print(paste("EpiARRS", rSqAR), quote=FALSE)
-	# print(paste("ShiftRS", rSqDiff), quote=FALSE)
-	# # print(paste("MeanARRS", rSqMeanAR), quote=FALSE)
+	mapeAR <- mape(inRangeEvalPredsAR, inRangeData)
+	mapeDiff <- mape(inRangeShiftOffset, inRangeData)
 
-	# # print(paste("EpiARAIC", aicAR), quote=FALSE)
-	# # print(paste("ShiftAIC", aicDiff), quote=FALSE)
+	print(paste("EpiSS", sseEpi))
+	print(paste("EpiARSS", sseAR), quote=FALSE)
+	print(paste("ShiftSS", sseDiff), quote=FALSE)
+	# print(paste("MeanARSS", sseMeanAR), quote=FALSE)
 
-	# print(paste("EpiARMedAD", medADAR), quote=FALSE)
-	# print(paste("ShiftMedAD", medADDiff), quote=FALSE)
+	print(paste("EpiRS", rSqEpi), quote=FALSE)
+	print(paste("EpiARRS", rSqAR), quote=FALSE)
+	print(paste("ShiftRS", rSqDiff), quote=FALSE)
+	# print(paste("MeanARRS", rSqMeanAR), quote=FALSE)
 
-	# print(paste("EpiARMAD", madAR), quote=FALSE)
-	# print(paste("ShiftMAD", madDiff), quote=FALSE)	
+	# print(paste("EpiARAIC", aicAR), quote=FALSE)
+	# print(paste("ShiftAIC", aicDiff), quote=FALSE)
 
-	# # print(paste("EpiMean", myMean(abs(inRangeEvalPreds - inRangeData))))
-	# # print(paste("EpiARMean", myMean(abs(inRangeEvalPredsAR - inRangeData))))	
-	# # print(paste("ShiftMean", myMean(abs(inRangeShiftOffset - inRangeData))))
+	print(paste("EpiARMedAD", medADAR), quote=FALSE)
+	print(paste("ShiftMedAD", medADDiff), quote=FALSE)
 
-	# # Set graph settings
+	print(paste("EpiARMAD", madAR), quote=FALSE)
+	print(paste("ShiftMAD", madDiff), quote=FALSE)
+
+	print(paste("EpiARRAE", raeAR), quote=FALSE)
+	print(paste("ShiftRAE", raeDiff), quote=FALSE)
+
+	print(paste("EpiARMAPE", mapeAR), quote=FALSE)
+	print(paste("ShiftMAPE", mapeDiff), quote=FALSE)	
+
+	# print(paste("EpiMean", myMean(abs(inRangeEvalPreds - inRangeData))))
+	# print(paste("EpiARMean", myMean(abs(inRangeEvalPredsAR - inRangeData))))	
+	# print(paste("ShiftMean", myMean(abs(inRangeShiftOffset - inRangeData))))
+
+	# Set graph settings
 	# setEPS()
 	# postscript(paste(plotConfig$fileName, "allCallPredictionAR.eps", sep=''))	
 
