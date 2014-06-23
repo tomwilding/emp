@@ -1,4 +1,4 @@
-load("output/data/mix/mixDataSingle.RData")
+load("output/data/mix/mixDataItrIR.RData")
 require('epi')
 # Simulate data 
 # require('epi')

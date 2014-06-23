@@ -14,7 +14,6 @@ minTruncation <- 3
 startOffset <- 1
 endOffset <- 1
 offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minTruncation)
-
 # Threshold
 thresholds <- list(lim=0.9)
 
@@ -27,7 +26,7 @@ epiTypes <- c(0)
 # I0 from first data point
 initConds <- c()
 
-plotConfig <- list(title="Synthedemic Decomposition of H1N1", fileName="output/graphs/swineSingle/", dataFile="output/data/swineSingle.RData", envFile="output/data/blur2/blurEnv.RData", pat=5, rat=25)
+plotConfig <- list(title="2009 H1N1 Influenza Outbreak", fileName="output/graphs/swineSingle/", dataFile="output/data/swineSingle.RData", envFile="output/data/blur2/blurEnv.RData", pat=5, rat=25)
 
 # gradientSearch(times, data, plotConfig)
 # readline()

@@ -93,7 +93,6 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 
 	# Get optimal values stored in parallel evaluation loop
 	optimTime <- evalOverTime[[maxRSIndex]][[1]]
-	print(paste("optimTime", optimTime))
 	optimRSquare <- evalOverTime[[maxRSIndex]][[2]]
 	# Optimal sub and combined epidemic parameters
 	optimPastEval <- evalOverTime[[maxRSIndex]][[3]]
@@ -115,24 +114,24 @@ fitInRangeParallel <- function(optimSIRMulti, i, offsetTimes, offsetData, initCo
 	 	graphName <- paste(graphName, ".eps", sep='')
 	 	postscript(paste(plotConfig$fileName, graphName, sep=''))	
 	 	par(mar=c(7.1,4.1,4.1,2.1))
-	 	plot(offsetTimes, offsetData, xlab='Epochs', ylab='Infected Individuals', col='steelblue', ylim=c(0,350))
+	 	plot(offsetTimes, offsetData, xlab='Days', ylab='Infected Individuals', col='steelblue')
 	 	title(main=plotConfig$title, cex.main=1, cex.axis=0.8)
-	 	daysText <- paste("Epoch", i)
+	 	daysText <- paste("Day", i)
 	 	mtext(daysText, 3, cex=0.8)
 	 	# Plot offsetData points and actual offsetData lines
 	 	lines(offsetTimes, offsetData, col='steelblue', lty=1)
-	 	points(truncTimes, truncData, col='black', pch=16)
+	 	# points(truncTimes, truncData, col='black', pch=16)
 	 	# lines(fineTimes, allEvalFine$multiInf, lty=1)
 	 	# multiInfCoarse <- allEval$multiInf
 	 	multiInf <- allEvalFine$multiInf
-	 	for(k in 1:(length(allEvalFine$subInf))) {
-	 		sub <- allEvalFine$subInf[[k]]
-	 		subParams <- allEvalFine$subParams[[k]]
-	 		# Print sub epidemic graph
-	 		lines(fineTimes, sub, col=cl[k], lty=2)
-	 		lines(fineTimes, multiInf, col='black')
-	 		# lines(offsetTimes, multiInfCoarse, col='green')
-	 	}
+	 	# for(k in 1:(length(allEvalFine$subInf))) {
+	 	# 	sub <- allEvalFine$subInf[[k]]
+	 	# 	subParams <- allEvalFine$subParams[[k]]
+	 	# 	# Print sub epidemic graph
+	 	# 	lines(fineTimes, sub, col=cl[k], lty=2)
+	 	# 	lines(fineTimes, multiInf, col='black')
+	 	# 	# lines(offsetTimes, multiInfCoarse, col='green')
+	 	# }
 		legendText <- c("Epidemic Model", "Data")
 		legend("topright",legendText, col=c("black", "steelblue"), lty=1, cex=0.8)
 	 	dev.off()

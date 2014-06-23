@@ -1,4 +1,4 @@
-load("output/data/call/callSingle.RData")
+load("output/data/call/callDataFinal.RData")
 require("epi")
 
 fluData <- read.csv("data/call.csv", header = TRUE)
@@ -24,10 +24,10 @@ epiTypes <- c(0)
 # I0 from first data point
 initConds <- c()
 
-plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/call80/", dataFile="output/data/call/callData.RData", envFile="output/data/call/callEnv.RData", pat=80, rat=500)
+plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/callFinal3/", dataFile="output/data/call/callData.RData", envFile="output/data/call/callEnv.RData", pat=80, rat=500)
 
 # Fit parameters
-# reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # Plot RSq graph
 # plotRSq(times, data, offsets, thresholds, initParams, initConds, plotConfig)
@@ -36,5 +36,5 @@ plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorren
 # plotResiduals(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 
 # t+1 prediction
-plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
+# plotPred(times, data, offsets, thresholds, initParams, initConds, plotConfig)
 # analysis(times, data, offsets, thresholds, initParams, initConds, plotConfig)
