@@ -16,10 +16,15 @@ setSolver <- function(optimMethod, k, epiTypes) {
 		LMS = {
 			optimSIRMulti <- function(times, data, initConds, initParams, epiTypes, ts, k) {
 				optimisationParameters <- initParams
-				for (i in 1 : 5) {
-					params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes)
-					# print(params)
-					optimisationParameters <- params$par
+				if (k > 1) {
+					for (i in 1 : 5) {
+						params <- optim(optimisationParameters, sseMulti, time=times, data=data, initConds=initConds, ts=ts, k=k, epiTypes=epiTypes)
+						# print(params)
+						optimisationParameters <- params$par
+					}
+				} else {
+					# Return the mean as the baseline
+					optimisationParameters[1] <- log(mean(data))
 				}
 				optimisationParameters
 			}

@@ -8,17 +8,18 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 	I0 <- initConds[2]
 	predI <- 0
 	eval <- c()
+	eval$subParams[[1]] <- c(1,1,1)
 	subEpiNumParamsOffset <- 0
 	paramsMulti <- c()
 
 	for (i in 1:k) {
 		# Get sub epidemic type and parameters
 		subEpiNumParams <- epiTypes[i]
-		if (subEpiNumParams > 0) {
-			paramsMulti <- params[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
-			initCondsMulti <- initConds[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
-			subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
+		paramsMulti <- params[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
+		initCondsMulti <- initConds[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
+		subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
 
+		if (i > 1) {
 			# Evaluate epidemic according to type
 			if (subEpiNumParams == 3) {
 				# Update SIR epidemic parameters
@@ -30,7 +31,6 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 				# Get predictions of SIR given current parameters
 				preds <- lsoda(y=initCondsMulti, times=fineTimes, func=sir, parms=paramsMulti)
 				predInf <- (preds[,3])
-				optimConds <- initConds
 			} else if (subEpiNumParams == 1) {
 				# Update Spike epidemic parameters
 				# Update I0 as unexplained prediction of Infectious for this epidemic
@@ -39,13 +39,13 @@ evalMulti <- function(times, data, initConds, params, epiTypes, ts, k, granulari
 				predInf <- preds[,2]
 				# Update I0 in conds
 				initConds[subEpiNumParamsOffset + 1] <- I0
-				optimConds <- initConds
 			}
 		} else {
-			# No epidemic detected
-			predInf <- array(1, length(fineTimes)) * data[1]
-			optimConds <- initConds
+			# Optimise baseline
+			baseline <- exp(paramsMulti[1])
+			predInf <- array(baseline, length(fineTimes))
 		}
+		optimConds <- initConds
 
 		# Find index to start fitting k+1 epidemic
 		t0Index <- which(fineTimes == (times[ts[i]]))

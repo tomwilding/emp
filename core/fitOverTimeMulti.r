@@ -21,7 +21,6 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	# Initial t0 value
 	ts <- c(1)
 
-	# ts <- c(1, 26)
 	# Set the number of epidemics
 	k <- length(ts)
 
@@ -72,11 +71,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		optimConds <- eval$multiConds
 		print("", quote="FALSE")
 		print("optimParams:", quote=FALSE)
-		bg <- c(signif(exp(optimParams[1:2]), digits=3))
-		bg[is.na(bg)] <- 0
-		s0 <- round(exp(optimParams[3]), digits=0)
-		s0[is.na(s0)] <- 0
-		print(paste(c("Beta = ",", Gamma = ",", S0 = ", ", t0 = "), c(bg, s0, ts[k]), collapse=''), quote=FALSE)
+		print(exp(optimParams), quote=FALSE)
 		print("", quote="FALSE")
 		print(paste("rs:", rSquare), quote=FALSE)
 		# Get last residual and update residuals vector
