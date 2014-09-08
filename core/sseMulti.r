@@ -11,6 +11,7 @@ sseMulti <- function(params, times, data, initConds, epiTypes, ts, k) {
 		initCondsMulti <- initConds[(subEpiNumParamsOffset + 1) : (subEpiNumParamsOffset + subEpiNumParams)]
 		subEpiNumParamsOffset <- subEpiNumParamsOffset + subEpiNumParams
 
+		# Check parameters are in bounds
 		if (subEpiNumParams == 1 && i > 1) {
 			# Spike Epidemic
 			# Set Spike epidemic optimised parameters
