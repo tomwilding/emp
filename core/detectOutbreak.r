@@ -27,7 +27,7 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 			# If minimum residual increase is more than required, then set type
 			if (outbreakRes > outbreakLim) {
 				outbreak <- 3
-			} else if (expRes > expLim) {
+			} else if (outbreakRes > expLim) {
 				outbreak <- 1
 			}
 		}
