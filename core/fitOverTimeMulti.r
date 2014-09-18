@@ -17,7 +17,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 	totalRSquare <- 0
 	
 	# Step size for iterative fitting
-	step <- 1
+	step <- 2
 	# Initial t0 value
 	ts <- c(1)
 
@@ -110,7 +110,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Try to improve the fit if rSquare has deteriorated
 		outbreak <- detectOutbreak(eval$residuals, nRes, startTime, k)
 		print(paste("Outbreak:", outbreak), quote=FALSE)
-		if ((rSquare < lim) && (outbreak > 0) && (timeSinceOutbreak > 4)) {
+		if ((rSquare < lim) && (outbreak > 0)) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 3 || outbreak == 0) {

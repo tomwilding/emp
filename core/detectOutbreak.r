@@ -23,18 +23,18 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 			print(paste("ExpRes", expRes), quote=FALSE)
 			# Set epidemic type according to residual limit
 			outbreakLim <- (meanRes + (sdRes * 2))
-			expLim <- (meanRes + (sdRes * 8))
+			expLim <- (meanRes + (sdRes * 6))
 			# If minimum residual increase is more than required, then set type
-			if (outbreakRes > outbreakLim) {
-				outbreak <- 3
-			} else if (expRes > expLim) {
+			if (expRes > expLim) {
 				outbreak <- 1
+			} else if (outbreakRes > outbreakLim) {
+				outbreak <- 3
 			}
 		}
 	}
-	# # Single Epidemic
-	# if (k > 1) {
-	# 	outbreak <- 0
-	# }
+	# Single Epidemic
+	if (k > 1) {
+		outbreak <- 0
+	}
 	outbreak	
 }

@@ -81,7 +81,7 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 			sub <- allEvalFine$subInf[[k]]
 			subParams <- allEvalFine$subParams[[k]]
 			# Print sub epidemic graph
-			lines(fineTimes, sub, col=cl[k], lty=2)
+			# lines(fineTimes, sub, col=cl[k], lty=2)
 			lines(fineTimes, multiInf, col="black")
 			# Params - Add IO to S0
 			if (k > 1) {
@@ -89,21 +89,21 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 				if (epiType == 3) {
 					S0 <- exp(subParams[3])
 					ParamText <- paste(c("Beta = ",", Gamma = ",", S0 = ", ", t0 = "), c(signif(exp(subParams[1:2]), digits=3), round(S0, digits=0), ts[k]), collapse='')
-					mtext(ParamText, 1, at=plotConfig$pat, padj=4.5+(2*(k-2)), cex=0.7, col=cl[k])
+					mtext(ParamText, 1, at=plotConfig$pat, padj=4.5+(2*(k-2)), cex=0.7, col="black")
 				} else if (epiType == 1) {
 					gamma <- exp(subParams[1])
 					ParamText <- paste(c("Gamma = ", ", t0 = "), c(signif(exp(subParams[1]), digits=3), ts[k]), collapse='')
-					mtext(ParamText, 1, at=plotConfig$pat, padj=4.5+(2*(k-2)), cex=0.7, col=cl[k])
+					mtext(ParamText, 1, at=plotConfig$pat, padj=4.5+(2*(k-2)), cex=0.7, col="black")
 				}
 			}
-
-			# Legend
-			# legendText <- paste("Epidemic", 1:(k - 1))
-			legendText <- c("Combined", "Baseline")
-			lineType <- c(1,rep(2,k))
-			col <- c(1,cl[1:k])
 		}
-		legend("topright",legendText, col=c("black", cl[1:(length(allEvalFine$subInf))]), lty=lineType, cex=0.8)
+		# 	# Legend
+		# 	# legendText <- paste("Epidemic", 1:(k - 1))
+		legendText <- "Combined"
+		# 	lineType <- c(1,rep(2,k))
+		# 	col <- c(1,cl[1:k])
+		# }
+		legend("topright", legendText, col="black", cex=0.8)
 		dev.off()
 	}
 }
