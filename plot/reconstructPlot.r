@@ -99,11 +99,8 @@ reconstructPlot <- function(times, data, offsets, thresholds, initParams, initCo
 		}
 		# 	# Legend
 		# 	# legendText <- paste("Epidemic", 1:(k - 1))
-		legendText <- "Combined"
-		# 	lineType <- c(1,rep(2,k))
-		# 	col <- c(1,cl[1:k])
-		# }
-		legend("topright", legendText, col="black", cex=0.8)
+		legendText <- c("Data", "Epidmeic Model")
+		legend("topright", legendText, col=c("steelblue", "black"), lty=c(1, 1), lwd=c(1, 1), cex=0.8)
 		dev.off()
 	}
 }

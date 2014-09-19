@@ -1,4 +1,4 @@
-load("output/data/call/callDataFinal.RData")
+load("output/data/call/callBaseline.RData")
 require("epi")
 
 fluData <- read.csv("data/call.csv", header = TRUE)
@@ -24,7 +24,7 @@ epiTypes <- c(0)
 # I0 from first data point
 initConds <- c()
 
-plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/callFinal3/", dataFile="output/data/call/callData.RData", envFile="output/data/call/callEnv.RData", pat=80, rat=500)
+plotConfig <- list(title="Synthedemic Decomposition of Caly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/call6Sigma/", dataFile="output/data/call/callData.RData", envFile="output/data/call/callEnv.RData", pat=80, rat=500)
 
 # Fit parameters
 reconstructPlot(times, data, offsets, thresholds, initParams, initConds, plotConfig)

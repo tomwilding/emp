@@ -110,7 +110,7 @@ fitOverTimeMulti <- function(optimMethod, times, data, initConds, initParams, ep
 		# Try to improve the fit if rSquare has deteriorated
 		outbreak <- detectOutbreak(eval$residuals, nRes, startTime, k)
 		print(paste("Outbreak:", outbreak), quote=FALSE)
-		if ((rSquare < lim) && (outbreak > 0)) {
+		if ((rSquare < lim) && (outbreak > 0) && timeSinceOutbreak > minTruncation) {
 			# Try k+1 epidemics
 			print(">>> Fit k+1", quote=FALSE)
 			if (outbreak == 3 || outbreak == 0) {

@@ -56,6 +56,6 @@ epiTypes <- c(1)
 # I0 from first data point
 initConds <- c(1)
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mix/", dataFile="output/data/mix/mixBaselineData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/mixBaseline/", dataFile="output/data/mix/mixBaselineData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 # Fit parameters
 fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
