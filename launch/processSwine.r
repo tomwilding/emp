@@ -18,15 +18,15 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minT
 thresholds <- list(lim=0.9)
 
 # Init Params = beta, gamma, S0
-initParams <- c()
+initParams <- c(log(1))
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-epiTypes <- c(0)
+epiTypes <- c(1)
 
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c()
+initConds <- c(1)
 
-plotConfig <- list(title="2009 H1N1 Influenza Outbreak", fileName="output/graphs/swineSingle/", dataFile="output/data/swineSingle.RData", envFile="output/data/blur2/blurEnv.RData", pat=5, rat=25)
+plotConfig <- list(title="2009 H1N1 Influenza Outbreak", fileName="output/graphs/swineBaseline/", dataFile="output/data/swineBaseline.RData", envFile="output/data/blur2/blurEnv.RData", pat=5, rat=25)
 
 # gradientSearch(times, data, plotConfig)
 # readline()
