@@ -15,13 +15,14 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=4)
 thresholds <- list(lim=0.95)
 
 # Init Params = beta, gamma, S0
-initParams <- c();
+initParams <- c(log(1));
 
-epiTypes <- c(0)
+epiTypes <- c(1)
 
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c();
+initConds <- c(1)
+
 plotConfig <- list(title="Synthedemic Decomposition of Carly Rae Jepsen BitTorrent Downloads", fileName="output/graphs/call6Sigma/", dataFile="output/data/call/callSingle.RData", envFile="output/data/call/callEnv.RData", pat=12, rat=60)
 
 # Fit parameters
