@@ -33,8 +33,8 @@ detectOutbreak <- function(residuals, nRes, startTime, k) {
 		}
 	}
 	# Single Epidemic
-	# if (k > 1) {
-	# 	outbreak <- 0
-	# }
+	if (k > 1) {
+		outbreak <- 0
+	}
 	outbreak	
 }
