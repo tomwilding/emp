@@ -28,6 +28,7 @@ source('core/evalMulti.r')
 source('core/fitInRangeParallel.r')
 source('core/setSolver.r')
 source('core/sir.r')
+source('core/seir.r')
 source('core/expDec.r')
 
 source('plot/reconstructPlot.r')

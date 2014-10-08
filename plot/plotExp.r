@@ -1,4 +1,4 @@
-load("output/data/exp/expDataFinal.RData")
+load("output/data/exp/expData.RData")
 require('epi')
 # Simulate data 
 # require('epi')

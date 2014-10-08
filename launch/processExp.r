@@ -43,14 +43,15 @@ offsets <- list(startOffset=startOffset, endOffset=endOffset, minTruncation=minT
 thresholds <- list(lim=0.99)
 
 # Init Params = beta, gamma, S0
-initParams <- c();
+initParams <- c(log(1))
 # Epidemic type array epidemic types correspond to the number of parameters of the sub epidemic model
-epiTypes <- c(0)
+epiTypes <- c(1)
+
 # Init Conds = S0, I0, R0
 # I0 from first data point
-initConds <- c();
+initConds <- c(1)
 
-plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/expSingle/", dataFile="output/data/exp/expSingleData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
+plotConfig <- list(title="Synthedemic Decomposition of Simulated Data", fileName="output/graphs/exp/", dataFile="output/data/exp/expData.RData", envFile="output/data/mix/mixEnv.RData", pat=5, rat=30)
 
 # Fit parameters
 fitOverTimeMulti("LMS", c(1:length(data)), data, initConds, initParams, epiTypes, offsets, thresholds, plotConfig)
