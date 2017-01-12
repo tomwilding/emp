@@ -30,3 +30,8 @@ The project directory structure is as follows:
     "plot" - plotting the results
 
 The package "epi" contains the core fitting functions.
+
+Please note:
+This message sometimes appears:
+DLSODA-  Warning..Internal T (=R1) and H (=R2) are 
+It is not fatal, and the plot will usually recover depending on the data
