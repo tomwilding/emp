@@ -1,12 +1,21 @@
+cd into the directory where you have cloned the emp repo
+
+Start R
+
 Source the R script 
 `source("setPackages.r")` 
 to install all required packages.
+
+Source the common libs
+`source("sources.r")
 
 to run the fitting process (For example for processing the Synthetic example)
 `source("launch/process<X>.r")`
 The specified R file loads the required data source and calls package methods. Where the "<X>" in "launch/process<X>.r" is replaced by the file name for example "launch/processMix.r".
 
 The results of the fitting are stored in the "output/data" directory.
+(Please ensure the directories exist)
+`chmd 777` will give write access to create the graphs 
 
 to plot the results of the fitting process (For example for processing the Synthetic example)
 `source("plot/plotMix.r")`
