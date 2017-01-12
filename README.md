@@ -7,7 +7,7 @@ Source the R script
 to install all required packages.
 
 Source the common libs
-`source("sources.r")
+`source("sources.r")`
 
 to run the fitting process (For example for processing the Synthetic example)
 `source("launch/process<X>.r")`
@@ -15,7 +15,7 @@ The specified R file loads the required data source and calls package methods. W
 
 The results of the fitting are stored in the "output/data" directory.
 (Please ensure the directories exist)
-`chmd 777` will give write access to create the graphs 
+chmod 777 will give write access to create the graphs 
 
 to plot the results of the fitting process (For example for processing the Synthetic example)
 `source("plot/plotMix.r")`
